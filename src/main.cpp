@@ -1,0 +1,8 @@
+#include <iostream>
+#include "include/field.hpp"
+
+int main(int argc, char *argv[]) {
+	Field test(10, 15);
+	test.print();	
+	return 0;
+}
