@@ -1,7 +1,12 @@
+#pragma once
+
 #include <iostream>
 #include <cmath>
 #include <vector>
 #include <cstdio>
+#include <sstream>
+#include <iomanip>
+#include "agent.hpp"
 
 constexpr unsigned int MINE_ATTR = 0b01;
 constexpr unsigned int ENEMY_ATTR = 0b10;
@@ -46,6 +51,8 @@ public:
 	int getValue() const;
 };	
 
+class Agent;
+
 /*
  * Field 一つ一つ
  */
@@ -59,6 +66,9 @@ private:
 
 	// フィールド 
 	std::vector<Panel> field;
+
+	// エージェント
+	std::vector<Agent> agents;
 
 public:
 	// とりあえず全部スコアは0にしておく
