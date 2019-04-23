@@ -6,7 +6,9 @@
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
+#include <ctime>
 #include "agent.hpp"
+#include "useful.hpp"
 
 constexpr unsigned int MINE_ATTR = 0b01;
 constexpr unsigned int ENEMY_ATTR = 0b10;
@@ -66,6 +68,9 @@ private:
 
 	// 次の行に行くために必要なyのシフト数
 	unsigned int yShiftOffset;
+
+	// 乱数生成器
+	XorOshiro128p random;
 
 	std::vector<Panel> field;
 	std::vector<Agent> agents;

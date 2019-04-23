@@ -11,6 +11,9 @@ static inline uint_fast64_t splitmix64(uint_fast64_t z) {
 	return z ^ (z >> 31);
 }
 
+XorOshiro128p::XorOshiro128p() {
+}
+
 XorOshiro128p::XorOshiro128p(uint_fast64_t seed) {
 	if(seed == 0) seed = time(NULL);
 
@@ -26,7 +29,7 @@ uint_fast64_t XorOshiro128p::randull(uint_fast64_t max) {
 	// 厳密にはこうするべきだがパフォーマンスが落ちる
 	// return std::uniform_int_distribution<uint_fast64_t>{0, max-1}(*this);
 	
-	return gen() % max;
+	return gen() % (max + 1);
 }
 
 uint_fast64_t XorOshiro128p::gen() {

@@ -14,7 +14,8 @@ private:
 	uint_fast64_t gen();
 
 public:
-	XorOshiro128p(uint_fast64_t seed = 0);
+	XorOshiro128p();
+	XorOshiro128p(uint_fast64_t seed);
 
 	// uint_fast64_t の範囲で乱数を生成
 	uint_fast64_t randull();

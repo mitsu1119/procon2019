@@ -48,6 +48,8 @@ Field::Field(unsigned int width, unsigned int height):width(width),height(height
 	double buf;
 	unsigned int size;
 
+	this->random = XorOshiro128p(time(NULL));
+
 	buf = std::log2(this->width);
 	this->yShiftOffset = (unsigned int)(buf + ((std::ceil(buf) == std::floor(buf)) ? 0 : 1));
 	size = this->height << this->yShiftOffset;
@@ -68,9 +70,11 @@ void Field::setPanelScore(unsigned int x, unsigned int y, int value) {
 }
 
 void Field::genRandMap() {
+	int buf;
 	for(size_t i = 0; i < height; i++) {
 		for(size_t j = 0; j < width; j++) {
-			setPanelScore(j, i, 10);
+			buf = (int)this->random.randull(32) - 16;
+			setPanelScore(j, i, buf);
 		}
 	}
 }
@@ -95,7 +99,7 @@ void Field::print() {
 			}
 			if(flag == MINE_ATTR) printf("\x1b[36m");
 			if(flag == ENEMY_ATTR) printf("\x1b[31m");
-			printf("%2d ", this->at(j, i)->getValue());
+			printf("%3d ", this->at(j, i)->getValue());
 			if(flag != PURE_ATTR) printf("\x1b[39m");
 		}
 		printf("\n");
