@@ -3,17 +3,17 @@
 Agent::Agent() {
 }
 
-Agent::Agent(unsigned int x, unsigned int y, unsigned int attr):x(x),y(y),attr(attr) {
+Agent::Agent(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr):x(x),y(y),attr(attr) {
 }
 
-unsigned int Agent::getX() {
+uint_fast32_t Agent::getX() {
 	return this->x;
 }
 
-unsigned int Agent::getY() {
+uint_fast32_t Agent::getY() {
 	return this->y;
 }
 
-unsigned int Agent::getAttr() {
+uint_fast32_t Agent::getAttr() {
 	return this->attr;
 }

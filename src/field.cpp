@@ -6,11 +6,11 @@ Panel::Panel():value(0) {
 	setPure();
 }
 
-Panel::Panel(int value):value(value) {
+Panel::Panel(int_fast32_t value):value(value) {
 	setPure();
 }
 
-void Panel::setValue(int value) {
+void Panel::setValue(int_fast32_t value) {
 	this->value = value;
 }
 
@@ -38,20 +38,20 @@ void Panel::setPure() {
 	this->attr |= PURE_ATTR;
 }
 
-int Panel::getValue() const {
+int_fast32_t Panel::getValue() const {
 	return this->value;
 }
 
 // ---------------------------------------- Field ---------------------------------------------
 
-Field::Field(unsigned int width, unsigned int height):width(width),height(height) {
+Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(height) {
 	double buf;
-	unsigned int size;
+	uint_fast32_t size;
 
 	this->random = XorOshiro128p(time(NULL));
 
 	buf = std::log2(this->width);
-	this->yShiftOffset = (unsigned int)(buf + ((std::ceil(buf) == std::floor(buf)) ? 0 : 1));
+	this->yShiftOffset = (uint_fast32_t)(buf + ((std::ceil(buf) == std::floor(buf)) ? 0 : 1));
 	size = this->height << this->yShiftOffset;
 
 	// マップ生成
@@ -65,12 +65,12 @@ Field::Field(unsigned int width, unsigned int height):width(width),height(height
 	this->agents.emplace_back(width - 1, height - 1, MINE_ATTR);
 }
 
-void Field::setPanelScore(unsigned int x, unsigned int y, int value) {
+void Field::setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value) {
 	this->field[x + (y << this->yShiftOffset)].setValue(value);
 }
 
 void Field::genRandMap() {
-	int buf;
+	int_fast32_t buf;
 	for(size_t i = 0; i < height; i++) {
 		for(size_t j = 0; j < width; j++) {
 			buf = (int)this->random.randull(32) - 16;
@@ -79,12 +79,12 @@ void Field::genRandMap() {
 	}
 }
 
-const Panel *Field::at(unsigned int x, unsigned int y) const {
+const Panel *Field::at(uint_fast32_t x, uint_fast32_t y) const {
 	return (const Panel *)&(this->field[x + (y << this->yShiftOffset)]);
 }
 
 void Field::print() {
-	unsigned int flag;
+	uint_fast32_t flag;
 
 	for(size_t i = 0; i < this->height; i++) {
 		for(size_t j = 0; j < this->width; j++) {

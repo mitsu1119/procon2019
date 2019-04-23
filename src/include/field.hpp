@@ -10,9 +10,9 @@
 #include "agent.hpp"
 #include "useful.hpp"
 
-constexpr unsigned int MINE_ATTR = 0b01;
-constexpr unsigned int ENEMY_ATTR = 0b10;
-constexpr unsigned int PURE_ATTR = 0b00;
+constexpr uint_fast32_t MINE_ATTR = 0b01;
+constexpr uint_fast32_t ENEMY_ATTR = 0b10;
+constexpr uint_fast32_t PURE_ATTR = 0b00;
 
 class Field;
 
@@ -25,20 +25,20 @@ private:
 	struct {
 		// パネルのスコア
 		// -16 <= value <= 16
-		int value: 6;
+		int_fast32_t value: 6;
 
 		// パネルの属性を格納
 		// 01:味方パネル 10:敵パネル 00:未占領 11:エラー
 		// XXX 支配者 XXX
-		unsigned int attr: 2;
+		uint_fast32_t attr: 2;
 	};
 
 	// パネルにスコアを代入
-	void setValue(int value);	
+	void setValue(int_fast32_t value);	
 
 public:
 	Panel();
-	Panel(int value);
+	Panel(int_fast32_t value);
 
 	// 持ち主は誰か
 	// ex. isMyPanel() == true => 味方パネル
@@ -53,7 +53,7 @@ public:
 	void setPure();
 
 	// パネルのスコアを所得
-	int getValue() const;
+	int_fast32_t getValue() const;
 };	
 
 class Agent;
@@ -64,10 +64,10 @@ class Agent;
 class Field {
 private:
 	// フィールドの実幅、実高さ
-	unsigned int width, height;
+	uint_fast32_t width, height;
 
 	// 次の行に行くために必要なyのシフト数
-	unsigned int yShiftOffset;
+	uint_fast32_t yShiftOffset;
 
 	// 乱数生成器
 	XorOshiro128p random;
@@ -76,16 +76,16 @@ private:
 	std::vector<Agent> agents;
 
 	// 実座標(x,y)のパネルにスコアをセット
-	void setPanelScore(unsigned int x, unsigned int y, int value);
+	void setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value);
 
 	// フィールドランダム生成用関数
 	void genRandMap();
 
 public:
-	Field(unsigned int width, unsigned int height);
+	Field(uint_fast32_t width, uint_fast32_t height);
 
 	// 実座標(x,y)のパネルのポインタを所得(const)
-	const Panel *at(unsigned int x, unsigned int y) const;
+	const Panel *at(uint_fast32_t x, uint_fast32_t y) const;
 
 	// コンソール上に表示(テスト用)
 	void print();
