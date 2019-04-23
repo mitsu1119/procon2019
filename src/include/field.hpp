@@ -12,10 +12,13 @@ constexpr unsigned int MINE_ATTR = 0b01;
 constexpr unsigned int ENEMY_ATTR = 0b10;
 constexpr unsigned int PURE_ATTR = 0b00;
 
+class Field;
+
 /*
  * Panel 一つ一つの情報を管理するクラス
  */
 class Panel {
+friend Field;
 private:
 	struct {
 		// パネルのスコア
@@ -64,14 +67,16 @@ private:
 	// 次の行に行くために必要なyのシフト数
 	unsigned int yShiftOffset;
 
-	// フィールド 
 	std::vector<Panel> field;
-
-	// エージェント
 	std::vector<Agent> agents;
 
+	// 実座標(x,y)のパネルにスコアをセット
+	void setPanelScore(unsigned int x, unsigned int y, int value);
+
+	// フィールドランダム生成用関数
+	void genRandMap();
+
 public:
-	// とりあえず全部スコアは0にしておく
 	Field(unsigned int width, unsigned int height);
 
 	// 実座標(x,y)のパネルのポインタを所得(const)

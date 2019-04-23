@@ -52,14 +52,27 @@ Field::Field(unsigned int width, unsigned int height):width(width),height(height
 	this->yShiftOffset = (unsigned int)(buf + ((std::ceil(buf) == std::floor(buf)) ? 0 : 1));
 	size = this->height << this->yShiftOffset;
 
-	// とりあえず0で埋めておく
+	// マップ生成
 	this->field = std::vector<Panel>(size, Panel(0));	
+	genRandMap();
 
 	// とりあえずAgentを適当に生成
 	this->agents.emplace_back(0, 0, MINE_ATTR);
 	this->agents.emplace_back(width - 1, 0, ENEMY_ATTR);
 	this->agents.emplace_back(0, height - 1, ENEMY_ATTR);
 	this->agents.emplace_back(width - 1, height - 1, MINE_ATTR);
+}
+
+void Field::setPanelScore(unsigned int x, unsigned int y, int value) {
+	this->field[x + (y << this->yShiftOffset)].setValue(value);
+}
+
+void Field::genRandMap() {
+	for(size_t i = 0; i < height; i++) {
+		for(size_t j = 0; j < width; j++) {
+			setPanelScore(j, i, 10);
+		}
+	}
 }
 
 const Panel *Field::at(unsigned int x, unsigned int y) const {
