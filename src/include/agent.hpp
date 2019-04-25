@@ -1,6 +1,7 @@
 #pragma once
 
 #include "field.hpp"
+#include "useful.hpp"
 
 class Agent {
 private:
@@ -17,6 +18,8 @@ private:
 public:
 	Agent();
 	Agent(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr);
+
+	void move(Direction direction);
 
 	uint_fast32_t getX();
 	uint_fast32_t getY();

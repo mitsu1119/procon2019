@@ -87,6 +87,9 @@ public:
 	// 実座標(x,y)のパネルのポインタを所得(const)
 	const Panel *at(uint_fast32_t x, uint_fast32_t y) const;
 
+	// テスト用. ランダムな方向へエージェントが移動する
+	void testMoveAgent();
+
 	// コンソール上に表示(テスト用)
 	void print();
 };

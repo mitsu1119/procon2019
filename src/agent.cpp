@@ -6,6 +6,11 @@ Agent::Agent() {
 Agent::Agent(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr):x(x),y(y),attr(attr) {
 }
 
+void Agent::move(Direction direction) {
+	this->x += direction2x(direction);
+	this->y += direction2y(direction);
+}
+
 uint_fast32_t Agent::getX() {
 	return this->x;
 }

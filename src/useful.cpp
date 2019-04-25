@@ -11,6 +11,40 @@ static inline uint_fast64_t splitmix64(uint_fast64_t z) {
 	return z ^ (z >> 31);
 }
 
+int_fast32_t direction2x(Direction direction) {
+	switch(direction) {
+		case UP:
+		case DOWN:
+			return 0;
+		case RUP:
+		case RIGHT:
+		case RDOWN:
+			return 1;
+		case LDOWN:
+		case LEFT:
+		case LUP:
+			return -1;
+	}
+	return 0;
+}
+
+int_fast32_t direction2y(Direction direction) {
+	switch(direction) {
+		case UP:
+		case RUP:
+		case LUP:
+			return -1;
+		case RIGHT:
+		case LEFT:
+			return 0;
+		case RDOWN:
+		case DOWN:
+		case LDOWN:
+			return 1;
+	}
+	return 0;
+}
+
 XorOshiro128p::XorOshiro128p() {
 }
 

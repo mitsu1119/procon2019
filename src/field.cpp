@@ -59,10 +59,10 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 	genRandMap();
 
 	// とりあえずAgentを適当に生成
-	this->agents.emplace_back(0, 0, MINE_ATTR);
-	this->agents.emplace_back(width - 1, 0, ENEMY_ATTR);
-	this->agents.emplace_back(0, height - 1, ENEMY_ATTR);
-	this->agents.emplace_back(width - 1, height - 1, MINE_ATTR);
+	this->agents.emplace_back(1, 1, MINE_ATTR);
+	this->agents.emplace_back(width - 2, 1, ENEMY_ATTR);
+	this->agents.emplace_back(1, height - 2, ENEMY_ATTR);
+	this->agents.emplace_back(width - 2, height - 2, MINE_ATTR);
 }
 
 void Field::setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value) {
@@ -83,9 +83,20 @@ const Panel *Field::at(uint_fast32_t x, uint_fast32_t y) const {
 	return (const Panel *)&(this->field[x + (y << this->yShiftOffset)]);
 }
 
+void Field::testMoveAgent() {
+	Direction buf;
+	for(auto &i: this->agents) {
+		buf = (Direction)this->random.randull(8);
+		i.move(buf);
+	}
+}
+
+
 void Field::print() {
 	uint_fast32_t flag;
+	char strip[] = "----------------------------------------\n";
 
+	printf("%s", strip);
 	for(size_t i = 0; i < this->height; i++) {
 		for(size_t j = 0; j < this->width; j++) {
 			// エージェントの表示処理
@@ -104,4 +115,5 @@ void Field::print() {
 		}
 		printf("\n");
 	}
+	printf("%s", strip);
 }
