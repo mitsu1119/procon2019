@@ -63,6 +63,8 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 	this->agents.emplace_back(width - 2, 1, ENEMY_ATTR);
 	this->agents.emplace_back(1, height - 2, ENEMY_ATTR);
 	this->agents.emplace_back(width - 2, height - 2, MINE_ATTR);
+
+	this->canmoveAgents = std::vector<bool>(this->agents.size(), true);
 }
 
 void Field::setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value) {
@@ -79,6 +81,35 @@ void Field::genRandMap() {
 	}
 }
 
+bool Field::canMove(Agent &agent, Direction direction) {
+	int_fast32_t nextX = agent.getX() + direction2x(direction), nextY = agent.getY() + direction2y(direction);
+	
+	if(nextX < 0 || nextX > this->width - 1 || nextY < 0 || nextY > this->height - 1) return false;
+	for(auto &i: this->agents) {
+		if(i.getX() == nextX && i.getY() == nextY) return false;
+	}
+
+	return true;
+}
+
+void Field::applyNextAgents() {
+	// ||agents||が小さいため愚直な実装でも問題なさそう
+	// TODO:早くできるいい方法があるなら実装すべき	
+	for(size_t i = 0; i < this->agents.size(); i++) {
+		for(size_t j = i + 1; j < this->agents.size(); j++) {
+			if(this->agents[i].getnextX() != this->agents[j].getnextX() ||  this->agents[i].getnextY() != this->agents[j].getnextY()) continue;
+			this->canmoveAgents[i] = false;
+			this->canmoveAgents[j] = false;
+		}
+	}
+
+	for(size_t i = 0; i < this->agents.size(); i++) {
+		if(this->canmoveAgents[i]) {
+			this->agents[i].setNext();
+		}
+	}
+}
+
 const Panel *Field::at(uint_fast32_t x, uint_fast32_t y) const {
 	return (const Panel *)&(this->field[x + (y << this->yShiftOffset)]);
 }
@@ -86,9 +117,13 @@ const Panel *Field::at(uint_fast32_t x, uint_fast32_t y) const {
 void Field::testMoveAgent() {
 	Direction buf;
 	for(auto &i: this->agents) {
-		buf = (Direction)this->random.randull(8);
-		i.move(buf);
-	}
+RE_CONSIDER:
+		buf = (Direction)this->random.randull(DIRECTION_SIZE - 1);
+		if(canMove(i, buf)) i.move(buf);
+		else goto RE_CONSIDER; // もし動ける方向でなければ方向を検討し直す
+	}	
+
+	applyNextAgents();
 }
 
 

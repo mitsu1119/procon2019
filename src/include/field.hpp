@@ -73,13 +73,23 @@ private:
 	XorOshiro128p random;
 
 	std::vector<Panel> field;
-	std::vector<Agent> agents;
+	std::vector<Agent> agents;	
+
+	// agentの動作可能かベクター
+	std::vector<bool> canmoveAgents;
 
 	// 実座標(x,y)のパネルにスコアをセット
 	void setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value);
 
 	// フィールドランダム生成用関数
 	void genRandMap();
+
+	// agentがdirectionの方向に動けるかどうか true:動ける false:動けない
+	bool canMove(Agent &agent, Direction direction);
+
+	// agentsの(nextX,nextY)を適用する
+	// 行きたい座標が重なるなどしたときその場に止まるように指示
+	void applyNextAgents();
 
 public:
 	Field(uint_fast32_t width, uint_fast32_t height);

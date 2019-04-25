@@ -45,7 +45,7 @@ static enumName enumstr(#__VA_ARGS__);
 
 // Direction型
 // direction2name[UP] = "UP" など
-DECLARE_ENUM(Direction, direction2name, UP, RUP, RIGHT, RDOWN, DOWN, LDOWN, LEFT, LUP);
+DECLARE_ENUM(Direction, direction2name, UP, RUP, RIGHT, RDOWN, DOWN, LDOWN, LEFT, LUP, DIRECTION_SIZE);
 
 // Direction型からx,yを所得
 int_fast32_t direction2x(Direction direction);
