@@ -2,9 +2,59 @@
 
 #include <ctime>
 #include <cstdint>
+#include <cstdio>
 #include <random>
 #include <string>
 #include <vector>
+#include <algorithm>
+
+// 境界を二分探索するやつ
+// ソートされたvector Aの内, A[i] < b となる最大のインデックスiを返す
+template <typename T>
+size_t boundarySearch(std::vector<T> A, T b) {
+	int_fast32_t left = -1;
+	int_fast32_t right = (int)A.size();
+	int_fast32_t mid;
+
+	while(right - left > 1) {
+		mid = left + (right - left) / 2;
+		if(A[mid] >= b) right = mid;
+		else left = mid;
+	}
+	return left;
+}
+
+// グラフ表示するやつ
+// template使うのでヘッダに実装
+template <typename T>
+class DPlot {
+private:
+	// データ
+	std::vector<T> data;
+
+public:
+	DPlot(std::vector<T> data):data(data) {
+	}
+
+	// ヒストグラム生成
+	void histogram() {
+		// 現在のデータをファイル書き出し
+		FILE *fp = fopen("data.txt", "w");
+		for(uint_fast32_t i = 0; i < this->data.size(); i++) fprintf(fp, "%s\n", std::to_string(this->data[i]).c_str());
+		fclose(fp);
+
+		// gnuplot
+		FILE *gp = popen("python", "w");
+
+		fprintf(gp, "import numpy as np\nfrom matplotlib import pyplot\n");
+		fprintf(gp, "data = np.loadtxt('data.txt')\n");
+		fprintf(gp, "pyplot.hist(data, bins=%u)\n", (uint_fast32_t)(this->data.size()/100));
+		fprintf(gp, "pyplot.show()\n");
+		pclose(gp);
+
+		std::remove("data.txt");
+	}
+};
 
 class enumName {
 private:

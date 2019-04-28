@@ -1,5 +1,5 @@
 #include "include/useful.hpp"
-
+	
 static inline uint_fast64_t rotl(uint_fast64_t x, int_fast32_t k) {
 	return (x << k) | (x >> (std::numeric_limits<uint_fast64_t>::digits - k));
 }
