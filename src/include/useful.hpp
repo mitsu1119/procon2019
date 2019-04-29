@@ -20,6 +20,8 @@ public:
 	DPlot(std::vector<T> data):data(data) {
 	}
 
+	T calcMean();
+
 	// ヒストグラム生成
 	void histogram(std::string color = "c") {
 		// 現在のデータをファイル書き出し
@@ -87,7 +89,8 @@ int_fast32_t direction2y(Direction direction);
 
 // 乱数生成器
 // 高速で性質がいいため128bitのXoroshiro+法を選択
-// Xorshift familyに比べていい乱数がでるし高速
+// Xorshift に比べていい乱数がでるし高速
+// 64bit
 class XorOshiro128p {
 private:
 	uint_fast64_t seed[2];
@@ -100,6 +103,8 @@ public:
 	XorOshiro128p();
 	XorOshiro128p(uint_fast64_t seed);
 
+	// それぞれ同じ処理を実装しているのは高速化のため(関数呼び出しのコストが大きい)
+	
 	uint_fast64_t operator()() {
 		uint_fast64_t s0 = this->seed[0], s1 = this->seed[1], result = s0 + s1;
 		s1 ^= s0; 
@@ -116,6 +121,19 @@ public:
 
 		// modulo bias がかかってしまうがパフォーマンスを考えると難しい
 		return result % (max + 1);
+	}
+
+	// [0, 1) の範囲で乱数を生成する
+	inline double gend() {
+		uint_fast64_t s0 = this->seed[0], s1 = this->seed[1], result = s0 + s1;
+		s1 ^= s0; 
+		this->seed[0] = ((s0 << 55) | (s0 >> (64 - 55))) ^ s1 ^ (s1 << 14);
+		this->seed[1] = ((s1 << 36) | (s1 >> (64 - 36)));
+		return (result >> 11) * (1. / (UINT64_C(1) << 53));
+	}
+
+	inline bool genb() {
+		return (this->gend() < 0.5) ? true : false;
 	}
 };
 	
