@@ -75,7 +75,7 @@ void Field::genRandMap() {
 	int_fast32_t buf;
 	for(size_t i = 0; i < height; i++) {
 		for(size_t j = 0; j < width; j++) {
-			buf = (int)this->random.randull(32) - 16;
+			buf = (int)this->random(32) - 16;
 			setPanelScore(j, i, buf);
 		}
 	}
@@ -118,7 +118,7 @@ void Field::testMoveAgent() {
 	Direction buf;
 	for(auto &i: this->agents) {
 RE_CONSIDER:
-		buf = (Direction)this->random.randull(DIRECTION_SIZE - 1);
+		buf = (Direction)this->random(DIRECTION_SIZE - 1);
 		if(canMove(i, buf)) i.move(buf);
 		else goto RE_CONSIDER; // もし動ける方向でなければ方向を検討し直す
 	}	

@@ -8,22 +8,6 @@
 #include <vector>
 #include <algorithm>
 
-// 境界を二分探索するやつ
-// ソートされたvector Aの内, A[i] < b となる最大のインデックスiを返す
-template <typename T>
-size_t boundarySearch(std::vector<T> A, T b) {
-	int_fast32_t left = -1;
-	int_fast32_t right = (int)A.size();
-	int_fast32_t mid;
-
-	while(right - left > 1) {
-		mid = left + (right - left) / 2;
-		if(A[mid] >= b) right = mid;
-		else left = mid;
-	}
-	return left;
-}
-
 // グラフ表示するやつ
 // template使うのでヘッダに実装
 template <typename T>
@@ -37,7 +21,7 @@ public:
 	}
 
 	// ヒストグラム生成
-	void histogram() {
+	void histogram(std::string color = "c") {
 		// 現在のデータをファイル書き出し
 		FILE *fp = fopen("data.txt", "w");
 		for(uint_fast32_t i = 0; i < this->data.size(); i++) fprintf(fp, "%s\n", std::to_string(this->data[i]).c_str());
@@ -48,7 +32,7 @@ public:
 
 		fprintf(gp, "import numpy as np\nfrom matplotlib import pyplot\n");
 		fprintf(gp, "data = np.loadtxt('data.txt')\n");
-		fprintf(gp, "pyplot.hist(data, bins=%u)\n", (uint_fast32_t)(this->data.size()/100));
+		fprintf(gp, "pyplot.hist(data, bins=%u, color='%s')\n", (uint_fast32_t)(this->data.size()/100), color.c_str());
 		fprintf(gp, "pyplot.show()\n");
 		pclose(gp);
 
@@ -108,21 +92,36 @@ class XorOshiro128p {
 private:
 	uint_fast64_t seed[2];
 
-	uint_fast64_t gen();
+	static uint_fast64_t rotl(uint_fast64_t x, int_fast32_t k);
+
+	static uint_fast64_t splitmix64(uint_fast64_t z);
 
 public:
 	XorOshiro128p();
 	XorOshiro128p(uint_fast64_t seed);
 
-	// uint_fast64_t の範囲で乱数を生成
-	uint_fast64_t randull();
-
-	// [0, max]の範囲で乱数を生成
-	uint_fast64_t randull(uint_fast64_t max);
-
 	uint_fast64_t operator()() {
-		return gen();
+		uint_fast64_t s0 = this->seed[0], s1 = this->seed[1], result = s0 + s1;
+		s1 ^= s0; 
+		this->seed[0] = ((s0 << 55) | (s0 >> (64 - 55))) ^ s1 ^ (s1 << 14);
+		this->seed[1] = ((s1 << 36) | (s1 >> (64 - 36)));
+		return result;
+	}
+
+	uint_fast64_t operator()(uint_fast64_t max) {
+		uint_fast64_t s0 = this->seed[0], s1 = this->seed[1], result = s0 + s1;
+		s1 ^= s0; 
+		this->seed[0] = ((s0 << 55) | (s0 >> (64 - 55))) ^ s1 ^ (s1 << 14);
+		this->seed[1] = ((s1 << 36) | (s1 >> (64 - 36)));
+
+		// modulo bias がかかってしまうがパフォーマンスを考えると難しい
+		return result % (max + 1);
 	}
 };
-
 	
+inline uint_fast64_t XorOshiro128p::splitmix64(uint_fast64_t z) {
+	z += 0x9e3779b97f4a7c15;
+	z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9;
+	z = (z ^ (z >> 27)) * 0x94d049bb133111eb;
+	return z ^ (z >> 31);
+}
