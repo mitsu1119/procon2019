@@ -1,8 +1,8 @@
 #include <iostream>
 #include <random>
 #include <chrono>
-#include "include/field.hpp"
-#include "include/useful.hpp"
+#include "field.hpp"
+#include "useful.hpp"
 
 int main(int argc, char *argv[]) {
 	Field test(10, 15);

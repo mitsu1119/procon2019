@@ -1,4 +1,4 @@
-#include "include/useful.hpp"
+#include "useful.hpp"
 
 int_fast32_t direction2x(Direction direction) {
 	switch(direction) {
