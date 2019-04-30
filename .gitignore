@@ -1,2 +1,2 @@
-/src/*.o
-/run
+*.o
+/build/src/run
