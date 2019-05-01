@@ -1,7 +1,10 @@
 #--------使い方--------
-#buildディレクトリに移動してcmake .を実行
-#buildディレクトリ内のsrcディレクトリに移動してmakeする
-#実行ファイルrunが作成される
+#$ mkdir build
+#$ cd build
+#$ cmake ..
+#$ cd src
+#$ make
+#$ ./run
 
 cmake_minimum_required(VERSION 3.1)
 project(procon2019 CXX)
