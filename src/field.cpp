@@ -152,11 +152,3 @@ void Field::print() {
 	}
 	printf("%s", strip);
 }
-
-const uint_fast32_t Field::getWidth(){
-	return this->width;
-}
-
-const uint_fast32_t Field::getHeight(){
-	return this->height;
-}

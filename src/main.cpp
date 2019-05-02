@@ -6,7 +6,7 @@
 #include "disp.hpp"
 
 int main(int argc, char *argv[]) {
-
+	
 	Field field(10, 15);
 
 	DisplayWrapper* test = new Display();
@@ -15,14 +15,16 @@ int main(int argc, char *argv[]) {
 	test->setField(&field);
 	test->start(argc, argv);
 	
-	//	Field test(10, 15);
+	/*
+	Field test(10, 15);
 
-	//	test.print();	
+	test.print();	
 
-	/*	for(size_t i = 0; i < 10; i++) {
+	for(size_t i = 0; i < 10; i++) {
 		test.testMoveAgent();
 		test.print();
-		}*/
+	}
+	*/
 
 	return 0;
 }

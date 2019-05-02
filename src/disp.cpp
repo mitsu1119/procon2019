@@ -82,7 +82,10 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'c':
 	case 'C':
 		this->field->print();
-		std::cout<<std::endl;
+		break;
+	case 'M':
+	case 'm':
+		this->field->testMoveAgent();
 		break;
 	default:
 		break;
@@ -95,7 +98,7 @@ void Display::specialKeyboard(int key, int x, int y){
 
 void Display::mouse(int button, int state, int x, int y){
 	const bool launch=(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN);
-	const bool range=(x<0||x>cell_size*this->field->getWidth()||y<0||y>cell_size*this->field->getHeight());
+	const bool range=(x<0||x>cell_size*this->field->width||y<0||y>cell_size*this->field->height);
 	if(!launch||range)  return;
 	const int coordX=x/cell_size+1;
 	const int coordY=y/cell_size+1;
@@ -110,21 +113,21 @@ const void Display::line(){
 	glColor3f(0.0f, 1.0f, 0.0);
 	glLineWidth(line_size);
 	glBegin(GL_LINES);
-	for(int i=0;i<=this->field->getWidth();i++){
+	for(int i=0;i<=this->field->width;i++){
 		glVertex2i(this->cell_size*i, 0);
-		glVertex2i(this->cell_size*i, this->cell_size*this->field->getHeight());
+		glVertex2i(this->cell_size*i, this->cell_size*this->field->height);
 	}
-	for(int j=0;j<=this->field->getHeight();j++){
+	for(int j=0;j<=this->field->height;j++){
 		glVertex2i(0, this->cell_size*j);
-		glVertex2i(this->cell_size*this->field->getWidth(), this->cell_size*j);
+		glVertex2i(this->cell_size*this->field->width, this->cell_size*j);
 	}
 	glEnd();
 }
 
 const void Display::score(){
 	glColor3f(0.0f, 1.0f, 0.0);
-	for(int i=0;i<this->field->getWidth();i++){
-		for(int j=0;j<this->field->getHeight();j++){
+	for(int i=0;i<this->field->width;i++){
+		for(int j=0;j<this->field->height;j++){
 			int value=this->field->at(i, j)->getValue();
 			std::string str=std::to_string(value);
 			this->renderString(i*this->cell_size+5, (j+1)*this->cell_size-5, str);

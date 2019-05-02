@@ -7,6 +7,7 @@
 #include "field.hpp"
 
 class Display;
+class Field;
 
 class DisplayWrapper{
 private:

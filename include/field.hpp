@@ -9,12 +9,14 @@
 #include <ctime>
 #include "agent.hpp"
 #include "useful.hpp"
+#include "disp.hpp"
 
 constexpr uint_fast32_t MINE_ATTR = 0b01;
 constexpr uint_fast32_t ENEMY_ATTR = 0b10;
 constexpr uint_fast32_t PURE_ATTR = 0b00;
 
 class Field;
+class Display;
 
 /*
  * Panel 一つ一つの情報を管理するクラス
@@ -62,6 +64,7 @@ class Agent;
  * Field 一つ一つ
  */
 class Field {
+friend Display;
 private:
 	// フィールドの実幅、実高さ
 	uint_fast32_t width, height;
@@ -103,7 +106,4 @@ public:
 	// コンソール上に表示(テスト用)
 	void print();
 
-	//縦と横の大きさを吐く
-	const uint_fast32_t getWidth();
-	const uint_fast32_t getHeight();
 };
