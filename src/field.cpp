@@ -23,7 +23,11 @@ bool Panel::isEnemyPanel() const {
 }
 
 bool Panel::isPurePanel() const {
-	return this->attr & PURE_ATTR;
+	return !this->attr;
+}
+
+uint_fast32_t Panel::getAttr() const {
+	return this->attr;
 }
 
 void Panel::setMine() {
@@ -35,7 +39,7 @@ void Panel::setEnemy() {
 }
 
 void Panel::setPure() {
-	this->attr |= PURE_ATTR;
+	this->attr = PURE_ATTR;
 }
 
 int_fast32_t Panel::getValue() const {
@@ -127,8 +131,12 @@ void Field::applyNextAgents() {
 
 	for(size_t i = 0; i < this->agents.size(); i++) {
 		if(this->canmoveAgents[i]) {
-			this->agents[i].setNext();
-			setPanelAttr(this->agents[i].getX(), this->agents[i].getY(), this->agents[i].getAttr());
+			if(!this->at(this->agents[i].getnextX(), this->agents[i].getnextY())->isPurePanel() && this->at(this->agents[i].getnextX(), this->agents[i].getnextY())->getAttr() != this->agents[i].getAttr()) {
+				setPanelAttr(this->agents[i].getnextX(), this->agents[i].getnextY(), PURE_ATTR);
+			} else {
+				this->agents[i].setNext();
+				setPanelAttr(this->agents[i].getX(), this->agents[i].getY(), this->agents[i].getAttr());
+			}
 		} else {
 			this->canmoveAgents[i] = true;
 		}
