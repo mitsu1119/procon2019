@@ -102,4 +102,8 @@ public:
 
 	// コンソール上に表示(テスト用)
 	void print();
+
+	//縦と横の大きさを吐く
+	const uint_fast32_t getWidth();
+	const uint_fast32_t getHeight();
 };

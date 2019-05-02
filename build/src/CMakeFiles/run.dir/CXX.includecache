@@ -12,6 +12,18 @@ field.hpp
 useful.hpp
 ../include/useful.hpp
 
+../include/disp.hpp
+iostream
+-
+algorithm
+-
+string
+-
+GL/glut.h
+-
+field.hpp
+../include/field.hpp
+
 ../include/field.hpp
 iostream
 -
@@ -59,4 +71,6 @@ field.hpp
 /home/kaito/program/procon2019/src/field.hpp
 useful.hpp
 /home/kaito/program/procon2019/src/useful.hpp
+disp.hpp
+/home/kaito/program/procon2019/src/disp.hpp
 

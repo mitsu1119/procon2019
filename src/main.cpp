@@ -3,16 +3,26 @@
 #include <chrono>
 #include "field.hpp"
 #include "useful.hpp"
+#include "disp.hpp"
 
 int main(int argc, char *argv[]) {
-	Field test(10, 15);
 
-	test.print();	
+	Field field(10, 15);
 
-	for(size_t i = 0; i < 10; i++) {
+	DisplayWrapper* test = new Display();
+	
+	test->setInstance(test);
+	test->setField(&field);
+	test->start(argc, argv);
+	
+	//	Field test(10, 15);
+
+	//	test.print();	
+
+	/*	for(size_t i = 0; i < 10; i++) {
 		test.testMoveAgent();
 		test.print();
-	}
+		}*/
 
 	return 0;
 }

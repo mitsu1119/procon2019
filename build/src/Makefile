@@ -167,6 +167,33 @@ agent.cpp.s:
 	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/agent.cpp.s
 .PHONY : agent.cpp.s
 
+disp.o: disp.cpp.o
+
+.PHONY : disp.o
+
+# target to build an object file
+disp.cpp.o:
+	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/disp.cpp.o
+.PHONY : disp.cpp.o
+
+disp.i: disp.cpp.i
+
+.PHONY : disp.i
+
+# target to preprocess a source file
+disp.cpp.i:
+	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/disp.cpp.i
+.PHONY : disp.cpp.i
+
+disp.s: disp.cpp.s
+
+.PHONY : disp.s
+
+# target to generate assembly for a file
+disp.cpp.s:
+	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/disp.cpp.s
+.PHONY : disp.cpp.s
+
 field.o: field.cpp.o
 
 .PHONY : field.o
@@ -261,6 +288,9 @@ help:
 	@echo "... agent.o"
 	@echo "... agent.i"
 	@echo "... agent.s"
+	@echo "... disp.o"
+	@echo "... disp.i"
+	@echo "... disp.s"
 	@echo "... field.o"
 	@echo "... field.i"
 	@echo "... field.s"

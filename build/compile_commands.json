@@ -16,6 +16,11 @@
 },
 {
   "directory": "/home/kaito/program/procon2019/build/src",
+  "command": "/usr/bin/c++  -DMACRO1=bar -Dgreetings_EXPORTS -I/home/kaito/program/procon2019/include  -std=c++17 -Wall -g -fPIC   -I/foo/dir1 -o CMakeFiles/greetings.dir/disp.cpp.o -c /home/kaito/program/procon2019/src/disp.cpp",
+  "file": "/home/kaito/program/procon2019/src/disp.cpp"
+},
+{
+  "directory": "/home/kaito/program/procon2019/build/src",
   "command": "/usr/bin/c++  -DMACRO1=bar -I/home/kaito/program/procon2019/include  -std=c++17 -Wall -g   -I/foo/dir1 -o CMakeFiles/run.dir/main.cpp.o -c /home/kaito/program/procon2019/src/main.cpp",
   "file": "/home/kaito/program/procon2019/src/main.cpp"
 }
