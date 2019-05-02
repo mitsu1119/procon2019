@@ -81,6 +81,9 @@ private:
 	// 実座標(x,y)のパネルにスコアをセット
 	void setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value);
 
+	// 実座標(x,y)のパネルの属性をセット
+	void setPanelAttr(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr);
+
 	// フィールドランダム生成用関数
 	void genRandMap();
 
