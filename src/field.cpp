@@ -106,6 +106,8 @@ void Field::applyNextAgents() {
 	for(size_t i = 0; i < this->agents.size(); i++) {
 		if(this->canmoveAgents[i]) {
 			this->agents[i].setNext();
+		} else {
+			this->canmoveAgents[i] = true;
 		}
 	}
 }
