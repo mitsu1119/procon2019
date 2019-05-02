@@ -168,8 +168,8 @@ void Field::print() {
 	for(size_t i = 0; i < this->height; i++) {
 		for(size_t j = 0; j < this->width; j++) {
 			// パネルの属性の表示処理
-			if(this->at(j, i)->isMyPanel()) printf("\x1b[46m");
-			if(this->at(j, i)->isEnemyPanel()) printf("\x1b[43m"); 
+			if(this->at(j, i)->isMyPanel()) printf("\x1b[34m");
+			if(this->at(j, i)->isEnemyPanel()) printf("\x1b[31m"); 
 			
 			// エージェントの表示処理
 			// ||agents|| が十分に小さいため線形探索でも計算時間にそれほど影響がでない
@@ -184,9 +184,15 @@ void Field::print() {
 			if(flag == ENEMY_ATTR) printf("\x1b[31m");
 			printf("%3d ", this->at(j, i)->getValue());
 			if(flag != PURE_ATTR) printf("\x1b[39m");
-			if(!this->at(j, i)->isPurePanel()) printf("\x1b[49m");
+			if(!this->at(j, i)->isPurePanel()) printf("\x1b[39m");
 		}
 		printf("\n");
+	}
+	printf("%s", strip);
+	for(size_t i = 0; i < this->agents.size(); i++) {
+		if(this->agents[i].getAttr() == MINE_ATTR) printf("\x1b[34m");
+		else printf("\x1b[31m");
+		printf("agent[%u]: (%u, %u)\n\x1b[39m", i, this->agents[i].getX(), this->agents[i].getY());
 	}
 	printf("%s", strip);
 }
