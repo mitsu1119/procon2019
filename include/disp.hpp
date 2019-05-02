@@ -49,6 +49,8 @@ private:
 	
 	static const unsigned int line_size=1;
 	static const unsigned int cell_size=30;
+	static const unsigned int agent_size=15;
+	static const unsigned int panel_size=30;
 	
 public:
 	

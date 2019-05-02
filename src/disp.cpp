@@ -67,9 +67,9 @@ void Display::resize(int w, int h){
 void Display::display(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	this->line();
+	this->agent();
 	//	this->panel();
 	this->score();
-	this->agent();
 	glFlush();
 }
 
@@ -86,6 +86,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'M':
 	case 'm':
 		this->field->testMoveAgent();
+		glutPostRedisplay();
 		break;
 	default:
 		break;
@@ -140,7 +141,20 @@ const void Display::panel(){
 }
 
 const void Display::agent(){
+	const int half=this->cell_size/2;
+	uint_fast32_t flag;
 	
+	glPointSize(this->agent_size);
+	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
+			flag = a.getAttr();
+			if(flag == MINE_ATTR)
+				glColor3f(1.0f, 0.0f, 0.0f);
+			if(flag == ENEMY_ATTR)
+				glColor3f(0.0f, 0.0f, 1.0f);
+			glBegin(GL_POINTS);
+			glVertex2i(half+cell_size*a.getX(), half+cell_size*a.getY());
+			glEnd();
+		});
 }
 
 const void Display::renderString(float x, float y, const std::string& str){
