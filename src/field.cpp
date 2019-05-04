@@ -23,7 +23,11 @@ bool Panel::isEnemyPanel() const {
 }
 
 bool Panel::isPurePanel() const {
-	return this->attr & PURE_ATTR;
+	return !this->attr;
+}
+
+uint_fast32_t Panel::getAttr() const {
+	return this->attr;
 }
 
 void Panel::setMine() {
@@ -35,7 +39,7 @@ void Panel::setEnemy() {
 }
 
 void Panel::setPure() {
-	this->attr |= PURE_ATTR;
+	this->attr = PURE_ATTR;
 }
 
 int_fast32_t Panel::getValue() const {
@@ -127,8 +131,12 @@ void Field::applyNextAgents() {
 
 	for(size_t i = 0; i < this->agents.size(); i++) {
 		if(this->canmoveAgents[i]) {
-			this->agents[i].setNext();
-			setPanelAttr(this->agents[i].getX(), this->agents[i].getY(), this->agents[i].getAttr());
+			if(!this->at(this->agents[i].getnextX(), this->agents[i].getnextY())->isPurePanel() && this->at(this->agents[i].getnextX(), this->agents[i].getnextY())->getAttr() != this->agents[i].getAttr()) {
+				setPanelAttr(this->agents[i].getnextX(), this->agents[i].getnextY(), PURE_ATTR);
+			} else {
+				this->agents[i].setNext();
+				setPanelAttr(this->agents[i].getX(), this->agents[i].getY(), this->agents[i].getAttr());
+			}
 		} else {
 			this->canmoveAgents[i] = true;
 		}
@@ -160,8 +168,8 @@ void Field::print() {
 	for(size_t i = 0; i < this->height; i++) {
 		for(size_t j = 0; j < this->width; j++) {
 			// パネルの属性の表示処理
-			if(this->at(j, i)->isMyPanel()) printf("\x1b[46m");
-			if(this->at(j, i)->isEnemyPanel()) printf("\x1b[43m"); 
+			if(this->at(j, i)->isMyPanel()) printf("\x1b[34m");
+			if(this->at(j, i)->isEnemyPanel()) printf("\x1b[31m"); 
 			
 			// エージェントの表示処理
 			// ||agents|| が十分に小さいため線形探索でも計算時間にそれほど影響がでない
@@ -176,9 +184,15 @@ void Field::print() {
 			if(flag == ENEMY_ATTR) printf("\x1b[31m");
 			printf("%3d ", this->at(j, i)->getValue());
 			if(flag != PURE_ATTR) printf("\x1b[39m");
-			if(!this->at(j, i)->isPurePanel()) printf("\x1b[49m");
+			if(!this->at(j, i)->isPurePanel()) printf("\x1b[39m");
 		}
 		printf("\n");
+	}
+	printf("%s", strip);
+	for(size_t i = 0; i < this->agents.size(); i++) {
+		if(this->agents[i].getAttr() == MINE_ATTR) printf("\x1b[34m");
+		else printf("\x1b[31m");
+		printf("agent[%u]: (%u, %u)\n\x1b[39m", i, this->agents[i].getX(), this->agents[i].getY());
 	}
 	printf("%s", strip);
 }

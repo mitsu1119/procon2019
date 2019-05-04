@@ -45,6 +45,7 @@ public:
 	bool isMyPanel() const;
 	bool isEnemyPanel() const;
 	bool isPurePanel() const;
+	uint_fast32_t getAttr() const;
 
 	// 持ち主のセット
 	// ex. setMine() -> 味方パネルへ
