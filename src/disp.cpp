@@ -2,6 +2,13 @@
 
 // ---------------------------------------- DisplayWrapper ----------------------------------------
 
+DisplayWrapper::DisplayWrapper(){
+}
+
+DisplayWrapper::~DisplayWrapper(){
+	delete instance;
+}
+
 DisplayWrapper* DisplayWrapper::instance=0;
 
 void DisplayWrapper::init(){
@@ -114,7 +121,6 @@ Display::Display(){
 }
 
 Display::~Display(){
-	delete field;
 }
 
 const void Display::line(){

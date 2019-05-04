@@ -14,6 +14,8 @@ int main(int argc, char *argv[]) {
 	test->setInstance(test);
 	test->setField(&field);
 	test->start(argc, argv);
+
+	delete test;
 	
 	/*
 	Field test(10, 15);

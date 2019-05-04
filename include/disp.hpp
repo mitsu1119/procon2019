@@ -21,6 +21,9 @@ private:
 public:
 	
 	Field* field;
+
+	DisplayWrapper();
+	~DisplayWrapper();
 	
 	void init();
 	void start(int argc, char *argv[]);
@@ -53,6 +56,7 @@ private:
 	static const unsigned int panel_size=30;
 	
 public:
+	
 	Display();
 	~Display();
 	
