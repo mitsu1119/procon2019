@@ -15,28 +15,28 @@ The CXX compiler identification is GNU, found in "/home/kaito/program/procon2019
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_e1d76/fast"
-/usr/bin/make -f CMakeFiles/cmTC_e1d76.dir/build.make CMakeFiles/cmTC_e1d76.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_aec56/fast"
+/usr/bin/make -f CMakeFiles/cmTC_aec56.dir/build.make CMakeFiles/cmTC_aec56.dir/build
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' に入ります
-Building CXX object CMakeFiles/cmTC_e1d76.dir/testCXXCompiler.cxx.o
-/usr/bin/c++     -o CMakeFiles/cmTC_e1d76.dir/testCXXCompiler.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_e1d76
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e1d76.dir/link.txt --verbose=1
-/usr/bin/c++       -rdynamic CMakeFiles/cmTC_e1d76.dir/testCXXCompiler.cxx.o  -o cmTC_e1d76 
+Building CXX object CMakeFiles/cmTC_aec56.dir/testCXXCompiler.cxx.o
+/usr/bin/c++     -o CMakeFiles/cmTC_aec56.dir/testCXXCompiler.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_aec56
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_aec56.dir/link.txt --verbose=1
+/usr/bin/c++       -rdynamic CMakeFiles/cmTC_aec56.dir/testCXXCompiler.cxx.o  -o cmTC_aec56 
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' から出ます
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_d4dff/fast"
-/usr/bin/make -f CMakeFiles/cmTC_d4dff.dir/build.make CMakeFiles/cmTC_d4dff.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_33371/fast"
+/usr/bin/make -f CMakeFiles/cmTC_33371.dir/build.make CMakeFiles/cmTC_33371.dir/build
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' に入ります
-Building CXX object CMakeFiles/cmTC_d4dff.dir/CMakeCXXCompilerABI.cpp.o
-/usr/bin/c++     -o CMakeFiles/cmTC_d4dff.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.10/Modules/CMakeCXXCompilerABI.cpp
-Linking CXX executable cmTC_d4dff
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d4dff.dir/link.txt --verbose=1
-/usr/bin/c++      -v -rdynamic CMakeFiles/cmTC_d4dff.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_d4dff 
+Building CXX object CMakeFiles/cmTC_33371.dir/CMakeCXXCompilerABI.cpp.o
+/usr/bin/c++     -o CMakeFiles/cmTC_33371.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.10/Modules/CMakeCXXCompilerABI.cpp
+Linking CXX executable cmTC_33371
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_33371.dir/link.txt --verbose=1
+/usr/bin/c++      -v -rdynamic CMakeFiles/cmTC_33371.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_33371 
 Using built-in specs.
 COLLECT_GCC=/usr/bin/c++
 COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
@@ -48,9 +48,9 @@ Thread model: posix
 gcc version 7.3.0 (Ubuntu 7.3.0-27ubuntu1~18.04) 
 COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
 LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_d4dff' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccOplypK.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_d4dff /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_d4dff.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_d4dff' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_33371' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccbz1dws.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_33371 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_33371.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_33371' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' から出ます
 
 
@@ -58,14 +58,14 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_d4dff/fast"]
-  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_d4dff.dir/build.make CMakeFiles/cmTC_d4dff.dir/build]
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_33371/fast"]
+  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_33371.dir/build.make CMakeFiles/cmTC_33371.dir/build]
   ignore line: [make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' に入ります]
-  ignore line: [Building CXX object CMakeFiles/cmTC_d4dff.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/usr/bin/c++     -o CMakeFiles/cmTC_d4dff.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.10/Modules/CMakeCXXCompilerABI.cpp]
-  ignore line: [Linking CXX executable cmTC_d4dff]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d4dff.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/c++      -v -rdynamic CMakeFiles/cmTC_d4dff.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_d4dff ]
+  ignore line: [Building CXX object CMakeFiles/cmTC_33371.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/bin/c++     -o CMakeFiles/cmTC_33371.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.10/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Linking CXX executable cmTC_33371]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_33371.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/c++      -v -rdynamic CMakeFiles/cmTC_33371.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_33371 ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/c++]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper]
@@ -77,13 +77,13 @@ Parsed CXX implicit link information from above output:
   ignore line: [gcc version 7.3.0 (Ubuntu 7.3.0-27ubuntu1~18.04) ]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_d4dff' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccOplypK.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_d4dff /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_d4dff.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_33371' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccbz1dws.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_33371 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_33371.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o]
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/ccOplypK.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccbz1dws.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -103,7 +103,7 @@ Parsed CXX implicit link information from above output:
     arg [-znow] ==> ignore
     arg [-zrelro] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_d4dff] ==> ignore
+    arg [cmTC_33371] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o] ==> ignore
@@ -115,7 +115,7 @@ Parsed CXX implicit link information from above output:
     arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
     arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
     arg [-L/usr/lib/gcc/x86_64-linux-gnu/7/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../..]
-    arg [CMakeFiles/cmTC_d4dff.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_33371.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -143,14 +143,14 @@ Parsed CXX implicit link information from above output:
 Detecting CXX [-std=c++1z] compiler features compiled with the following output:
 Change Dir: /home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_be587/fast"
-/usr/bin/make -f CMakeFiles/cmTC_be587.dir/build.make CMakeFiles/cmTC_be587.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_6717c/fast"
+/usr/bin/make -f CMakeFiles/cmTC_6717c.dir/build.make CMakeFiles/cmTC_6717c.dir/build
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' に入ります
-Building CXX object CMakeFiles/cmTC_be587.dir/feature_tests.cxx.o
-/usr/bin/c++    -std=c++1z -o CMakeFiles/cmTC_be587.dir/feature_tests.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_be587
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_be587.dir/link.txt --verbose=1
-/usr/bin/c++       -rdynamic CMakeFiles/cmTC_be587.dir/feature_tests.cxx.o  -o cmTC_be587 
+Building CXX object CMakeFiles/cmTC_6717c.dir/feature_tests.cxx.o
+/usr/bin/c++    -std=c++1z -o CMakeFiles/cmTC_6717c.dir/feature_tests.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_6717c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6717c.dir/link.txt --verbose=1
+/usr/bin/c++       -rdynamic CMakeFiles/cmTC_6717c.dir/feature_tests.cxx.o  -o cmTC_6717c 
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' から出ます
 
 
@@ -216,14 +216,14 @@ make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMa
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
 Change Dir: /home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_967dd/fast"
-/usr/bin/make -f CMakeFiles/cmTC_967dd.dir/build.make CMakeFiles/cmTC_967dd.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_28b6c/fast"
+/usr/bin/make -f CMakeFiles/cmTC_28b6c.dir/build.make CMakeFiles/cmTC_28b6c.dir/build
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' に入ります
-Building CXX object CMakeFiles/cmTC_967dd.dir/feature_tests.cxx.o
-/usr/bin/c++    -std=c++14 -o CMakeFiles/cmTC_967dd.dir/feature_tests.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_967dd
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_967dd.dir/link.txt --verbose=1
-/usr/bin/c++       -rdynamic CMakeFiles/cmTC_967dd.dir/feature_tests.cxx.o  -o cmTC_967dd 
+Building CXX object CMakeFiles/cmTC_28b6c.dir/feature_tests.cxx.o
+/usr/bin/c++    -std=c++14 -o CMakeFiles/cmTC_28b6c.dir/feature_tests.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_28b6c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_28b6c.dir/link.txt --verbose=1
+/usr/bin/c++       -rdynamic CMakeFiles/cmTC_28b6c.dir/feature_tests.cxx.o  -o cmTC_28b6c 
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' から出ます
 
 
@@ -289,14 +289,14 @@ make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMa
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
 Change Dir: /home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_2dd5f/fast"
-/usr/bin/make -f CMakeFiles/cmTC_2dd5f.dir/build.make CMakeFiles/cmTC_2dd5f.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_8695c/fast"
+/usr/bin/make -f CMakeFiles/cmTC_8695c.dir/build.make CMakeFiles/cmTC_8695c.dir/build
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' に入ります
-Building CXX object CMakeFiles/cmTC_2dd5f.dir/feature_tests.cxx.o
-/usr/bin/c++    -std=c++11 -o CMakeFiles/cmTC_2dd5f.dir/feature_tests.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_2dd5f
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2dd5f.dir/link.txt --verbose=1
-/usr/bin/c++       -rdynamic CMakeFiles/cmTC_2dd5f.dir/feature_tests.cxx.o  -o cmTC_2dd5f 
+Building CXX object CMakeFiles/cmTC_8695c.dir/feature_tests.cxx.o
+/usr/bin/c++    -std=c++11 -o CMakeFiles/cmTC_8695c.dir/feature_tests.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_8695c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8695c.dir/link.txt --verbose=1
+/usr/bin/c++       -rdynamic CMakeFiles/cmTC_8695c.dir/feature_tests.cxx.o  -o cmTC_8695c 
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' から出ます
 
 
@@ -362,14 +362,14 @@ make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMa
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
 Change Dir: /home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_932a1/fast"
-/usr/bin/make -f CMakeFiles/cmTC_932a1.dir/build.make CMakeFiles/cmTC_932a1.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_afa99/fast"
+/usr/bin/make -f CMakeFiles/cmTC_afa99.dir/build.make CMakeFiles/cmTC_afa99.dir/build
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' に入ります
-Building CXX object CMakeFiles/cmTC_932a1.dir/feature_tests.cxx.o
-/usr/bin/c++    -std=c++98 -o CMakeFiles/cmTC_932a1.dir/feature_tests.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_932a1
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_932a1.dir/link.txt --verbose=1
-/usr/bin/c++       -rdynamic CMakeFiles/cmTC_932a1.dir/feature_tests.cxx.o  -o cmTC_932a1 
+Building CXX object CMakeFiles/cmTC_afa99.dir/feature_tests.cxx.o
+/usr/bin/c++    -std=c++98 -o CMakeFiles/cmTC_afa99.dir/feature_tests.cxx.o -c /home/kaito/program/procon2019/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_afa99
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_afa99.dir/link.txt --verbose=1
+/usr/bin/c++       -rdynamic CMakeFiles/cmTC_afa99.dir/feature_tests.cxx.o  -o cmTC_afa99 
 make[1]: ディレクトリ '/home/kaito/program/procon2019/build/CMakeFiles/CMakeTmp' から出ます
 
 

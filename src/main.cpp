@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 
 	test.print();	
 
-	for(size_t i = 0; i < 10; i++) {
+	for(size_t i = 0; i < 20; i++) {
 		test.testMoveAgent();
 		test.print();
 	}
