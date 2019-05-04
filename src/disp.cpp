@@ -67,8 +67,8 @@ void Display::resize(int w, int h){
 void Display::display(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	this->line();
+	this->panel();
 	this->agent();
-	//	this->panel();
 	this->score();
 	glFlush();
 }
@@ -137,7 +137,20 @@ const void Display::score(){
 }
 
 const void Display::panel(){
-	
+	const int half=this->cell_size/2;
+		for(int i=0;i<this->field->width;i++){
+			for(int j=0;j<this->field->height;j++){;
+			if(this->field->at(i, j)->isPurePanel())
+				continue;
+			if(this->field->at(i, j)->isMyPanel())
+				glColor3f(0.0f, 0.0f, 0.3f);
+			if(this->field->at(i, j)->isEnemyPanel())
+				glColor3f(0.3f, 0.0f, 0.0f);
+			glBegin(GL_POINTS);
+			glVertex2i(half+cell_size*i, half+cell_size*j);
+			glEnd();
+		}
+	}
 }
 
 const void Display::agent(){
@@ -148,9 +161,9 @@ const void Display::agent(){
 	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
 			flag = a.getAttr();
 			if(flag == MINE_ATTR)
-				glColor3f(1.0f, 0.0f, 0.0f);
+				glColor3f(0.0f, 0.0f, 1.0f);				
 			if(flag == ENEMY_ATTR)
-				glColor3f(0.0f, 0.0f, 1.0f);
+				glColor3f(1.0f, 0.0f, 0.0f);
 			glBegin(GL_POINTS);
 			glVertex2i(half+cell_size*a.getX(), half+cell_size*a.getY());
 			glEnd();
