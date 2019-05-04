@@ -53,6 +53,8 @@ private:
 	static const unsigned int panel_size=30;
 	
 public:
+	Display();
+	~Display();
 	
 	void resize(int w, int h) override;
 	void display() override;

@@ -109,7 +109,14 @@ void Display::mouse(int button, int state, int x, int y){
 void Display::motion(int x, int y){
 	;
 }
-	
+
+Display::Display(){	
+}
+
+Display::~Display(){
+	delete field;
+}
+
 const void Display::line(){
 	glColor3f(0.0f, 1.0f, 0.0);
 	glLineWidth(line_size);
