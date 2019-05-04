@@ -93,6 +93,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'M':
 	case 'm':
 		this->field->testMoveAgent();
+		this->field->print();		
 		glutPostRedisplay();
 		break;
 	default:
@@ -174,9 +175,9 @@ const void Display::agent(){
 	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
 			flag = a.getAttr();
 			if(flag == MINE_ATTR)
-				glColor3f(0.0f, 0.0f, 1.0f);				
+				glColor3f(0.1f, 0.1f, 1.0f);				
 			if(flag == ENEMY_ATTR)
-				glColor3f(1.0f, 0.0f, 0.0f);
+				glColor3f(1.0f, 0.1f, 0.1f);
 			glBegin(GL_POINTS);
 			glVertex2i(half+cell_size*a.getX(), half+cell_size*a.getY());
 			glEnd();
