@@ -90,12 +90,12 @@ run_EXTERNAL_OBJECTS =
 
 src/run: src/CMakeFiles/run.dir/main.cpp.o
 src/run: src/CMakeFiles/run.dir/build.make
+src/run: src/libgreetings.so
 src/run: /usr/lib/x86_64-linux-gnu/libglut.so
 src/run: /usr/lib/x86_64-linux-gnu/libXmu.so
 src/run: /usr/lib/x86_64-linux-gnu/libXi.so
 src/run: /usr/lib/x86_64-linux-gnu/libGL.so
 src/run: /usr/lib/x86_64-linux-gnu/libGLU.so
-src/run: src/libgreetings.so
 src/run: src/CMakeFiles/run.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/kaito/program/procon2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable run"
 	cd /home/kaito/program/procon2019/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/run.dir/link.txt --verbose=$(VERBOSE)

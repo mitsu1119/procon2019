@@ -9,12 +9,14 @@
 #include <ctime>
 #include "agent.hpp"
 #include "useful.hpp"
+#include "disp.hpp"
 
 constexpr uint_fast32_t MINE_ATTR = 0b01;
 constexpr uint_fast32_t ENEMY_ATTR = 0b10;
 constexpr uint_fast32_t PURE_ATTR = 0b00;
 
 class Field;
+class Display;
 
 /*
  * Panel 一つ一つの情報を管理するクラス
@@ -45,6 +47,7 @@ public:
 	bool isMyPanel() const;
 	bool isEnemyPanel() const;
 	bool isPurePanel() const;
+	uint_fast32_t getAttr() const;
 
 	// 持ち主のセット
 	// ex. setMine() -> 味方パネルへ
@@ -62,6 +65,7 @@ class Agent;
  * Field 一つ一つ
  */
 class Field {
+friend Display;
 private:
 	// フィールドの実幅、実高さ
 	uint_fast32_t width, height;
@@ -80,6 +84,9 @@ private:
 
 	// 実座標(x,y)のパネルにスコアをセット
 	void setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value);
+
+	// 実座標(x,y)のパネルの属性をセット
+	void setPanelAttr(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr);
 
 	// フィールドランダム生成用関数
 	void genRandMap();
@@ -102,4 +109,5 @@ public:
 
 	// コンソール上に表示(テスト用)
 	void print();
+
 };

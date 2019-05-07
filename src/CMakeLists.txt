@@ -4,9 +4,15 @@ add_library(greetings
 	agent.cpp
 	field.cpp
 	useful.cpp
+	disp.cpp
 	)
+
+#パッケージを探す
 find_package(GLUT)
 find_package(OpenGL)
+
+#リンクする
+target_link_libraries(greetings ${GLUT_LIBRARY} ${OPENGL_LIBRARY} m)
 
 #インクルードディレクトリを指定
 target_include_directories(greetings
@@ -15,5 +21,4 @@ target_include_directories(greetings
 
 #リンクする
 add_executable(run main.cpp)
-target_link_libraries(run ${GLUT_LIBRARY} ${OPENGL_LIBRARY} m)
 target_link_libraries(run greetings)

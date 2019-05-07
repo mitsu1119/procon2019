@@ -12,6 +12,18 @@ field.hpp
 useful.hpp
 ../include/useful.hpp
 
+../include/disp.hpp
+iostream
+-
+algorithm
+-
+string
+-
+GL/glut.h
+-
+field.hpp
+../include/field.hpp
+
 ../include/field.hpp
 iostream
 -
@@ -31,6 +43,8 @@ agent.hpp
 ../include/agent.hpp
 useful.hpp
 ../include/useful.hpp
+disp.hpp
+../include/disp.hpp
 
 ../include/useful.hpp
 ctime
@@ -51,6 +65,10 @@ algorithm
 /home/kaito/program/procon2019/src/agent.cpp
 agent.hpp
 /home/kaito/program/procon2019/src/agent.hpp
+
+/home/kaito/program/procon2019/src/disp.cpp
+disp.hpp
+/home/kaito/program/procon2019/src/disp.hpp
 
 /home/kaito/program/procon2019/src/field.cpp
 field.hpp
