@@ -167,6 +167,33 @@ agent.cpp.s:
 	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/agent.cpp.s
 .PHONY : agent.cpp.s
 
+ai.o: ai.cpp.o
+
+.PHONY : ai.o
+
+# target to build an object file
+ai.cpp.o:
+	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/ai.cpp.o
+.PHONY : ai.cpp.o
+
+ai.i: ai.cpp.i
+
+.PHONY : ai.i
+
+# target to preprocess a source file
+ai.cpp.i:
+	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/ai.cpp.i
+.PHONY : ai.cpp.i
+
+ai.s: ai.cpp.s
+
+.PHONY : ai.s
+
+# target to generate assembly for a file
+ai.cpp.s:
+	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/ai.cpp.s
+.PHONY : ai.cpp.s
+
 disp.o: disp.cpp.o
 
 .PHONY : disp.o
@@ -193,6 +220,33 @@ disp.s: disp.cpp.s
 disp.cpp.s:
 	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/disp.cpp.s
 .PHONY : disp.cpp.s
+
+evaluator.o: evaluator.cpp.o
+
+.PHONY : evaluator.o
+
+# target to build an object file
+evaluator.cpp.o:
+	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/evaluator.cpp.o
+.PHONY : evaluator.cpp.o
+
+evaluator.i: evaluator.cpp.i
+
+.PHONY : evaluator.i
+
+# target to preprocess a source file
+evaluator.cpp.i:
+	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/evaluator.cpp.i
+.PHONY : evaluator.cpp.i
+
+evaluator.s: evaluator.cpp.s
+
+.PHONY : evaluator.s
+
+# target to generate assembly for a file
+evaluator.cpp.s:
+	cd /home/kaito/program/procon2019/build && $(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/evaluator.cpp.s
+.PHONY : evaluator.cpp.s
 
 field.o: field.cpp.o
 
@@ -288,9 +342,15 @@ help:
 	@echo "... agent.o"
 	@echo "... agent.i"
 	@echo "... agent.s"
+	@echo "... ai.o"
+	@echo "... ai.i"
+	@echo "... ai.s"
 	@echo "... disp.o"
 	@echo "... disp.i"
 	@echo "... disp.s"
+	@echo "... evaluator.o"
+	@echo "... evaluator.i"
+	@echo "... evaluator.s"
 	@echo "... field.o"
 	@echo "... field.i"
 	@echo "... field.s"

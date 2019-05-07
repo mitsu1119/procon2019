@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/greetings.dir/field.cpp.o"
   "CMakeFiles/greetings.dir/useful.cpp.o"
   "CMakeFiles/greetings.dir/disp.cpp.o"
+  "CMakeFiles/greetings.dir/ai.cpp.o"
+  "CMakeFiles/greetings.dir/evaluator.cpp.o"
   "libgreetings.pdb"
   "libgreetings.so"
 )

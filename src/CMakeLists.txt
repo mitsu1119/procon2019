@@ -5,6 +5,8 @@ add_library(greetings
 	field.cpp
 	useful.cpp
 	disp.cpp
+	ai.cpp
+	evaluator.cpp
 	)
 
 #パッケージを探す

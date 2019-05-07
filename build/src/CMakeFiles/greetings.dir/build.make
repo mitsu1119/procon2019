@@ -153,12 +153,62 @@ src/CMakeFiles/greetings.dir/disp.cpp.o.provides: src/CMakeFiles/greetings.dir/d
 src/CMakeFiles/greetings.dir/disp.cpp.o.provides.build: src/CMakeFiles/greetings.dir/disp.cpp.o
 
 
+src/CMakeFiles/greetings.dir/ai.cpp.o: src/CMakeFiles/greetings.dir/flags.make
+src/CMakeFiles/greetings.dir/ai.cpp.o: ../src/ai.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/kaito/program/procon2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/CMakeFiles/greetings.dir/ai.cpp.o"
+	cd /home/kaito/program/procon2019/build/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/greetings.dir/ai.cpp.o -c /home/kaito/program/procon2019/src/ai.cpp
+
+src/CMakeFiles/greetings.dir/ai.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/greetings.dir/ai.cpp.i"
+	cd /home/kaito/program/procon2019/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kaito/program/procon2019/src/ai.cpp > CMakeFiles/greetings.dir/ai.cpp.i
+
+src/CMakeFiles/greetings.dir/ai.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/greetings.dir/ai.cpp.s"
+	cd /home/kaito/program/procon2019/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kaito/program/procon2019/src/ai.cpp -o CMakeFiles/greetings.dir/ai.cpp.s
+
+src/CMakeFiles/greetings.dir/ai.cpp.o.requires:
+
+.PHONY : src/CMakeFiles/greetings.dir/ai.cpp.o.requires
+
+src/CMakeFiles/greetings.dir/ai.cpp.o.provides: src/CMakeFiles/greetings.dir/ai.cpp.o.requires
+	$(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/ai.cpp.o.provides.build
+.PHONY : src/CMakeFiles/greetings.dir/ai.cpp.o.provides
+
+src/CMakeFiles/greetings.dir/ai.cpp.o.provides.build: src/CMakeFiles/greetings.dir/ai.cpp.o
+
+
+src/CMakeFiles/greetings.dir/evaluator.cpp.o: src/CMakeFiles/greetings.dir/flags.make
+src/CMakeFiles/greetings.dir/evaluator.cpp.o: ../src/evaluator.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/kaito/program/procon2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object src/CMakeFiles/greetings.dir/evaluator.cpp.o"
+	cd /home/kaito/program/procon2019/build/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/greetings.dir/evaluator.cpp.o -c /home/kaito/program/procon2019/src/evaluator.cpp
+
+src/CMakeFiles/greetings.dir/evaluator.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/greetings.dir/evaluator.cpp.i"
+	cd /home/kaito/program/procon2019/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kaito/program/procon2019/src/evaluator.cpp > CMakeFiles/greetings.dir/evaluator.cpp.i
+
+src/CMakeFiles/greetings.dir/evaluator.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/greetings.dir/evaluator.cpp.s"
+	cd /home/kaito/program/procon2019/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kaito/program/procon2019/src/evaluator.cpp -o CMakeFiles/greetings.dir/evaluator.cpp.s
+
+src/CMakeFiles/greetings.dir/evaluator.cpp.o.requires:
+
+.PHONY : src/CMakeFiles/greetings.dir/evaluator.cpp.o.requires
+
+src/CMakeFiles/greetings.dir/evaluator.cpp.o.provides: src/CMakeFiles/greetings.dir/evaluator.cpp.o.requires
+	$(MAKE) -f src/CMakeFiles/greetings.dir/build.make src/CMakeFiles/greetings.dir/evaluator.cpp.o.provides.build
+.PHONY : src/CMakeFiles/greetings.dir/evaluator.cpp.o.provides
+
+src/CMakeFiles/greetings.dir/evaluator.cpp.o.provides.build: src/CMakeFiles/greetings.dir/evaluator.cpp.o
+
+
 # Object files for target greetings
 greetings_OBJECTS = \
 "CMakeFiles/greetings.dir/agent.cpp.o" \
 "CMakeFiles/greetings.dir/field.cpp.o" \
 "CMakeFiles/greetings.dir/useful.cpp.o" \
-"CMakeFiles/greetings.dir/disp.cpp.o"
+"CMakeFiles/greetings.dir/disp.cpp.o" \
+"CMakeFiles/greetings.dir/ai.cpp.o" \
+"CMakeFiles/greetings.dir/evaluator.cpp.o"
 
 # External object files for target greetings
 greetings_EXTERNAL_OBJECTS =
@@ -167,6 +217,8 @@ src/libgreetings.so: src/CMakeFiles/greetings.dir/agent.cpp.o
 src/libgreetings.so: src/CMakeFiles/greetings.dir/field.cpp.o
 src/libgreetings.so: src/CMakeFiles/greetings.dir/useful.cpp.o
 src/libgreetings.so: src/CMakeFiles/greetings.dir/disp.cpp.o
+src/libgreetings.so: src/CMakeFiles/greetings.dir/ai.cpp.o
+src/libgreetings.so: src/CMakeFiles/greetings.dir/evaluator.cpp.o
 src/libgreetings.so: src/CMakeFiles/greetings.dir/build.make
 src/libgreetings.so: /usr/lib/x86_64-linux-gnu/libglut.so
 src/libgreetings.so: /usr/lib/x86_64-linux-gnu/libXmu.so
@@ -174,7 +226,7 @@ src/libgreetings.so: /usr/lib/x86_64-linux-gnu/libXi.so
 src/libgreetings.so: /usr/lib/x86_64-linux-gnu/libGL.so
 src/libgreetings.so: /usr/lib/x86_64-linux-gnu/libGLU.so
 src/libgreetings.so: src/CMakeFiles/greetings.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/kaito/program/procon2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX shared library libgreetings.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/kaito/program/procon2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX shared library libgreetings.so"
 	cd /home/kaito/program/procon2019/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/greetings.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -186,6 +238,8 @@ src/CMakeFiles/greetings.dir/requires: src/CMakeFiles/greetings.dir/agent.cpp.o.
 src/CMakeFiles/greetings.dir/requires: src/CMakeFiles/greetings.dir/field.cpp.o.requires
 src/CMakeFiles/greetings.dir/requires: src/CMakeFiles/greetings.dir/useful.cpp.o.requires
 src/CMakeFiles/greetings.dir/requires: src/CMakeFiles/greetings.dir/disp.cpp.o.requires
+src/CMakeFiles/greetings.dir/requires: src/CMakeFiles/greetings.dir/ai.cpp.o.requires
+src/CMakeFiles/greetings.dir/requires: src/CMakeFiles/greetings.dir/evaluator.cpp.o.requires
 
 .PHONY : src/CMakeFiles/greetings.dir/requires
 

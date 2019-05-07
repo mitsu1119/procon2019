@@ -12,6 +12,10 @@ field.hpp
 useful.hpp
 ../include/useful.hpp
 
+../include/ai.hpp
+field.hpp
+../include/field.hpp
+
 ../include/disp.hpp
 iostream
 -
@@ -21,6 +25,10 @@ string
 -
 GL/glut.h
 -
+field.hpp
+../include/field.hpp
+
+../include/evaluator.hpp
 field.hpp
 ../include/field.hpp
 
@@ -66,9 +74,17 @@ algorithm
 agent.hpp
 /home/kaito/program/procon2019/src/agent.hpp
 
+/home/kaito/program/procon2019/src/ai.cpp
+ai.hpp
+/home/kaito/program/procon2019/src/ai.hpp
+
 /home/kaito/program/procon2019/src/disp.cpp
 disp.hpp
 /home/kaito/program/procon2019/src/disp.hpp
+
+/home/kaito/program/procon2019/src/evaluator.cpp
+evaluator.hpp
+/home/kaito/program/procon2019/src/evaluator.hpp
 
 /home/kaito/program/procon2019/src/field.cpp
 field.hpp

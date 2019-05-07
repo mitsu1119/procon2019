@@ -7,11 +7,25 @@ src/CMakeFiles/greetings.dir/agent.cpp.o: ../include/field.hpp
 src/CMakeFiles/greetings.dir/agent.cpp.o: ../include/useful.hpp
 src/CMakeFiles/greetings.dir/agent.cpp.o: ../src/agent.cpp
 
+src/CMakeFiles/greetings.dir/ai.cpp.o: ../include/agent.hpp
+src/CMakeFiles/greetings.dir/ai.cpp.o: ../include/ai.hpp
+src/CMakeFiles/greetings.dir/ai.cpp.o: ../include/disp.hpp
+src/CMakeFiles/greetings.dir/ai.cpp.o: ../include/field.hpp
+src/CMakeFiles/greetings.dir/ai.cpp.o: ../include/useful.hpp
+src/CMakeFiles/greetings.dir/ai.cpp.o: ../src/ai.cpp
+
 src/CMakeFiles/greetings.dir/disp.cpp.o: ../include/agent.hpp
 src/CMakeFiles/greetings.dir/disp.cpp.o: ../include/disp.hpp
 src/CMakeFiles/greetings.dir/disp.cpp.o: ../include/field.hpp
 src/CMakeFiles/greetings.dir/disp.cpp.o: ../include/useful.hpp
 src/CMakeFiles/greetings.dir/disp.cpp.o: ../src/disp.cpp
+
+src/CMakeFiles/greetings.dir/evaluator.cpp.o: ../include/agent.hpp
+src/CMakeFiles/greetings.dir/evaluator.cpp.o: ../include/disp.hpp
+src/CMakeFiles/greetings.dir/evaluator.cpp.o: ../include/evaluator.hpp
+src/CMakeFiles/greetings.dir/evaluator.cpp.o: ../include/field.hpp
+src/CMakeFiles/greetings.dir/evaluator.cpp.o: ../include/useful.hpp
+src/CMakeFiles/greetings.dir/evaluator.cpp.o: ../src/evaluator.cpp
 
 src/CMakeFiles/greetings.dir/field.cpp.o: ../include/agent.hpp
 src/CMakeFiles/greetings.dir/field.cpp.o: ../include/disp.hpp
