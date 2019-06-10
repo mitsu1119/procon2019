@@ -16,7 +16,7 @@ void DisplayWrapper::init(){
 	glutInitDisplayMode(GLUT_SINGLE|GLUT_RGBA|GLUT_DOUBLE);
 	glutInitWindowPosition(this->window_width_position, this->window_height_position);
 	glutInitWindowSize(this->window_width_size, this->window_height_size);
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
 }
 
 void DisplayWrapper::start(int argc, char *argv[]){
@@ -125,7 +125,7 @@ Display::~Display(){
 }
 
 const void Display::line(){
-	glColor3f(0.0f, 1.0f, 0.0);
+	glColor3f(0.0f, 0.0f, 0.0f);
 	glLineWidth(line_size);
 	glBegin(GL_LINES);
 	for(int i=0;i<=this->field->width;i++){
@@ -140,7 +140,7 @@ const void Display::line(){
 }
 
 const void Display::score(){
-	glColor3f(0.0f, 1.0f, 0.0);
+	glColor3f(0.0f, 0.0f, 0.0f);
 	for(int i=0;i<this->field->width;i++){
 		for(int j=0;j<this->field->height;j++){
 			int value=this->field->at(i, j)->getValue();
@@ -157,9 +157,9 @@ const void Display::panel(){
 			if(this->field->at(i, j)->isPurePanel())
 				continue;
 			if(this->field->at(i, j)->isMyPanel())
-				glColor3f(0.0f, 0.0f, 0.3f);
+				glColor3f(0.3f, 0.3f, 1.0f);
 			if(this->field->at(i, j)->isEnemyPanel())
-				glColor3f(0.3f, 0.0f, 0.0f);
+				glColor3f(1.0f, 0.3f, 0.3f);
 			glBegin(GL_POINTS);
 			glVertex2i(half+cell_size*i, half+cell_size*j);
 			glEnd();
