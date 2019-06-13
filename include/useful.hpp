@@ -15,14 +15,14 @@ private:
 	std::vector<int_fast32_t> rank;
 
 public:
-	UF(int_fast32_t size);
+	UF(uint_fast32_t size);
 
 	inline int_fast32_t root(int_fast32_t x) {
-		return data[x] == x ? x : data[x];
+		return data[x] == x ? x : data[x] = root(data[x]);
 	}
 
 	inline bool same(int_fast32_t x, int_fast32_t y) {
-		return root[x] == root[y];
+		return root(x) == root(y);
 	}
 
 	inline void unite(int_fast32_t x, int_fast32_t y) {
@@ -30,11 +30,11 @@ public:
 		y = root(y);
 		if(x == y) return;
 
-		if(ranx[x] < rand[y]) {
+		if(rank[x] < rank[y]) {
 			data[x] = y;
 		} else {
 			data[y] = x;
-			if(ranki[x] == rank[y]) rank[x]++;
+			if(rank[x] == rank[y]) rank[x]++;
 		}
 	}
 };
