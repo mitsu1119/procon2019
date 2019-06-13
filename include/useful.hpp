@@ -8,6 +8,37 @@
 #include <vector>
 #include <algorithm>
 
+// UnionFind クラス
+class UF {
+private:
+	std::vector<int_fast32_t> data;
+	std::vector<int_fast32_t> rank;
+
+public:
+	UF(int_fast32_t size);
+
+	inline int_fast32_t root(int_fast32_t x) {
+		return data[x] == x ? x : data[x];
+	}
+
+	inline bool same(int_fast32_t x, int_fast32_t y) {
+		return root[x] == root[y];
+	}
+
+	inline void unite(int_fast32_t x, int_fast32_t y) {
+		x = root(x);
+		y = root(y);
+		if(x == y) return;
+
+		if(ranx[x] < rand[y]) {
+			data[x] = y;
+		} else {
+			data[y] = x;
+			if(ranki[x] == rank[y]) rank[x]++;
+		}
+	}
+};
+
 // グラフ表示するやつ
 // template使うのでヘッダに実装
 template <typename T>
