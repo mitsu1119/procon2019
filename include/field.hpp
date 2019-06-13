@@ -7,22 +7,27 @@
 #include <sstream>
 #include <iomanip>
 #include <ctime>
+#include <algorithm>
 #include "agent.hpp"
 #include "useful.hpp"
 #include "disp.hpp"
+#include "ai.hpp"
 
 constexpr uint_fast32_t MINE_ATTR = 0b01;
 constexpr uint_fast32_t ENEMY_ATTR = 0b10;
 constexpr uint_fast32_t PURE_ATTR = 0b00;
 
 class Field;
+class Agent;
 class Display;
+class DisplayWrapper;
+class AI;
 
 /*
  * Panel 一つ一つの情報を管理するクラス
  */
 class Panel {
-friend Field;
+	friend Field;
 private:
 	struct {
 		// パネルのスコア
@@ -59,14 +64,18 @@ public:
 	int_fast32_t getValue() const;
 };	
 
-class Agent;
 
 /*
  * Field 一つ一つ
  */
 class Field {
-friend Display;
+	
+	friend DisplayWrapper;
+	friend Display;
+	friend AI;
+	
 private:
+
 	// フィールドの実幅、実高さ
 	uint_fast32_t width, height;
 
@@ -99,6 +108,7 @@ private:
 	void applyNextAgents();
 
 public:
+
 	Field(uint_fast32_t width, uint_fast32_t height);
 
 	// 実座標(x,y)のパネルのポインタを所得(const)
@@ -109,5 +119,5 @@ public:
 
 	// コンソール上に表示(テスト用)
 	void print();
-
+	
 };

@@ -12,6 +12,10 @@ field.hpp
 useful.hpp
 ../include/useful.hpp
 
+../include/ai.hpp
+field.hpp
+../include/field.hpp
+
 ../include/disp.hpp
 iostream
 -
@@ -23,6 +27,8 @@ GL/glut.h
 -
 field.hpp
 ../include/field.hpp
+ai.hpp
+../include/ai.hpp
 
 ../include/field.hpp
 iostream
@@ -39,12 +45,16 @@ iomanip
 -
 ctime
 -
+algorithm
+-
 agent.hpp
 ../include/agent.hpp
 useful.hpp
 ../include/useful.hpp
 disp.hpp
 ../include/disp.hpp
+ai.hpp
+../include/ai.hpp
 
 ../include/useful.hpp
 ctime

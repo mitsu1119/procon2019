@@ -63,7 +63,81 @@ void DisplayWrapper::setField(Field* object){
 	field=object;
 }
 
+const void DisplayWrapper::line(){
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glLineWidth(line_size);
+	glBegin(GL_LINES);
+	for(int i=0;i<=this->field->width;i++){
+		glVertex2i(this->cell_size*i, 0);
+		glVertex2i(this->cell_size*i, this->cell_size*this->field->height);
+	}
+	for(int j=0;j<=this->field->height;j++){
+		glVertex2i(0, this->cell_size*j);
+		glVertex2i(this->cell_size*this->field->width, this->cell_size*j);
+	}
+	glEnd();
+}
+
+const void DisplayWrapper::score(){
+	glColor3f(0.0f, 0.0f, 0.0f);
+	for(int i=0;i<this->field->width;i++){
+		for(int j=0;j<this->field->height;j++){
+			int value=this->field->at(i, j)->getValue();
+			std::string str=std::to_string(value);
+			this->renderString(i*this->cell_size+5, (j+1)*this->cell_size-5, str);
+		}
+	}
+}
+
+const void DisplayWrapper::panel(){
+	const int half=this->cell_size/2;
+		for(int i=0;i<this->field->width;i++){
+			for(int j=0;j<this->field->height;j++){;
+			if(this->field->at(i, j)->isPurePanel())
+				continue;
+			if(this->field->at(i, j)->isMyPanel())
+				glColor3f(0.3f, 0.3f, 1.0f);
+			if(this->field->at(i, j)->isEnemyPanel())
+				glColor3f(1.0f, 0.3f, 0.3f);
+			glBegin(GL_POINTS);
+			glVertex2i(half+cell_size*i, half+cell_size*j);
+			glEnd();
+		}
+	}
+}
+
+const void DisplayWrapper::agent(){
+	const int half=this->cell_size/2;
+	uint_fast32_t flag;
+	
+	glPointSize(this->agent_size);
+	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
+			flag = a.getAttr();
+			if(flag == MINE_ATTR)
+				glColor3f(0.0f, 0.0f, 0.8f);				
+			if(flag == ENEMY_ATTR)
+				glColor3f(0.8f, 0.0f, 0.0f);
+			glBegin(GL_POINTS);
+			glVertex2i(half+cell_size*a.getX(), half+cell_size*a.getY());
+			glEnd();
+		});
+}
+
+const void DisplayWrapper::renderString(float x, float y, const std::string& str){
+	float z = 0.0f;
+	glRasterPos3f(x, y, z);
+	for(int i = 0; i < (int)str.size(); ++i){
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, str[i]);
+	}
+}
+
 // ---------------------------------------- Display ----------------------------------------
+
+Display::Display(){
+}
+
+Display::~Display(){
+}
 
 void Display::resize(int w, int h){
 	glViewport(0, 0, w, h);
@@ -112,82 +186,44 @@ void Display::mouse(int button, int state, int x, int y){
 	const int coordX=x/cell_size+1;
 	const int coordY=y/cell_size+1;
 	std::cout<<std::endl<<"("<<coordX<<","<<coordY<<")";
+	
 }
 
 void Display::motion(int x, int y){
 	;
 }
 
-Display::Display(){	
-}
-
-Display::~Display(){
-}
-
-const void Display::line(){
-	glColor3f(0.0f, 0.0f, 0.0f);
-	glLineWidth(line_size);
-	glBegin(GL_LINES);
-	for(int i=0;i<=this->field->width;i++){
-		glVertex2i(this->cell_size*i, 0);
-		glVertex2i(this->cell_size*i, this->cell_size*this->field->height);
-	}
-	for(int j=0;j<=this->field->height;j++){
-		glVertex2i(0, this->cell_size*j);
-		glVertex2i(this->cell_size*this->field->width, this->cell_size*j);
-	}
-	glEnd();
-}
-
-const void Display::score(){
-	glColor3f(0.0f, 0.0f, 0.0f);
-	for(int i=0;i<this->field->width;i++){
-		for(int j=0;j<this->field->height;j++){
-			int value=this->field->at(i, j)->getValue();
-			std::string str=std::to_string(value);
-			this->renderString(i*this->cell_size+5, (j+1)*this->cell_size-5, str);
-		}
-	}
-}
-
-const void Display::panel(){
-	const int half=this->cell_size/2;
-		for(int i=0;i<this->field->width;i++){
-			for(int j=0;j<this->field->height;j++){;
-			if(this->field->at(i, j)->isPurePanel())
-				continue;
-			if(this->field->at(i, j)->isMyPanel())
-				glColor3f(0.3f, 0.3f, 1.0f);
-			if(this->field->at(i, j)->isEnemyPanel())
-				glColor3f(1.0f, 0.3f, 0.3f);
-			glBegin(GL_POINTS);
-			glVertex2i(half+cell_size*i, half+cell_size*j);
-			glEnd();
-		}
-	}
-}
-
-const void Display::agent(){
-	const int half=this->cell_size/2;
-	uint_fast32_t flag;
+const void Display::printCandidate(){
 	
-	glPointSize(this->agent_size);
-	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
-			flag = a.getAttr();
-			if(flag == MINE_ATTR)
-				glColor3f(0.1f, 0.1f, 1.0f);				
-			if(flag == ENEMY_ATTR)
-				glColor3f(1.0f, 0.1f, 0.1f);
-			glBegin(GL_POINTS);
-			glVertex2i(half+cell_size*a.getX(), half+cell_size*a.getY());
-			glEnd();
-		});
 }
 
-const void Display::renderString(float x, float y, const std::string& str){
-	float z = 0.0f;
-	glRasterPos3f(x, y, z);
-	for(int i = 0; i < (int)str.size(); ++i){
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, str[i]);
-	}
+selfDirectedGame::selfDirectedGame(){	
 }
+
+selfDirectedGame::~selfDirectedGame(){
+}
+
+void selfDirectedGame::resize(int w, int h){
+	;
+}
+
+void selfDirectedGame::display(){
+	;
+}
+
+void selfDirectedGame::keyboard(unsigned char key, int x, int y){
+	;
+}
+
+void selfDirectedGame::specialKeyboard(int key, int x, int y){
+	;
+}
+
+void selfDirectedGame::mouse(int button, int state, int x, int y){
+	;
+}
+
+void selfDirectedGame::motion(int x, int y){
+	;
+}
+

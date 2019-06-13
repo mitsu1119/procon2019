@@ -27,6 +27,8 @@ GL/glut.h
 -
 field.hpp
 ../include/field.hpp
+ai.hpp
+../include/ai.hpp
 
 ../include/evaluator.hpp
 field.hpp
@@ -47,12 +49,16 @@ iomanip
 -
 ctime
 -
+algorithm
+-
 agent.hpp
 ../include/agent.hpp
 useful.hpp
 ../include/useful.hpp
 disp.hpp
 ../include/disp.hpp
+ai.hpp
+../include/ai.hpp
 
 ../include/useful.hpp
 ctime

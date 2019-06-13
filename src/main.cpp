@@ -11,8 +11,8 @@ int main(int argc, char *argv[]) {
 
 	DisplayWrapper* test = new Display();
 	
-	test->setInstance(test);
 	test->setField(&field);
+	test->setInstance(test);
 	test->start(argc, argv);
 
 	delete test;

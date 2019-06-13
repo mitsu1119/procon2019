@@ -1,11 +1,10 @@
 #pragma once
-
 #include "field.hpp"
 
 class Evaluator{
 private:
-public:
-	
+public:	
 	virtual double evalutor(const Field& field)=0;
-	
 };
+
+
