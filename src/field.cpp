@@ -143,6 +143,22 @@ void Field::applyNextAgents() {
 	}
 }
 
+int_fast32_t Field::calcMinepanelScore() {
+	int_fast32_t tmpScore = 0;
+	for(auto &i: field) {
+		if(i.isMyPanel()) tmpScore += i.getValue();
+	}
+	return tmpScore;
+}
+
+int_fast32_t Field::calcEnemypanelScore() {
+	int_fast32_t tmpScore = 0;
+	for(auto &i: field) {
+		if(i.isEnemyPanel()) tmpScore += i.getValue();
+	}
+	return tmpScore;
+}
+
 const Panel *Field::at(uint_fast32_t x, uint_fast32_t y) const {
 	return (const Panel *)&(this->field[x + (y << this->yShiftOffset)]);
 }
@@ -194,5 +210,7 @@ void Field::print() {
 		else printf("\x1b[31m");
 		printf("agent[%u]: (%u, %u)\n\x1b[39m", i, this->agents[i].getX(), this->agents[i].getY());
 	}
+	printf("mineScore:  %d\n", this->calcMinepanelScore());
+	printf("enemyScore: %d\n", this->calcEnemypanelScore());
 	printf("%s", strip);
 }

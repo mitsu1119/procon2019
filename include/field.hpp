@@ -97,6 +97,9 @@ private:
 
 public:
 	Field(uint_fast32_t width, uint_fast32_t height);
+	// MINE, ENEMY属性のパネルの置かれているところの合計点数を所得
+	int_fast32_t calcMinepanelScore();
+	int_fast32_t calcEnemypanelScore();
 
 	// 実座標(x,y)のパネルのポインタを所得(const)
 	const Panel *at(uint_fast32_t x, uint_fast32_t y) const;
