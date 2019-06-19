@@ -176,12 +176,12 @@ const void DisplayWrapper::renderString(float x, float y, const std::string& str
 
 Display::Display() : flag(0){
 	int val=0;
-	std::for_each(field->agents.begin(), field->agents.end(), [&, this](auto& a){
+	/*	std::for_each(field->agents.begin(), field->agents.end(), [&, this](auto& a){
 			if(a.getAttr()==MINE_ATTR){
 				val++;
 			}
 		});
-	this->candidate.resize(val);
+		this->candidate.resize(val);*/
 }
 
 Display::~Display(){
