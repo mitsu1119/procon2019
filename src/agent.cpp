@@ -35,3 +35,7 @@ void Agent::setNext() {
 	this->x = this->nextX;
 	this->y = this->nextY;
 }
+
+void Agent::reverseAttr(){
+	this->attr = this->attr ^ 0b11;
+}

@@ -14,6 +14,9 @@ class AI;
 class DisplayWrapper{
 private:
 
+	AI* mine;
+	AI* enemy;
+
 	static DisplayWrapper* instance;
 	static const unsigned int window_width_size=800;
 	static const unsigned int window_height_size=800;
@@ -36,6 +39,7 @@ public:
 	void init();
 	void start(int argc, char *argv[]);
 	void setField(Field* object);
+	void reverseBoard(Field& field);
 	
 	static void resizeWrapper(int w, int h);
 	static void displayWrapper();
@@ -64,6 +68,7 @@ class Display : public DisplayWrapper{
 private:
 
 	std::vector<std::pair<unsigned int, unsigned int>> candidate;
+	unsigned int flag;
 	
 public:
 
@@ -82,9 +87,6 @@ public:
 
 class selfDirectedGame : public DisplayWrapper {
 private:
-	
- 	AI* mine;
-  AI* enemy;
 	
 public:
 

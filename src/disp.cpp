@@ -7,6 +7,9 @@ DisplayWrapper::DisplayWrapper(){
 
 DisplayWrapper::~DisplayWrapper(){
 	delete instance;
+	delete field;
+	delete mine;
+	delete enemy;
 }
 
 DisplayWrapper* DisplayWrapper::instance=0;
@@ -36,7 +39,7 @@ void DisplayWrapper::resizeWrapper(int w, int h){
 }
 
 void DisplayWrapper::displayWrapper(){
-	instance->display();	
+	instance->display();
 }
 
 void DisplayWrapper::keyboardWrapper(unsigned char key, int x, int y){
@@ -62,6 +65,24 @@ void DisplayWrapper::setInstance(DisplayWrapper* framework){
 void DisplayWrapper::setField(Field* object){
 	field=object;
 }
+
+void DisplayWrapper::reverseBoard(Field& field){
+	std::for_each(field.field.begin(), field.field.end(), [this](auto& panel){
+			if(panel.isEnemyPanel()){
+				panel.setPure();
+				panel.setMine();
+			}
+			else{
+				if(panel.isMyPanel()){
+					panel.setPure();
+					panel.setEnemy();
+				}
+			}
+		});
+	std::for_each(field.agents.begin(), field.agents.end(), [&, this](auto& a){
+			a.reverseAttr();
+		});
+}	
 
 const void DisplayWrapper::line(){
 	glColor3f(0.0f, 0.0f, 0.0f);
@@ -121,6 +142,26 @@ const void DisplayWrapper::agent(){
 			glVertex2i(half+cell_size*a.getX(), half+cell_size*a.getY());
 			glEnd();
 		});
+
+	static int mine, enemy;
+	mine=0;
+	enemy=0;
+	glColor3f(0.0f, 0.0f, 0.0f);
+	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
+			flag = a.getAttr();
+			if(flag == MINE_ATTR){
+				mine++;
+				std::string value=std::to_string(mine);
+				std::string str="M"+value;
+				this->renderString(half+cell_size*a.getX()-2, half+cell_size*a.getY(), str);
+			}
+			if(flag == ENEMY_ATTR){
+				enemy++;
+				std::string value=std::to_string(enemy);
+				std::string str="E"+value;
+				this->renderString(half+cell_size*a.getX()-2, half+cell_size*a.getY(), str);
+			}
+			});
 }
 
 const void DisplayWrapper::renderString(float x, float y, const std::string& str){
@@ -133,7 +174,14 @@ const void DisplayWrapper::renderString(float x, float y, const std::string& str
 
 // ---------------------------------------- Display ----------------------------------------
 
-Display::Display(){
+Display::Display() : flag(0){
+	int val=0;
+	std::for_each(field->agents.begin(), field->agents.end(), [&, this](auto& a){
+			if(a.getAttr()==MINE_ATTR){
+				val++;
+			}
+		});
+	this->candidate.resize(val);
 }
 
 Display::~Display(){
@@ -169,6 +217,16 @@ void Display::keyboard(unsigned char key, int x, int y){
 		this->field->testMoveAgent();
 		this->field->print();		
 		glutPostRedisplay();
+		break;
+	case 'r':
+	case 'R':
+		this->reverseBoard(*field);
+		glutPostRedisplay();
+		break;
+	case 'a':
+	case 'A':
+		
+		this->field->applyNextAgents();
 		break;
 	default:
 		break;

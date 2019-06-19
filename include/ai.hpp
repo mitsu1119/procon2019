@@ -10,7 +10,6 @@ public:
 	AI();
 	~AI();
 	virtual void move(Field& field)=0;
-	void reverseBoard(Field& field);xo
 };
 
 class Astar : public AI{
@@ -18,6 +17,14 @@ private:
 public:
 	Astar();
 	~Astar();
+	void move(Field& field) override;
+};
+
+class Human : public AI{
+private:
+public:
+	Human();
+	~Human();
 	void move(Field& field) override;
 };
 

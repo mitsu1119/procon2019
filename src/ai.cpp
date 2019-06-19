@@ -6,9 +6,6 @@ AI::AI(){
 AI::~AI(){
 }
 
-void AI::reverseBoard(Field& field){
-}
-
 Astar::Astar(){	
 }
 
