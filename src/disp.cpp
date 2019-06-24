@@ -15,6 +15,7 @@ DisplayWrapper::~DisplayWrapper(){
 DisplayWrapper* DisplayWrapper::instance=0;
 
 void DisplayWrapper::init(){
+	instance->initInstance();
 	gluOrtho2D(0, 100, 100, 0);
 	glutInitDisplayMode(GLUT_SINGLE|GLUT_RGBA|GLUT_DOUBLE);
 	glutInitWindowPosition(this->window_width_position, this->window_height_position);
@@ -84,7 +85,7 @@ void DisplayWrapper::reverseBoard(Field& field){
 		});
 }	
 
-const void DisplayWrapper::line(){
+void DisplayWrapper::line() const{
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glLineWidth(line_size);
 	glBegin(GL_LINES);
@@ -99,7 +100,7 @@ const void DisplayWrapper::line(){
 	glEnd();
 }
 
-const void DisplayWrapper::score(){
+void DisplayWrapper::score() const{
 	glColor3f(0.0f, 0.0f, 0.0f);
 	for(int i=0;i<this->field->width;i++){
 		for(int j=0;j<this->field->height;j++){
@@ -110,7 +111,7 @@ const void DisplayWrapper::score(){
 	}
 }
 
-const void DisplayWrapper::panel(){
+void DisplayWrapper::panel() const{
 	const int half=this->cell_size/2;
 		for(int i=0;i<this->field->width;i++){
 			for(int j=0;j<this->field->height;j++){;
@@ -127,7 +128,7 @@ const void DisplayWrapper::panel(){
 	}
 }
 
-const void DisplayWrapper::agent(){
+void DisplayWrapper::agent() const{
 	const int half=this->cell_size/2;
 	uint_fast32_t flag;
 	
@@ -135,7 +136,7 @@ const void DisplayWrapper::agent(){
 	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
 			flag = a.getAttr();
 			if(flag == MINE_ATTR)
-				glColor3f(0.0f, 0.0f, 0.8f);				
+				glColor3f(0.0f, 0.0f, 0.8f);
 			if(flag == ENEMY_ATTR)
 				glColor3f(0.8f, 0.0f, 0.0f);
 			glBegin(GL_POINTS);
@@ -161,10 +162,10 @@ const void DisplayWrapper::agent(){
 				std::string str="E"+value;
 				this->renderString(half+cell_size*a.getX()-2, half+cell_size*a.getY(), str);
 			}
-			});
+		});
 }
 
-const void DisplayWrapper::renderString(float x, float y, const std::string& str){
+void DisplayWrapper::renderString(float x, float y, const std::string& str) const{
 	float z = 0.0f;
 	glRasterPos3f(x, y, z);
 	for(int i = 0; i < (int)str.size(); ++i){
@@ -174,17 +175,44 @@ const void DisplayWrapper::renderString(float x, float y, const std::string& str
 
 // ---------------------------------------- Display ----------------------------------------
 
-Display::Display() : flag(0){
-	int val=0;
-	/*	std::for_each(field->agents.begin(), field->agents.end(), [&, this](auto& a){
-			if(a.getAttr()==MINE_ATTR){
-				val++;
-			}
-		});
-		this->candidate.resize(val);*/
+Display::Display() : flag(0) ,mine_flag(0), enemy_flag(0) {
 }
 
 Display::~Display(){
+}
+
+void Display::makePossibleList(){
+	this->possible_list.clear();
+	std::vector<std::pair<int, int>> coord;
+	std::vector<int> vec_x={-1,-1,0,1,1,-1,0,-1};
+	std::vector<int> vec_y={0,1,1,1,0,-1,-1,-1};
+	for(int i=0;i<vec_x.size();i++){
+		coord.push_back(std::make_pair(vec_x.at(i), vec_y.at(i)));
+	}
+
+	int x, y, bufX, bufY;
+	std::vector<std::pair<int, int>> possible;
+	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
+			bufX=a.getX();
+			bufY=a.getY();
+			std::for_each(coord.begin(), coord.end(), [&, this](auto& c){
+					x=bufX+c.first;
+					y=bufY+c.second;
+					possible.push_back(std::make_pair(x, y));
+				});
+			this->possible_list.push_back(possible);
+			possible.clear();
+		});
+}
+
+void Display::initInstance(){
+	for(int i=0;i<this->field->agents.size();i++){
+		if(this->field->agents.at(i).getAttr()==MINE_ATTR)
+			this->mine_id.push_back(i);
+		if(this->field->agents.at(i).getAttr()==ENEMY_ATTR)
+			this->enemy_id.push_back(i);			
+	}
+	this->makePossibleList();
 }
 
 void Display::resize(int w, int h){
@@ -209,13 +237,14 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case '\033':
 		std::exit(0);
 	case 'c':
-	case 'C':
-		this->field->print();
+	case 'C':		
+		this->flag=this->flag+1%2;
 		break;
 	case 'M':
 	case 'm':
 		this->field->testMoveAgent();
-		this->field->print();		
+		this->field->print();
+		this->makePossibleList();
 		glutPostRedisplay();
 		break;
 	case 'r':
@@ -225,7 +254,6 @@ void Display::keyboard(unsigned char key, int x, int y){
 		break;
 	case 'a':
 	case 'A':
-		
 		this->field->applyNextAgents();
 		break;
 	default:
@@ -241,18 +269,33 @@ void Display::mouse(int button, int state, int x, int y){
 	const bool launch=(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN);
 	const bool range=(x<0||x>cell_size*this->field->width||y<0||y>cell_size*this->field->height);
 	if(!launch||range)  return;
-	const int coordX=x/cell_size+1;
-	const int coordY=y/cell_size+1;
+	const int coordX=x/cell_size;
+	const int coordY=y/cell_size;
+	std::pair<int, int> coord=std::make_pair(coordX, coordY);
 	std::cout<<std::endl<<"("<<coordX<<","<<coordY<<")";
 	
+	if(flag){
+		auto result=std::find(this->possible_list.at(enemy_id.at(enemy_flag)).begin(), this->possible_list.at(enemy_id.at(enemy_flag)).end(), coord);
+		if(result==this->possible_list.at(enemy_id.at(enemy_flag)).end()){
+			std::cout<<"error";
+			return;
+		}
+		this->enemy_flag=(this->enemy_flag+1)%this->enemy_id.size();
+		}
+	
+	else{
+		auto result=std::find(this->possible_list.at(mine_id.at(mine_flag)).begin(), this->possible_list.at(mine_id.at(mine_flag)).end(), coord);
+		if(result==this->possible_list.at(mine_id.at(mine_flag)).end()){
+			std::cout<<"error";
+			return;
+		}
+		this->mine_flag=(this->mine_flag+1)%this->mine_id.size();
+	}
+	std::cout<<"true";
 }
 
 void Display::motion(int x, int y){
 	;
-}
-
-const void Display::printCandidate(){
-	
 }
 
 selfDirectedGame::selfDirectedGame(){	

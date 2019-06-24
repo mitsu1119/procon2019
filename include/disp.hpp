@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include <utility>
 #include <GL/glut.h>
 #include "field.hpp"
 #include "ai.hpp"
@@ -48,7 +49,8 @@ public:
 	static void mouseWrapper(int button, int state, int x, int y);
 	static void motionWrapper(int x, int y);
 	static void setInstance(DisplayWrapper* framework);
-	
+
+	virtual void initInstance()=0;
 	virtual void resize(int w, int h)=0;
 	virtual void display()=0;
 	virtual void keyboard(unsigned char key, int x, int y)=0;
@@ -56,32 +58,40 @@ public:
 	virtual void mouse(int button, int state, int x, int y)=0;
 	virtual void motion(int x, int y)=0;
 
-	const void line();
-	const void score();
-	const void panel();
-	const void agent();
- 	const void renderString(float x, float y, const std::string& str);
+	void line() const;
+	void score() const;
+	void panel() const;
+	void agent() const;
+ 	void renderString(float x, float y, const std::string& str) const;
 
 };
 
 class Display : public DisplayWrapper{
 private:
 
-	std::vector<std::pair<unsigned int, unsigned int>> candidate;
+	std::vector<std::vector<std::pair<int, int>>> possible_list;
+	std::vector<int> mine_id;
+	std::vector<int> enemy_id;
+
+	//flag==0:mineの入力 flag==1:enemyの入力
 	unsigned int flag;
+	unsigned int mine_flag;
+	unsigned int enemy_flag;
+
+	void makePossibleList();
 	
 public:
 
  	Display();
  	~Display();
 
+	void initInstance();
  	void resize(int w, int h) override;
  	void display() override;
  	void keyboard(unsigned char key, int x, int y) override;
  	void specialKeyboard(int key, int x, int y) override;
  	void mouse(int button, int state, int x, int y) override;
  	void motion(int x, int y) override;
-	const void printCandidate();
 	
 };
 
