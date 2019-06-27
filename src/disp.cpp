@@ -205,15 +205,19 @@ void Display::makePossibleList(){
 	this->next_list.clear();
 	this->next_list.resize(this->field->agents.size());
 	std::fill(this->next_list.begin(), this->next_list.end(), UP);
+	this->mine_flag=0;
+	this->enemy_flag=0;
+	this->flag=0;
 }
 
 void Display::moveNextList(){
 	int buf=0;
+	Direction b;
 	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
 			if(this->field->canMove(a, this->next_list.at(buf))){
 				a.move(this->next_list.at(buf));
-				buf++;
 			}
+			buf++;
 		});
 	this->field->applyNextAgents();
 }
@@ -223,8 +227,9 @@ void Display::initInstance(){
 		if(this->field->agents.at(i).getAttr()==MINE_ATTR)
 			this->mine_id.push_back(i);
 		if(this->field->agents.at(i).getAttr()==ENEMY_ATTR)
-			this->enemy_id.push_back(i);			
+			this->enemy_id.push_back(i);
 	}
+	this->next_list.clear();
 	this->next_list.resize(this->field->agents.size());
 	std::fill(this->next_list.begin(), this->next_list.end(), UP);
 	this->makePossibleList();
@@ -242,6 +247,7 @@ void Display::display(){
 	this->panel();
 	this->agent();
 	this->score();
+	this->candidate();
 	glFlush();
 }
 
@@ -254,18 +260,21 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'c':
 	case 'C':		
 		this->flag=this->flag+1%2;
+		std::cout<<"chenge agent"<<std::endl;
 		break;
 	case 'p':
 	case 'P':
 		if(flag){
 			this->enemy_flag=(this->enemy_flag+1)%this->enemy_id.size();
+			std::cout<<"Enemy"<<this->enemy_flag+1<<" agent"<<std::endl;
 		}
 		else{
 			this->mine_flag=(this->mine_flag+1)%this->mine_id.size();
+			std::cout<<"Mine"<<this->mine_flag+1<<" agent"<<std::endl;
 		}
 		break;
-	case 'w':
-	case 'W':
+  	case 'w':
+  	case 'W':
 		this->field->testMoveAgent();
 		this->makePossibleList();
 		this->field->print();
@@ -305,13 +314,12 @@ void Display::mouse(int button, int state, int x, int y){
 	} 
 	const int coordX=x/cell_size;
 	const int coordY=y/cell_size;
+	std::cout<<std::endl<<"("<<coordX+1<<","<<coordY+1<<")"<<std::endl;
+
 	std::pair<int, int> coord=std::make_pair(coordX, coordY);
-	//std::cout<<std::endl<<"("<<coordX<<","<<coordY<<")";
 	if(flag){
 		for(int i=0;i<this->possible_list.at(enemy_id.at(enemy_flag)).size();i++){
 			if(this->possible_list.at(enemy_id.at(enemy_flag)).at(i)==coord){
-				//				this->enemy_flag=(this->enemy_flag+1)%this->enemy_id.size();
-				std::cout<<"true"<<std::endl;
 				this->next_list.at(enemy_id.at(enemy_flag))=(Direction)i;
 				return;
 			}
@@ -320,14 +328,18 @@ void Display::mouse(int button, int state, int x, int y){
 	else{
 		for(int i=0;i<this->possible_list.at(mine_id.at(mine_flag)).size();i++){
 			if(this->possible_list.at(mine_id.at(mine_flag)).at(i)==coord){
-				//				this->mine_flag=(this->mine_flag+1)%this->mine_id.size();
-				std::cout<<"true"<<std::endl;
 				this->next_list.at(mine_id.at(mine_flag))=(Direction)i;
 				return;
 			}
 		}
 	}
 	std::cout<<"error"<<std::endl;
+}
+
+void Display::candidate() const{
+	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
+			;
+		});
 }
 
 void Display::motion(int x, int y){

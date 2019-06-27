@@ -83,6 +83,7 @@ private:
 
 	void makePossibleList();
 	void moveNextList();
+	void candidate() const;
 	
 public:
 
