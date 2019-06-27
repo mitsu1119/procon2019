@@ -9,8 +9,7 @@ int main(int argc, char *argv[]) {
 	
 	Field field(10, 15);
 
-	DisplayWrapper* test;
-	test = new Display();
+	DisplayWrapper* test = new Display();
 	
 	test->setField(&field);
 	test->setInstance(test);

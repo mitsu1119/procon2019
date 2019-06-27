@@ -184,12 +184,11 @@ Display::~Display(){
 void Display::makePossibleList(){
 	this->possible_list.clear();
 	std::vector<std::pair<int, int>> coord;
-	std::vector<int> vec_x={-1,-1,0,1,1,-1,0,-1};
-	std::vector<int> vec_y={0,1,1,1,0,-1,-1,-1};
+	std::vector<int> vec_x={0,1,1,1,0,-1,-1,-1};
+	std::vector<int> vec_y={-1,-1,0,1,1,1,0,-1};
 	for(int i=0;i<vec_x.size();i++){
 		coord.push_back(std::make_pair(vec_x.at(i), vec_y.at(i)));
 	}
-
 	int x, y, bufX, bufY;
 	std::vector<std::pair<int, int>> possible;
 	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
@@ -203,6 +202,20 @@ void Display::makePossibleList(){
 			this->possible_list.push_back(possible);
 			possible.clear();
 		});
+	this->next_list.clear();
+	this->next_list.resize(this->field->agents.size());
+	std::fill(this->next_list.begin(), this->next_list.end(), UP);
+}
+
+void Display::moveNextList(){
+	int buf=0;
+	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
+			if(this->field->canMove(a, this->next_list.at(buf))){
+				a.move(this->next_list.at(buf));
+				buf++;
+			}
+		});
+	this->field->applyNextAgents();
 }
 
 void Display::initInstance(){
@@ -212,6 +225,8 @@ void Display::initInstance(){
 		if(this->field->agents.at(i).getAttr()==ENEMY_ATTR)
 			this->enemy_id.push_back(i);			
 	}
+	this->next_list.resize(this->field->agents.size());
+	std::fill(this->next_list.begin(), this->next_list.end(), UP);
 	this->makePossibleList();
 }
 
@@ -240,11 +255,27 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'C':		
 		this->flag=this->flag+1%2;
 		break;
-	case 'M':
-	case 'm':
+	case 'p':
+	case 'P':
+		if(flag){
+			this->enemy_flag=(this->enemy_flag+1)%this->enemy_id.size();
+		}
+		else{
+			this->mine_flag=(this->mine_flag+1)%this->mine_id.size();
+		}
+		break;
+	case 'w':
+	case 'W':
 		this->field->testMoveAgent();
-		this->field->print();
 		this->makePossibleList();
+		this->field->print();
+		glutPostRedisplay();
+		break;
+	case 'm':
+	case 'M':
+		this->moveNextList();
+		this->makePossibleList();
+		this->field->print();
 		glutPostRedisplay();
 		break;
 	case 'r':
@@ -268,30 +299,35 @@ void Display::specialKeyboard(int key, int x, int y){
 void Display::mouse(int button, int state, int x, int y){
 	const bool launch=(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN);
 	const bool range=(x<0||x>cell_size*this->field->width||y<0||y>cell_size*this->field->height);
-	if(!launch||range)  return;
+	if(!launch||range){
+		return;
+		std::cout<<"error"<<std::endl;
+	} 
 	const int coordX=x/cell_size;
 	const int coordY=y/cell_size;
 	std::pair<int, int> coord=std::make_pair(coordX, coordY);
-	std::cout<<std::endl<<"("<<coordX<<","<<coordY<<")";
-	
+	//std::cout<<std::endl<<"("<<coordX<<","<<coordY<<")";
 	if(flag){
-		auto result=std::find(this->possible_list.at(enemy_id.at(enemy_flag)).begin(), this->possible_list.at(enemy_id.at(enemy_flag)).end(), coord);
-		if(result==this->possible_list.at(enemy_id.at(enemy_flag)).end()){
-			std::cout<<"error";
-			return;
+		for(int i=0;i<this->possible_list.at(enemy_id.at(enemy_flag)).size();i++){
+			if(this->possible_list.at(enemy_id.at(enemy_flag)).at(i)==coord){
+				//				this->enemy_flag=(this->enemy_flag+1)%this->enemy_id.size();
+				std::cout<<"true"<<std::endl;
+				this->next_list.at(enemy_id.at(enemy_flag))=(Direction)i;
+				return;
+			}
 		}
-		this->enemy_flag=(this->enemy_flag+1)%this->enemy_id.size();
-		}
-	
-	else{
-		auto result=std::find(this->possible_list.at(mine_id.at(mine_flag)).begin(), this->possible_list.at(mine_id.at(mine_flag)).end(), coord);
-		if(result==this->possible_list.at(mine_id.at(mine_flag)).end()){
-			std::cout<<"error";
-			return;
-		}
-		this->mine_flag=(this->mine_flag+1)%this->mine_id.size();
 	}
-	std::cout<<"true";
+	else{
+		for(int i=0;i<this->possible_list.at(mine_id.at(mine_flag)).size();i++){
+			if(this->possible_list.at(mine_id.at(mine_flag)).at(i)==coord){
+				//				this->mine_flag=(this->mine_flag+1)%this->mine_id.size();
+				std::cout<<"true"<<std::endl;
+				this->next_list.at(mine_id.at(mine_flag))=(Direction)i;
+				return;
+			}
+		}
+	}
+	std::cout<<"error"<<std::endl;
 }
 
 void Display::motion(int x, int y){

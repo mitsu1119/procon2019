@@ -69,9 +69,12 @@ public:
 class Display : public DisplayWrapper{
 private:
 
+	//DECLARE_ENUM(Direction, direction2name, UP, RUP, RIGHT, RDOWN, DOWN, LDOWN, LEFT, LUP, DIRECTION_SIZE);
+	//buf = (Direction)this->random(DIRECTION_SIZE - 1);
 	std::vector<std::vector<std::pair<int, int>>> possible_list;
+	std::vector<Direction> next_list;
 	std::vector<int> mine_id;
-	std::vector<int> enemy_id;
+	std::vector<int> enemy_id;	
 
 	//flag==0:mineの入力 flag==1:enemyの入力
 	unsigned int flag;
@@ -79,6 +82,7 @@ private:
 	unsigned int enemy_flag;
 
 	void makePossibleList();
+	void moveNextList();
 	
 public:
 

@@ -20,14 +20,6 @@ public:
 	void move(Field& field) override;
 };
 
-class Human : public AI{
-private:
-public:
-	Human();
-	~Human();
-	void move(Field& field) override;
-};
-
 class Random : public AI{
 private:
 	XorOshiro128p random;
