@@ -223,12 +223,6 @@ void Display::moveNextList(){
 }
 
 void Display::initInstance(){
-	for(int i=0;i<this->field->agents.size();i++){
-		if(this->field->agents.at(i).getAttr()==MINE_ATTR)
-			this->mine_id.push_back(i);
-		if(this->field->agents.at(i).getAttr()==ENEMY_ATTR)
-			this->enemy_id.push_back(i);
-	}
 	this->next_list.clear();
 	this->next_list.resize(this->field->agents.size());
 	std::fill(this->next_list.begin(), this->next_list.end(), UP);
@@ -257,24 +251,9 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'Q':
 	case '\033':
 		std::exit(0);
-	case 'c':
-	case 'C':		
-		this->flag=this->flag+1%2;
-		std::cout<<"chenge agent"<<std::endl;
 		break;
-	case 'p':
-	case 'P':
-		if(flag){
-			this->enemy_flag=(this->enemy_flag+1)%this->enemy_id.size();
-			std::cout<<"Enemy"<<this->enemy_flag+1<<" agent"<<std::endl;
-		}
-		else{
-			this->mine_flag=(this->mine_flag+1)%this->mine_id.size();
-			std::cout<<"Mine"<<this->mine_flag+1<<" agent"<<std::endl;
-		}
-		break;
-  	case 'w':
-  	case 'W':
+	case 'w':
+	case 'W':
 		this->field->testMoveAgent();
 		this->makePossibleList();
 		this->field->print();
@@ -314,25 +293,49 @@ void Display::mouse(int button, int state, int x, int y){
 	} 
 	const int coordX=x/cell_size;
 	const int coordY=y/cell_size;
-	std::cout<<std::endl<<"("<<coordX+1<<","<<coordY+1<<")"<<std::endl;
+	std::cout<<"("<<coordX+1<<","<<coordY+1<<")"<<std::endl;
 
+	//動かすエージェントの選択処理
+	int buf=0,count_mine=0,count_enemy=0;
+	for(int i=0;i<this->field->agents.size();i++){
+		if(this->field->agents.at(i).getX()==coordX&&this->field->agents.at(i).getY()==coordY){
+			if(this->field->agents.at(i).getAttr()==ENEMY_ATTR){
+				this->flag=1;
+				this->enemy_flag=i;
+				buf=1;
+				count_enemy++;
+				std::cout<<"Enemy"<<count_enemy<<" agent"<<std::endl;
+			}
+			if(this->field->agents.at(i).getAttr()==MINE_ATTR){
+				this->flag=0;
+				this->mine_flag=i;
+				buf=1;
+				count_mine++;
+				std::cout<<"Mine"<<count_mine<<" agent"<<std::endl;
+			}
+		}
+	}
+	if(buf)  return;
+
+	//動かす方向の選択処理
 	std::pair<int, int> coord=std::make_pair(coordX, coordY);
 	if(flag){
-		for(int i=0;i<this->possible_list.at(enemy_id.at(enemy_flag)).size();i++){
-			if(this->possible_list.at(enemy_id.at(enemy_flag)).at(i)==coord){
-				this->next_list.at(enemy_id.at(enemy_flag))=(Direction)i;
+		for(int i=0;i<this->possible_list.at(enemy_flag).size();i++){
+			if(this->possible_list.at(enemy_flag).at(i)==coord){
+				this->next_list.at(enemy_flag)=(Direction)i;
 				return;
 			}
 		}
 	}
 	else{
-		for(int i=0;i<this->possible_list.at(mine_id.at(mine_flag)).size();i++){
-			if(this->possible_list.at(mine_id.at(mine_flag)).at(i)==coord){
-				this->next_list.at(mine_id.at(mine_flag))=(Direction)i;
+		for(int i=0;i<this->possible_list.at(mine_flag).size();i++){
+			if(this->possible_list.at(mine_flag).at(i)==coord){
+				this->next_list.at(mine_flag)=(Direction)i;
 				return;
 			}
 		}
 	}
+	
 	std::cout<<"error"<<std::endl;
 }
 
