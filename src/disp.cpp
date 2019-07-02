@@ -348,7 +348,7 @@ void Display::candidate() const{
 	Direction buf;
 	int coordX, coordY;
 	const int half=this->cell_size/2;
-	glPointSize(agent_size-3);
+	glPointSize(agent_size-8);
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glBegin(GL_POINTS);
 	for(int i=0;i<this->field->agents.size();i++){
