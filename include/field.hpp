@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <unordered_map>
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
@@ -79,6 +80,17 @@ private:
 	// agentの動作可能かベクター
 	std::vector<bool> canmoveAgents;
 
+	// 実座標からfieldのインデックスを取り出す関数
+	uint_fast32_t xyIndex(uint_fast32_t x, uint_fast32_t y);
+
+	// fieldのインデックスから実座標を所得
+	uint_fast32_t indexY(uint_fast32_t index) {
+		return index / (field.size() / height);
+	}
+	uint_fast32_t indexX(uint_fast32_t index) {
+		return index - indexY(index) * (field.size() / height);
+	}
+
 	// 実座標(x,y)のパネルにスコアをセット
 	void setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value);
 
@@ -95,11 +107,24 @@ private:
 	// 行きたい座標が重なるなどしたときその場に止まるように指示
 	void applyNextAgents();
 
+	// 得点計算関係
+	UF makePureTreeMine();
+	UF makePureTreeEnemy();
+	std::unordered_map<int_fast32_t , std::vector<int_fast32_t>> makePureTerritory(UF &&pureTree);
+	bool isPanelMineBetween(uint_fast32_t x, uint_fast32_t y);
+	bool isPanelEnemyBetween(uint_fast32_t x, uint_fast32_t y);
+	bool checkLocalArea(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr);
+	int_fast32_t calcMineScore(std::unordered_map<int_fast32_t , std::vector<int_fast32_t>> &pureTree);
+	int_fast32_t calcEnemyScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree);
+
 public:
 	Field(uint_fast32_t width, uint_fast32_t height);
 	// MINE, ENEMY属性のパネルの置かれているところの合計点数を所得
 	int_fast32_t calcMinepanelScore();
 	int_fast32_t calcEnemypanelScore();
+
+	// スコア計算
+	int_fast32_t calcScore(uint_fast32_t attr);
 
 	// 実座標(x,y)のパネルのポインタを所得(const)
 	const Panel *at(uint_fast32_t x, uint_fast32_t y) const;

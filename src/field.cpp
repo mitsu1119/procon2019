@@ -76,6 +76,10 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 	}
 }
 
+uint_fast32_t Field::xyIndex(uint_fast32_t x, uint_fast32_t y) {
+	return x + (y << this->yShiftOffset);
+}
+
 void Field::setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value) {
 	this->field[x + (y << this->yShiftOffset)].setValue(value);
 }
@@ -143,6 +147,86 @@ void Field::applyNextAgents() {
 	}
 }
 
+UF Field::makePureTreeMine() {
+    UF pureTree(field.size());
+
+    for(int i=0; i<height; i++) {
+        for(int j=0; j<width; j++) {
+            if(!this->at(j,i)->isPurePanel() && !this->at(j,i)->isEnemyPanel()) continue;
+    		    // UP
+                if(i-1 >= 0) {
+                        if(this->at(j, i-1)->isPurePanel() || this->at(j, i-1)->isEnemyPanel()) {
+                                pureTree.unite(xyIndex(j,i), xyIndex(j,i-1));
+                        }
+                }
+                // DOWN
+                if(i+1 < height) {
+                        if(this->at(j, i+1)->isPurePanel() || this->at(j, i+1)->isEnemyPanel()) {
+                                pureTree.unite(xyIndex(j,i), xyIndex(j,i+1));
+                        }
+                }
+                // RIGHT
+                if(j+1 < width) {
+                        if(this->at(j+1, i)->isPurePanel() || this->at(j+1, i)->isEnemyPanel()) {
+                                pureTree.unite(xyIndex(j,i), xyIndex(j+1, i));
+                        }
+                }
+                // LEFT
+                if(j-1 >= 0) {
+                        if(this->at(j-1, i)->isPurePanel()  || this->at(j-1, i)->isEnemyPanel()) {
+                                pureTree.unite(xyIndex(j,i), xyIndex(j-1, i));
+                        }
+                }
+		}
+	}
+	return pureTree;
+}
+
+UF Field::makePureTreeEnemy() {
+	UF pureTree(field.size());
+
+	for(size_t i = 0; i < height; i++) {
+		for(size_t j = 0; j < width; j++) {
+			if(at(j,i)->isEnemyPanel()) continue;
+			// UP
+			if(i - 1 >= 0) {
+				if(!at(j, i - 1)->isEnemyPanel()) {
+					pureTree.unite(xyIndex(j, i), xyIndex(j, i - 1));
+				}
+			}
+			// DOWN
+			if(i + 1 < height) {
+				if(!at(j, i + 1)->isEnemyPanel()) {
+					pureTree.unite(xyIndex(j, i), xyIndex(j, i + 1));
+				}
+			}
+			// RIGHT
+			if(j + 1 < width) {
+				if(!at(j + 1, i)->isEnemyPanel()) {
+					pureTree.unite(xyIndex(j, i), xyIndex(j + 1, i));
+				}
+			}
+			// LEFT
+			if(j - 1 >= 0) {
+				if(!at(j - 1, i)->isEnemyPanel()) {
+					pureTree.unite(xyIndex(j, i), xyIndex(j - 1, i));
+				}
+			}
+		}
+	}
+	return pureTree;
+}
+
+std::unordered_map<int_fast32_t , std::vector<int_fast32_t>> Field::makePureTerritory(UF &&pureTree) {
+	std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> retn;
+	for(size_t i = 0; i < height; i++) {
+		for(size_t j = 0; j < width; j++) {
+			if(this->at(j, i)->isPurePanel()) retn[pureTree.root(xyIndex(j,i))].push_back(xyIndex(j, i));
+		}
+	}
+	return retn;
+}
+
 int_fast32_t Field::calcMinepanelScore() {
 	int_fast32_t tmpScore = 0;
 	for(auto &i: field) {
@@ -159,8 +243,154 @@ int_fast32_t Field::calcEnemypanelScore() {
 	return tmpScore;
 }
 
+bool Field::isPanelMineBetween(uint_fast32_t x, uint_fast32_t y) {
+	int_fast32_t buf = 0;
+	
+	// left
+	for(size_t i = x-1; i >= 0; i--) {
+		if(this->at(i, y)->isMyPanel()) {
+			buf++;
+			break;
+		}
+	}
+	if(buf == 0) return false;
+
+	// right
+	for(size_t i = x+1; i < width; i++) {
+		if(this->at(i, y)->isMyPanel()) {
+			buf++;
+			break;
+		}
+	}
+	if(buf == 1) return false;
+
+	// up
+	for(size_t i = y-1; i >= 0; i--) {
+		if(this->at(x, i)->isMyPanel()) {
+			buf++;
+			break;
+		}
+	}
+	if(buf == 2) return false;
+
+	// down
+	for(size_t i = y+1; i < height; i++) {
+		if(this->at(x, i)->isMyPanel()) {
+			buf++;
+			break;
+		}
+	}
+	if(buf == 3) return false;
+	return true;
+}
+
+bool Field::isPanelEnemyBetween(uint_fast32_t x, uint_fast32_t y) {
+	int_fast32_t buf = 0;
+	
+	// left
+	for(size_t i = x-1; i >= 0; i--) {
+		if(this->at(i, y)->isEnemyPanel()) {
+			buf++;
+			break;
+		}
+	}
+	if(buf == 0) return false;
+
+	// right
+	for(size_t i = x+1; i < width; i++) {
+		if(this->at(i, y)->isEnemyPanel()) {
+			buf++;
+			break;
+		}
+	}
+	if(buf == 1) return false;
+
+	// up
+	for(size_t i = y-1; i >= 0; i--) {
+		if(this->at(x, i)->isEnemyPanel()) {
+			buf++;
+			break;
+		}
+	}
+	if(buf == 2) return false;
+
+	// down
+	for(size_t i = y+1; i < height; i++) {
+		if(this->at(x, i)->isEnemyPanel()) {
+			buf++;
+			break;
+		}
+	}
+	if(buf == 3) return false;
+	return true;
+}
+
+bool Field::checkLocalArea(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr) {
+	if(attr == MINE_ATTR) return isPanelMineBetween(x, y);
+	return isPanelEnemyBetween(x, y);
+}
+
+int_fast32_t Field::calcMineScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree) {
+	int_fast32_t totalscore = 0, score;
+	bool check;
+
+	for(const auto &[key, vec]: pureTree) {
+		check = true;
+		score = 0;
+		for(auto pn: vec) {
+			if(!checkLocalArea(indexX(pn), indexY(pn), MINE_ATTR)) {
+				check = false;
+				break;
+			}
+			score += std::abs(field.at(pn).getValue());
+		}
+		if(check == true) {
+			totalscore += score;
+		}
+	}
+	return totalscore;
+}
+
 const Panel *Field::at(uint_fast32_t x, uint_fast32_t y) const {
 	return (const Panel *)&(this->field[x + (y << this->yShiftOffset)]);
+}
+
+int_fast32_t Field::calcEnemyScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree) {
+	int_fast32_t totalscore = 0, score;
+	bool check;
+
+	for(const auto &[key, vec]: pureTree) {
+		check = true;
+		score = 0;
+		for(auto pn: vec) {
+			if(!checkLocalArea(indexX(pn), indexY(pn), ENEMY_ATTR)) {
+				check = false;
+				break;
+			}
+			score += std::abs(field.at(pn).getValue());
+		}
+		if(check == true) {
+			totalscore += score;
+		}
+	}
+	return totalscore;
+}
+
+int_fast32_t Field::calcScore(uint_fast32_t attr) {
+	int_fast32_t score = 0;
+	std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> pureTerritory;
+
+	if(attr == MINE_ATTR) {
+		score += calcMinepanelScore();
+		pureTerritory = makePureTerritory(makePureTreeMine());
+		score += calcMineScore(pureTerritory);
+	} else {
+		score += calcEnemypanelScore();
+		pureTerritory = makePureTerritory(makePureTreeEnemy());
+		score += calcEnemyScore(pureTerritory);
+	}
+
+	return score;
 }
 
 void Field::testMoveAgent() {
@@ -210,7 +440,7 @@ void Field::print() {
 		else printf("\x1b[31m");
 		printf("agent[%u]: (%u, %u)\n\x1b[39m", i, this->agents[i].getX(), this->agents[i].getY());
 	}
-	printf("mineScore:  %d\n", this->calcMinepanelScore());
-	printf("enemyScore: %d\n", this->calcEnemypanelScore());
+	printf("mineScore:  %d\n", this->calcScore(MINE_ATTR));
+	printf("enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
 	printf("%s", strip);
 }

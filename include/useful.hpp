@@ -11,8 +11,8 @@
 // UnionFind クラス
 class UF {
 private:
-	std::vector<int_fast32_t> data;
 	std::vector<int_fast32_t> rank;
+	std::vector<int_fast32_t> data;
 
 public:
 	UF(uint_fast32_t size);
