@@ -122,7 +122,7 @@ void DisplayWrapper::panel() const{
 			if(this->field->at(i, j)->isEnemyPanel())
 				glColor3f(1.0f, 0.3f, 0.3f);
 			glBegin(GL_POINTS);
-			glVertex2i(half+cell_size*i, half+cell_size*j);
+			glVertex2i(half+this->cell_size*i, half+this->cell_size*j);
 			glEnd();
 		}
 	}
@@ -239,9 +239,9 @@ void Display::display(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	this->line();
 	this->panel();
+	this->candidate();
 	this->agent();
 	this->score();
-	this->candidate();
 	glFlush();
 }
 
@@ -317,12 +317,14 @@ void Display::mouse(int button, int state, int x, int y){
 	}
 	if(buf)  return;
 
+	int hoge;
 	//動かす方向の選択処理
 	std::pair<int, int> coord=std::make_pair(coordX, coordY);
 	if(flag){
 		for(int i=0;i<this->possible_list.at(enemy_flag).size();i++){
 			if(this->possible_list.at(enemy_flag).at(i)==coord){
 				this->next_list.at(enemy_flag)=(Direction)i;
+				glutPostRedisplay();
 				return;
 			}
 		}
@@ -331,6 +333,7 @@ void Display::mouse(int button, int state, int x, int y){
 		for(int i=0;i<this->possible_list.at(mine_flag).size();i++){
 			if(this->possible_list.at(mine_flag).at(i)==coord){
 				this->next_list.at(mine_flag)=(Direction)i;
+				glutPostRedisplay();				
 				return;
 			}
 		}
@@ -340,9 +343,21 @@ void Display::mouse(int button, int state, int x, int y){
 }
 
 void Display::candidate() const{
-	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
-			;
-		});
+	std::vector<int> vec_x={0,1,1,1,0,-1,-1,-1,0};
+	std::vector<int> vec_y={-1,-1,0,1,1,1,0,-1,0};
+	Direction buf;
+	int coordX, coordY;
+	const int half=this->cell_size/2;
+	glPointSize(agent_size-3);
+	glColor3f(1.0f, 1.0f, 0.0f);
+	glBegin(GL_POINTS);
+	for(int i=0;i<this->field->agents.size();i++){
+		buf=this->next_list.at(i);
+		coordX=this->field->agents.at(i).getX()+vec_x.at((int)buf);
+		coordY=this->field->agents.at(i).getY()+vec_y.at((int)buf);
+		glVertex2i(half+cell_size*coordX, half+cell_size*coordY);
+	}
+	glEnd();
 }
 
 void Display::motion(int x, int y){
