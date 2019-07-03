@@ -460,6 +460,8 @@ void Field::print() {
 		printf("agent[%u]: (%u, %u)\n\x1b[39m", i, this->agents[i].getX(), this->agents[i].getY());
 	}
 	printf("mineScore:  %d\n", this->calcScore(MINE_ATTR));
-	printf("enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
+	
+	//	printf("enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
+	
 	printf("%s", strip);
 }

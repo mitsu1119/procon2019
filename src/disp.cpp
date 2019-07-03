@@ -118,9 +118,9 @@ void DisplayWrapper::panel() const{
 			if(this->field->at(i, j)->isPurePanel())
 				continue;
 			if(this->field->at(i, j)->isMyPanel())
-				glColor3f(0.3f, 0.3f, 1.0f);
+				glColor3f(0.7f, 0.7f, 1.0f);
 			if(this->field->at(i, j)->isEnemyPanel())
-				glColor3f(1.0f, 0.3f, 0.3f);
+				glColor3f(1.0f, 0.7f, 0.7f);
 			glBegin(GL_POINTS);
 			glVertex2i(half+this->cell_size*i, half+this->cell_size*j);
 			glEnd();
@@ -256,14 +256,14 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'W':
 		this->field->testMoveAgent();
 		this->makePossibleList();
-		//		this->field->print();
+		this->field->print();
 		glutPostRedisplay();
 		break;
 	case 'm':
 	case 'M':
 		this->moveNextList();
 		this->makePossibleList();
-		//		this->field->print();
+		this->field->print();
 		glutPostRedisplay();
 		break;
 	case 'r':

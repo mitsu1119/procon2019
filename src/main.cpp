@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[]) {
 	
-	Field field(16, 16);
+	Field field(20, 20);
 
 	DisplayWrapper* test = new Display();
 	
