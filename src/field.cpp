@@ -102,11 +102,30 @@ void Field::setPanelAttr(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr) {
 }
 
 void Field::genRandMap() {
-	int_fast32_t buf;
-	for(size_t i = 0; i < height; i++) {
-		for(size_t j = 0; j < width; j++) {
-			buf = (int)this->random(32) - 16;
-			setPanelScore(j, i, buf);
+	int N = 32;
+	std::vector<int> field_rand;
+  std::vector<int> field_rev;
+  std::vector<int> buf;
+	for(int i=0; i < this->height/2; i++){
+		for(int j=0; j < this->width/2; j++){
+			buf.push_back((rand() % N)-16);
+		}
+		field_rand.insert(field_rand.end(), buf.begin(), buf.end());
+		std::reverse(buf.begin(), buf.end());
+		field_rand.insert(field_rand.end(), buf.begin(), buf.end());
+		buf.clear();
+  }
+
+  field_rev = field_rand;
+  std::reverse(field_rev.begin(), field_rev.end());
+  field_rand.insert(field_rand.begin(), field_rev.begin(), field_rev.end());
+
+	int val=0;
+	
+	for(int i=0;i<this->height;i++){
+		for(int j=0;j<this->width;j++){
+			this->setPanelScore(j, i, field_rand.at(val));
+			val++;
 		}
 	}
 }

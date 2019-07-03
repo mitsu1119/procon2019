@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -std=c++17 -Wall -g  -shared -Wl,-soname,libgreetings.so -o libgreetings.so CMakeFiles/greetings.dir/agent.cpp.o CMakeFiles/greetings.dir/field.cpp.o CMakeFiles/greetings.dir/useful.cpp.o CMakeFiles/greetings.dir/disp.cpp.o CMakeFiles/greetings.dir/ai.cpp.o CMakeFiles/greetings.dir/evaluator.cpp.o -lglut -lXmu -lXi -lGL -lGLU -lm 

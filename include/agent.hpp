@@ -33,5 +33,6 @@ public:
 
 	// (nextX, nextY)を(x, y)に適用する
 	void setNext();
+	void reverseAttr();
 };
 

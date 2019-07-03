@@ -3,8 +3,21 @@
 #include <chrono>
 #include "field.hpp"
 #include "useful.hpp"
+#include "disp.hpp"
 
 int main(int argc, char *argv[]) {
+	
+	Field field(16, 16);
+
+	DisplayWrapper* test = new Display();
+	
+	test->setField(&field);
+	test->setInstance(test);
+	test->start(argc, argv);
+
+	delete test;
+	
+	/*
 	Field test(10, 15);
 
 	test.print();	
@@ -13,6 +26,7 @@ int main(int argc, char *argv[]) {
 		test.testMoveAgent();
 		test.print();
 	}
+	*/
 
 	return 0;
 }

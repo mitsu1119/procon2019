@@ -8,20 +8,27 @@
 #include <sstream>
 #include <iomanip>
 #include <ctime>
+#include <algorithm>
 #include "agent.hpp"
 #include "useful.hpp"
+#include "disp.hpp"
+#include "ai.hpp"
 
 constexpr uint_fast32_t MINE_ATTR = 0b01;
 constexpr uint_fast32_t ENEMY_ATTR = 0b10;
 constexpr uint_fast32_t PURE_ATTR = 0b00;
 
 class Field;
+class Agent;
+class Display;
+class DisplayWrapper;
+class AI;
 
 /*
  * Panel 一つ一つの情報を管理するクラス
  */
 class Panel {
-friend Field;
+	friend Field;
 private:
 	struct {
 		// パネルのスコア
@@ -58,13 +65,18 @@ public:
 	int_fast32_t getValue() const;
 };	
 
-class Agent;
 
 /*
  * Field 一つ一つ
  */
 class Field {
+	
+	friend DisplayWrapper;
+	friend Display;
+	friend AI;
+	
 private:
+
 	// フィールドの実幅、実高さ
 	uint_fast32_t width, height;
 
@@ -118,6 +130,7 @@ private:
 	int_fast32_t calcEnemyScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree);
 
 public:
+
 	Field(uint_fast32_t width, uint_fast32_t height);
 	// MINE, ENEMY属性のパネルの置かれているところの合計点数を所得
 	int_fast32_t calcMinepanelScore();
@@ -134,5 +147,6 @@ public:
 
 	// コンソール上に表示(テスト用)
 	void print();
+	
 };
 
