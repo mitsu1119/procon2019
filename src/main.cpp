@@ -17,8 +17,7 @@ int main(int argc, char *argv[]) {
 
 	delete test;
 	
-	/*
-	Field test(10, 15);
+	/*Field test(10, 15);
 
 	test.print();	
 
@@ -27,6 +26,5 @@ int main(int argc, char *argv[]) {
 		test.print();
 	}
 	*/
-
 	return 0;
 }

@@ -256,14 +256,14 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'W':
 		this->field->testMoveAgent();
 		this->makePossibleList();
-		this->field->print();
+		//		this->field->print();
 		glutPostRedisplay();
 		break;
 	case 'm':
 	case 'M':
 		this->moveNextList();
 		this->makePossibleList();
-		this->field->print();
+		//		this->field->print();
 		glutPostRedisplay();
 		break;
 	case 'r':
