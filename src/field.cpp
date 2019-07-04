@@ -110,8 +110,8 @@ void Field::genRandMap() {
 	buf_height=(this->height/2)+(this->height%2);
 	buf_width=(this->width/2)+(this->width%2);
 	
-	for(int i=0; i < this->height/2; i++){
-		for(int j=0; j < this->width/2; j++){
+	for(int i=0; i < buf_height; i++){
+		for(int j=0; j < buf_width; j++){
 			buf.push_back((rand() % N)-16);
 		}
 		field_rand.insert(field_rand.end(), buf.begin(), buf.end());
@@ -125,6 +125,16 @@ void Field::genRandMap() {
   field_rand.insert(field_rand.begin(), field_rev.begin(), field_rev.end());
 
 	//奇数業に対応させる
+
+	if(this->height%2){
+		field_rand.erase(field_rand.begin()+(field_rand.size()/2), field_rand.begin()+(field_rand.size()/2)+this->height+1);
+	}
+	if(this->width%2){
+		for(int i=0;i<field_rand.size();i++){
+			if(i%this->width==this->width/2)
+				field_rand.erase(field_rand.begin()+i);
+		}
+	}
 	
 	int val=0;
 	
