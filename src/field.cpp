@@ -106,6 +106,10 @@ void Field::genRandMap() {
 	std::vector<int> field_rand;
   std::vector<int> field_rev;
   std::vector<int> buf;
+	int buf_height, buf_width;
+	buf_height=(this->height/2)+(this->height%2);
+	buf_width=(this->width/2)+(this->width%2);
+	
 	for(int i=0; i < this->height/2; i++){
 		for(int j=0; j < this->width/2; j++){
 			buf.push_back((rand() % N)-16);
@@ -120,6 +124,8 @@ void Field::genRandMap() {
   std::reverse(field_rev.begin(), field_rev.end());
   field_rand.insert(field_rand.begin(), field_rev.begin(), field_rev.end());
 
+	//奇数業に対応させる
+	
 	int val=0;
 	
 	for(int i=0;i<this->height;i++){

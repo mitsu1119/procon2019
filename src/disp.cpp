@@ -118,9 +118,9 @@ void DisplayWrapper::panel() const{
 			if(this->field->at(i, j)->isPurePanel())
 				continue;
 			if(this->field->at(i, j)->isMyPanel())
-				glColor3f(0.7f, 0.7f, 1.0f);
+				glColor3f(0.6f, 0.6f, 1.0f);
 			if(this->field->at(i, j)->isEnemyPanel())
-				glColor3f(1.0f, 0.7f, 0.7f);
+				glColor3f(1.0f, 0.6f, 0.6f);
 			glBegin(GL_POINTS);
 			glVertex2i(half+this->cell_size*i, half+this->cell_size*j);
 			glEnd();
