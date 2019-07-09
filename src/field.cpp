@@ -218,35 +218,35 @@ UF Field::makePureTreeMine() {
 }
 
 UF Field::makePureTreeEnemy() {
-	UF pureTree(field.size());
+    UF pureTree(field.size());
 
-	for(size_t i = 0; i < height; i++) {
-		for(size_t j = 0; j < width; j++) {
-			if(at(j,i)->isEnemyPanel()) continue;
-			// UP
-			if(i - 1 >= 0) {
-				if(!at(j, i - 1)->isEnemyPanel()) {
-					pureTree.unite(xyIndex(j, i), xyIndex(j, i - 1));
-				}
-			}
-			// DOWN
-			if(i + 1 < height) {
-				if(!at(j, i + 1)->isEnemyPanel()) {
-					pureTree.unite(xyIndex(j, i), xyIndex(j, i + 1));
-				}
-			}
-			// RIGHT
-			if(j + 1 < width) {
-				if(!at(j + 1, i)->isEnemyPanel()) {
-					pureTree.unite(xyIndex(j, i), xyIndex(j + 1, i));
-				}
-			}
-			// LEFT
-			if(j - 1 >= 0) {
-				if(!at(j - 1, i)->isEnemyPanel()) {
-					pureTree.unite(xyIndex(j, i), xyIndex(j - 1, i));
-				}
-			}
+    for(int i=0; i<height; i++) {
+        for(int j=0; j<width; j++) {
+            if(!this->at(j,i)->isPurePanel() && !this->at(j,i)->isMyPanel()) continue;
+    		    // UP
+                if(i-1 >= 0) {
+                        if(this->at(j, i-1)->isPurePanel() || this->at(j, i-1)->isMyPanel()) {
+                                pureTree.unite(xyIndex(j,i), xyIndex(j,i-1));
+                        }
+                }
+                // DOWN
+                if(i+1 < height) {
+                        if(this->at(j, i+1)->isPurePanel() || this->at(j, i+1)->isMyPanel()) {
+                                pureTree.unite(xyIndex(j,i), xyIndex(j,i+1));
+                        }
+                }
+                // RIGHT
+                if(j+1 < width) {
+                        if(this->at(j+1, i)->isPurePanel() || this->at(j+1, i)->isMyPanel()) {
+                                pureTree.unite(xyIndex(j,i), xyIndex(j+1, i));
+                        }
+                }
+                // LEFT
+                if(j-1 >= 0) {
+                        if(this->at(j-1, i)->isPurePanel()  || this->at(j-1, i)->isMyPanel()) {
+                                pureTree.unite(xyIndex(j,i), xyIndex(j-1, i));
+                        }
+                }
 		}
 	}
 	return pureTree;
@@ -391,6 +391,7 @@ const Panel *Field::at(uint_fast32_t x, uint_fast32_t y) const {
 }
 
 int_fast32_t Field::calcEnemyScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree) {
+	std::cout << "calcEnemyScore\n";
 	int_fast32_t totalscore = 0, score;
 	bool check;
 
@@ -477,7 +478,7 @@ void Field::print() {
 	}
 	printf("mineScore:  %d\n", this->calcScore(MINE_ATTR));
 	
-	//	printf("enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
+	printf("enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
 	
 	printf("%s", strip);
 }
