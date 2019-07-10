@@ -1,5 +1,14 @@
 #include "useful.hpp"
 
+UF::UF(uint_fast32_t size) {
+	data = std::vector<int_fast32_t>(size);
+	rank = std::vector<int_fast32_t>(size);
+	for(size_t i = 0; i < size; i++) {
+		data[i] = i;
+		rank[i] = 0;
+	}
+}
+
 int_fast32_t direction2x(Direction direction) {
 	switch(direction) {
 		case UP:
