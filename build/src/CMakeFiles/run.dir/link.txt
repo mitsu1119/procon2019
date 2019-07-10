@@ -1,1 +1,1 @@
-/usr/bin/c++  -std=c++17 -Wall -g  -rdynamic CMakeFiles/run.dir/main.cpp.o  -o run -Wl,-rpath,/home/kaito/program/procon2019/build/src libgreetings.so -lglut -lXmu -lXi -lGL -lGLU -lm 
+/usr/bin/c++  -std=c++17 -Wall -g  -rdynamic CMakeFiles/run.dir/main.cpp.o  -o run -Wl,-rpath,/home/mitsu/projects/procon2019/build/src libgreetings.so -lglut -lXmu -lXi -lGL -lGLU -lm 
