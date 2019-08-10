@@ -23,6 +23,7 @@ class Agent;
 class Display;
 class DisplayWrapper;
 class AI;
+class Random;
 
 /*
  * Panel 一つ一つの情報を管理するクラス
@@ -74,6 +75,7 @@ class Field {
 	friend DisplayWrapper;
 	friend Display;
 	friend AI;
+	friend Random;
 	
 private:
 

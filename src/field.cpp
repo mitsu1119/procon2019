@@ -68,6 +68,11 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 	this->agents.emplace_back(1, height - 2, ENEMY_ATTR);
 	this->agents.emplace_back(width - 2, height - 2, MINE_ATTR);
 
+	this->agents.emplace_back(2, 2, ENEMY_ATTR);
+	this->agents.emplace_back(width - 3, 2, MINE_ATTR);
+	this->agents.emplace_back(2, height - 3, MINE_ATTR);
+	this->agents.emplace_back(width - 3, height - 3, ENEMY_ATTR);
+
 	this->canmoveAgents = std::vector<bool>(this->agents.size(), true);
 
 	// エージェントの初期位置のパネルの属性を設定
@@ -391,7 +396,6 @@ const Panel *Field::at(uint_fast32_t x, uint_fast32_t y) const {
 }
 
 int_fast32_t Field::calcEnemyScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree) {
-	std::cout << "calcEnemyScore\n";
 	int_fast32_t totalscore = 0, score;
 	bool check;
 

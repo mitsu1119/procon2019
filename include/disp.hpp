@@ -15,9 +15,6 @@ class AI;
 class DisplayWrapper{
 private:
 
-	AI* mine;
-	AI* enemy;
-
 	static DisplayWrapper* instance;
 	static const unsigned int window_width_size=800;
 	static const unsigned int window_height_size=800;
@@ -69,7 +66,8 @@ public:
 class Display : public DisplayWrapper{
 private:
 
-	//DECLARE_ENUM(Direction, direction2name, UP, RUP, RIGHT, RDOWN, DOWN, LDOWN, LEFT, LUP, DIRECTION_SIZE);
+	AI* enemy;
+
 	std::vector<std::vector<std::pair<int, int>>> possible_list;
 	std::vector<Direction> next_list;
 
@@ -99,6 +97,9 @@ public:
 
 class selfDirectedGame : public DisplayWrapper {
 private:
+
+	AI* mine;
+	AI* enemy;
 	
 public:
 

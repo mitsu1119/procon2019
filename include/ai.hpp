@@ -9,7 +9,7 @@ private:
 public:
 	AI();
 	~AI();
-	virtual void move(Field& field)=0;
+	virtual void move(Field *field)=0;
 };
 
 class Astar : public AI{
@@ -17,7 +17,7 @@ private:
 public:
 	Astar();
 	~Astar();
-	void move(Field& field) override;
+	void move(Field *field) override;
 };
 
 class Random : public AI{
@@ -26,5 +26,5 @@ private:
 public:
 	Random();
 	~Random();
-	void move(Field& field) override;
+	void move(Field *field) override;
 };

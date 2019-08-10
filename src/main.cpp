@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[]) {
 	
-	Field field(9, 9);
+	Field field(10, 10);
 
 	DisplayWrapper* test = new Display();
 	
@@ -17,14 +17,5 @@ int main(int argc, char *argv[]) {
 
 	delete test;
 	
-	/*Field test(10, 15);
-
-	test.print();	
-
-	for(size_t i = 0; i < 20; i++) {
-		test.testMoveAgent();
-		test.print();
-	}
-	*/
 	return 0;
 }

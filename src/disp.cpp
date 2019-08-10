@@ -8,8 +8,6 @@ DisplayWrapper::DisplayWrapper(){
 DisplayWrapper::~DisplayWrapper(){
 	delete instance;
 	delete field;
-	delete mine;
-	delete enemy;
 }
 
 DisplayWrapper* DisplayWrapper::instance=0;
@@ -176,9 +174,11 @@ void DisplayWrapper::renderString(float x, float y, const std::string& str) cons
 // ---------------------------------------- Display ----------------------------------------
 
 Display::Display() : flag(0) ,mine_flag(0), enemy_flag(0) {
+	enemy=new Random();
 }
 
 Display::~Display(){
+	delete enemy;
 }
 
 void Display::makePossibleList(){
@@ -262,6 +262,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'm':
 	case 'M':
 		this->moveNextList();
+		//		this->enemy->move(field);
 		this->makePossibleList();
 		this->field->print();
 		glutPostRedisplay();
