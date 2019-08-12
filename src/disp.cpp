@@ -3,11 +3,16 @@
 // ---------------------------------------- DisplayWrapper ----------------------------------------
 
 DisplayWrapper::DisplayWrapper(){
+	mine = new RandomMine();
+  enemy = new RandomEnemy();
+
 }
 
 DisplayWrapper::~DisplayWrapper(){
 	delete instance;
 	delete field;
+	delete mine;
+	delete enemy;
 }
 
 DisplayWrapper* DisplayWrapper::instance=0;
@@ -61,10 +66,12 @@ void DisplayWrapper::setInstance(DisplayWrapper* framework){
 	instance=framework;
 }
 
+
 void DisplayWrapper::setField(Field* object){
 	field=object;
 }
 
+/*
 void DisplayWrapper::reverseBoard(Field& field){
 	std::for_each(field.field.begin(), field.field.end(), [this](auto& panel){
 			if(panel.isEnemyPanel()){
@@ -82,6 +89,7 @@ void DisplayWrapper::reverseBoard(Field& field){
 			a.reverseAttr();
 		});
 }	
+*/
 
 void DisplayWrapper::line() const{
 	glColor3f(0.0f, 0.0f, 0.0f);
@@ -110,6 +118,7 @@ void DisplayWrapper::score() const{
 }
 
 void DisplayWrapper::panel() const{
+	glPointSize(this->agent_size);
 	const int half=this->cell_size/2;
 		for(int i=0;i<this->field->width;i++){
 			for(int j=0;j<this->field->height;j++){;
@@ -163,6 +172,10 @@ void DisplayWrapper::agent() const{
 		});
 }
 
+void DisplayWrapper::point() const{
+	;
+}
+
 void DisplayWrapper::renderString(float x, float y, const std::string& str) const{
 	float z = 0.0f;
 	glRasterPos3f(x, y, z);
@@ -174,11 +187,9 @@ void DisplayWrapper::renderString(float x, float y, const std::string& str) cons
 // ---------------------------------------- Display ----------------------------------------
 
 Display::Display() : flag(0) ,mine_flag(0), enemy_flag(0) {
-	enemy=new Random();
 }
 
-Display::~Display(){
-	delete enemy;
+Display::~Display(){	
 }
 
 void Display::makePossibleList(){
@@ -204,7 +215,7 @@ void Display::makePossibleList(){
 		});
 	this->next_list.clear();
 	this->next_list.resize(this->field->agents.size());
-	std::fill(this->next_list.begin(), this->next_list.end(), UP);
+	std::fill(this->next_list.begin(), this->next_list.end(), STOP);
 	this->mine_flag=0;
 	this->enemy_flag=0;
 	this->flag=0;
@@ -225,7 +236,7 @@ void Display::moveNextList(){
 void Display::initInstance(){
 	this->next_list.clear();
 	this->next_list.resize(this->field->agents.size());
-	std::fill(this->next_list.begin(), this->next_list.end(), UP);
+	std::fill(this->next_list.begin(), this->next_list.end(), STOP);
 	this->makePossibleList();
 }
 
@@ -239,8 +250,8 @@ void Display::display(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	this->line();
 	this->panel();
-	this->candidate();
 	this->agent();
+	this->candidate();
 	this->score();
 	glFlush();
 }
@@ -255,26 +266,25 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'w':
 	case 'W':
 		this->field->testMoveAgent();
-		this->makePossibleList();
 		this->field->print();
 		glutPostRedisplay();
+		this->makePossibleList();
 		break;
 	case 'm':
 	case 'M':
-		this->moveNextList();
-		//		this->enemy->move(field);
+		mine->move(this->field);
+		enemy->move(this->field);
+		field->applyNextAgents();		
 		this->makePossibleList();
 		this->field->print();
 		glutPostRedisplay();
 		break;
-	case 'r':
-	case 'R':
-		this->reverseBoard(*field);
+	case 'g':
+	case 'G':
+		this->moveNextList();
+		this->makePossibleList();
+		this->field->print();
 		glutPostRedisplay();
-		break;
-	case 'a':
-	case 'A':
-		this->field->applyNextAgents();
 		break;
 	default:
 		break;

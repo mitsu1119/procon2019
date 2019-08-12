@@ -22,6 +22,8 @@ int_fast32_t direction2x(Direction direction) {
 		case LEFT:
 		case LUP:
 			return -1;
+  	case STOP:
+	  	return 0;									
 	}
 	return 0;
 }
@@ -39,6 +41,8 @@ int_fast32_t direction2y(Direction direction) {
 		case DOWN:
 		case LDOWN:
 			return 1;
+  	case STOP:
+	  	return 0;
 	}
 	return 0;
 }

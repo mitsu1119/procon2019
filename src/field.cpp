@@ -79,6 +79,7 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 	for(auto &i: this->agents) {
 		setPanelAttr(i.getX(), i.getY(), i.getAttr());
 	}
+
 }
 
 uint_fast32_t Field::xyIndex(uint_fast32_t x, uint_fast32_t y) {

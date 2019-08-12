@@ -1,6 +1,7 @@
 #pragma once
 
 #include "field.hpp"
+#include <random>
 
 class Field;
 
@@ -20,11 +21,18 @@ public:
 	void move(Field *field) override;
 };
 
-class Random : public AI{
+class RandomMine : public AI{
 private:
-	XorOshiro128p random;
 public:
-	Random();
-	~Random();
+	RandomMine();
+	~RandomMine();
+	void move(Field *field) override;
+};
+
+class RandomEnemy : public AI{
+private:
+public:
+	RandomEnemy();
+	~RandomEnemy();
 	void move(Field *field) override;
 };

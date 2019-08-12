@@ -10,7 +10,10 @@
 
 class Display;
 class Field;
+
 class AI;
+class RandomMine;
+class RandomEnemy;
 
 class DisplayWrapper{
 private:
@@ -23,13 +26,16 @@ private:
 
 	static const unsigned int line_size=1;
 	static const unsigned int panel_size=30;
-	
+
 public:
 
 	static const unsigned int agent_size=15;
 	static const unsigned int cell_size=30;
 	
 	Field* field;
+	
+	AI* mine;
+	AI* enemy;
 
 	DisplayWrapper();
 	virtual ~DisplayWrapper();
@@ -37,7 +43,7 @@ public:
 	void init();
 	void start(int argc, char *argv[]);
 	void setField(Field* object);
-	void reverseBoard(Field& field);
+	//	void reverseBoard(Field& field);
 	
 	static void resizeWrapper(int w, int h);
 	static void displayWrapper();
@@ -59,15 +65,14 @@ public:
 	void score() const;
 	void panel() const;
 	void agent() const;
+	void point() const;
  	void renderString(float x, float y, const std::string& str) const;
 
 };
 
 class Display : public DisplayWrapper{
 private:
-
-	AI* enemy;
-
+	
 	std::vector<std::vector<std::pair<int, int>>> possible_list;
 	std::vector<Direction> next_list;
 
@@ -97,15 +102,12 @@ public:
 
 class selfDirectedGame : public DisplayWrapper {
 private:
-
-	AI* mine;
-	AI* enemy;
 	
 public:
-
+	
 	selfDirectedGame();
 	~selfDirectedGame();
-
+	
 	void resize(int w, int h) override;
 	void display() override;
 	void keyboard(unsigned char key, int x, int y) override;

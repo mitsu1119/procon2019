@@ -23,7 +23,8 @@ class Agent;
 class Display;
 class DisplayWrapper;
 class AI;
-class Random;
+class RandomMine;
+class RandomEnemy;
 
 /*
  * Panel 一つ一つの情報を管理するクラス
@@ -74,8 +75,6 @@ class Field {
 	
 	friend DisplayWrapper;
 	friend Display;
-	friend AI;
-	friend Random;
 	
 private:
 
@@ -89,7 +88,7 @@ private:
 	XorOshiro128p random;
 
 	std::vector<Panel> field;
-	std::vector<Agent> agents;	
+	//	std::vector<Agent> agents;	
 
 	// agentの動作可能かベクター
 	std::vector<bool> canmoveAgents;
@@ -115,11 +114,11 @@ private:
 	void genRandMap();
 
 	// agentがdirectionの方向に動けるかどうか true:動ける false:動けない
-	bool canMove(Agent &agent, Direction direction);
+	// bool canMove(Agent &agent, Direction direction);
 
 	// agentsの(nextX,nextY)を適用する
 	// 行きたい座標が重なるなどしたときその場に止まるように指示
-	void applyNextAgents();
+	// void applyNextAgents();
 
 	// 得点計算関係
 	UF makePureTreeMine();
@@ -133,12 +132,21 @@ private:
 
 public:
 
+	std::vector<Agent> agents;
+	
+	// agentがdirectionの方向に動けるかどうか true:動ける false:動けない
+	bool canMove(Agent &agent, Direction direction);
+
+	// agentsの(nextX,nextY)を適用する
+	// 行きたい座標が重なるなどしたときその場に止まるように指示
+	void applyNextAgents();
+	
 	Field(uint_fast32_t width, uint_fast32_t height);
 	// MINE, ENEMY属性のパネルの置かれているところの合計点数を所得
 	int_fast32_t calcMinepanelScore();
 	int_fast32_t calcEnemypanelScore();
 
-	// スコア計算
+	// スコア計算m
 	int_fast32_t calcScore(uint_fast32_t attr);
 
 	// 実座標(x,y)のパネルのポインタを所得(const)
