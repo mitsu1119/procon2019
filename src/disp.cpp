@@ -228,6 +228,9 @@ void Display::moveNextList(){
 			if(this->field->canMove(a, this->next_list.at(buf))){
 				a.move(this->next_list.at(buf));
 			}
+			else{
+				a.move(STOP);
+			}
 			buf++;
 		});
 	this->field->applyNextAgents();
@@ -281,8 +284,8 @@ void Display::keyboard(unsigned char key, int x, int y){
 		break;
 	case 'g':
 	case 'G':
-		this->moveNextList();
 		this->makePossibleList();
+		this->moveNextList();
 		this->field->print();
 		glutPostRedisplay();
 		break;

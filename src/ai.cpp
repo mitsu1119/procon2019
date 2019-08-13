@@ -25,15 +25,15 @@ AstarMine::AstarMine(){
 AstarMine::~AstarMine(){
 }
 
-void AstarMine::init(Field field){
+void AstarMine::init(const Field field){
 	
 }
 
-void AstarMine::greedyMove(Field& field, uint_fast32_t agent){
+void AstarMine::greedyMove(Field& field, const uint_fast32_t agent){
 	
 }
 
-void AstarMine::decidedMove(Field& field, uint_fast32_t agent){
+void AstarMine::decidedMove(Field& field, const uint_fast32_t agent){
 	
 }
 
@@ -44,15 +44,19 @@ const uint_fast32_t AstarMine::heuristicCost(std::pair<uint_fast32_t, uint_fast3
 	return distance;
 }
 
-void AstarMine::sortSearchTargetList(Field field, uint_fast32_t agent){
+void AstarMine::sortSearchTargetList(const Field field, const uint_fast32_t agent){
 	
 }
 	
-const double AstarMine::estimeteMoveCost(Field& field, uint_fast32_t agent) const{
+const double AstarMine::estimeteMoveCost(Field& field, const uint_fast32_t agent) const{
 	
 }
 
 void AstarMine::move(Field *field){
+	
+}
+
+void AstarMine::print() const{
 	
 }
 

@@ -42,6 +42,7 @@ public:
 	std::pair<uint_fast32_t, uint_fast32_t> coord;
 	//スコア所得
 	const double getScore() const;
+	
 };
 
 class AstarMine : public AI{
@@ -69,28 +70,35 @@ private:
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> decided_route;
 	//確定方向リスト
 	std::vector<std::vector<Direction>> decided_direction;
+
+private:
+	
+	//指定したエージェントを貪欲法で動かす
+	void greedyMove(Field& field, const uint_fast32_t agent);
+	//指定したエージェントを確定方向で動かす	
+	void decidedMove(Field& field, const uint_fast32_t agent);
+
+private:
+
+	void setParameters(const Field field);
+	//ヒューリスティックコスト（推定コスト）の計算
+	const uint_fast32_t heuristicCost(const std::pair<uint_fast32_t, uint_fast32_t> coord, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
+	//探索順番にゴール候補を探索候補リストにソートする
+	void sortSearchTargetList(const Field field, const uint_fast32_t agent);
+	//A*による推定移動コスト
+	const double estimeteMoveCost(Field& field, const uint_fast32_t agent) const;
 	
 public:
 	
 	AstarMine();
 	~AstarMine();
-	//初期化
-	void init(Field field);
-	//指定したエージェントを貪欲法で動かす
-	void greedyMove(Field& field, uint_fast32_t agent);
-	//指定したエージェントを確定方向で動かす	
-	void decidedMove(Field& field, uint_fast32_t agent);
 	
-public:
-
-	//ヒューリスティックコスト（推定コスト）の計算
-	const uint_fast32_t heuristicCost(std::pair<uint_fast32_t, uint_fast32_t> coord, std::pair<uint_fast32_t, uint_fast32_t> goal) const;
-	//探索順番にゴール候補を探索候補リストにソートする
-	void sortSearchTargetList(Field field, uint_fast32_t agent);
-	//A*による推定移動コスト
-	const double estimeteMoveCost(Field& field, uint_fast32_t agent) const;
+	//初期化
+	void init(const Field field);
 	//エージェントの移動
 	void move(Field *field) override;
+	//表示
+	void print() const;
 	
 };
 
