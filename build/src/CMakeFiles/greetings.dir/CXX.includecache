@@ -13,10 +13,12 @@ useful.hpp
 ../include/useful.hpp
 
 ../include/ai.hpp
+agent.hpp
+../include/agent.hpp
 field.hpp
 ../include/field.hpp
-random
--
+useful.hpp
+../include/useful.hpp
 
 ../include/disp.hpp
 iostream
@@ -63,8 +65,6 @@ useful.hpp
 ../include/useful.hpp
 disp.hpp
 ../include/disp.hpp
-ai.hpp
-../include/ai.hpp
 
 ../include/useful.hpp
 ctime

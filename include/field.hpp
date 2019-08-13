@@ -12,7 +12,6 @@
 #include "agent.hpp"
 #include "useful.hpp"
 #include "disp.hpp"
-#include "ai.hpp"
 
 constexpr uint_fast32_t MINE_ATTR = 0b01;
 constexpr uint_fast32_t ENEMY_ATTR = 0b10;
@@ -22,9 +21,6 @@ class Field;
 class Agent;
 class Display;
 class DisplayWrapper;
-class AI;
-class RandomMine;
-class RandomEnemy;
 
 /*
  * Panel 一つ一つの情報を管理するクラス
@@ -66,7 +62,6 @@ public:
 	// パネルのスコアを所得
 	int_fast32_t getValue() const;
 };	
-
 
 /*
  * Field 一つ一つ
@@ -157,6 +152,10 @@ public:
 
 	// コンソール上に表示(テスト用)
 	void print();
+
+  //width、heightを外部から所得
+	const uint_fast32_t getWidth() const;
+	const uint_fast32_t getHeight() const;
 	
 };
 

@@ -1,21 +1,62 @@
 #include "ai.hpp"
 
+//----------------AI--------------
 AI::AI(){
 }
 
 AI::~AI(){
 }
 
-Astar::Astar(){	
+//----------------Node--------------
+Node::Node(){
 }
 
-Astar::~Astar(){
+Node::~Node(){
 }
 
-void Astar::move(Field *field){
-	;
+const double Node::getScore() const{
+	return this->moveCost + this->stateCost + this->heuristic;
 }
 
+//----------------A*algorithm--------------
+AstarMine::AstarMine(){
+}
+
+AstarMine::~AstarMine(){
+}
+
+void AstarMine::init(Field field){
+	
+}
+
+void AstarMine::greedyMove(Field& field, uint_fast32_t agent){
+	
+}
+
+void AstarMine::decidedMove(Field& field, uint_fast32_t agent){
+	
+}
+
+const uint_fast32_t AstarMine::heuristicCost(std::pair<uint_fast32_t, uint_fast32_t> coord, std::pair<uint_fast32_t, uint_fast32_t> goal) const{
+	const uint_fast32_t dx = std::abs((int_fast32_t)(goal.first - coord.first));
+	const uint_fast32_t dy = std::abs((int_fast32_t)(goal.second - coord.second));
+	const double distance = std::sqrt(dx * dy);
+	return distance;
+}
+
+void AstarMine::sortSearchTargetList(Field field, uint_fast32_t agent){
+	
+}
+	
+const double AstarMine::estimeteMoveCost(Field& field, uint_fast32_t agent) const{
+	
+}
+
+void AstarMine::move(Field *field){
+	
+}
+
+//----------------Random--------------
 RandomMine::RandomMine(){
 }
 
@@ -28,7 +69,7 @@ void RandomMine::move(Field *field){
 	std::uniform_int_distribution<> rand(0, 8);
 	Direction buf;
 	for(auto &i: field->agents) {
-		if(i.getAttr()==MINE_ATTR){
+		if(i.getAttr() == MINE_ATTR){
 RE_CONSIDER:
 			buf = (Direction)rand(mt);			
 			if(field->canMove(i, buf))
@@ -51,7 +92,7 @@ void RandomEnemy::move(Field *field){
 	std::uniform_int_distribution<> rand(0, 8);
 	Direction buf;
 	for(auto &i: field->agents) {
-		if(i.getAttr()==ENEMY_ATTR){
+		if(i.getAttr() == ENEMY_ATTR){
 RE_CONSIDER:
 			buf = (Direction)rand(mt);
 			if(field->canMove(i, buf))
