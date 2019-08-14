@@ -6,6 +6,10 @@ DisplayWrapper::DisplayWrapper(){
 	mine = new RandomMine();
   enemy = new RandomEnemy();
 
+	
+	astar = new AstarMine();
+
+	
 }
 
 DisplayWrapper::~DisplayWrapper(){
@@ -13,6 +17,8 @@ DisplayWrapper::~DisplayWrapper(){
 	delete field;
 	delete mine;
 	delete enemy;
+
+	delete astar;
 }
 
 DisplayWrapper* DisplayWrapper::instance=0;
@@ -63,12 +69,12 @@ void DisplayWrapper::motionWrapper(int x, int y){
 }
 
 void DisplayWrapper::setInstance(DisplayWrapper* framework){
-	instance=framework;
+	instance = framework;
 }
 
 
 void DisplayWrapper::setField(Field* object){
-	field=object;
+	field = object;
 }
 
 /*
@@ -195,8 +201,8 @@ Display::~Display(){
 void Display::makePossibleList(){
 	this->possible_list.clear();
 	std::vector<std::pair<int, int>> coord;
-	std::vector<int> vec_x={0,1,1,1,0,-1,-1,-1};
-	std::vector<int> vec_y={-1,-1,0,1,1,1,0,-1};
+	std::vector<int> vec_x={0,1,1,1,0,-1,-1,-1,0};
+	std::vector<int> vec_y={-1,-1,0,1,1,1,0,-1,0};
 	for(int i=0;i<vec_x.size();i++){
 		coord.push_back(std::make_pair(vec_x.at(i), vec_y.at(i)));
 	}
@@ -284,10 +290,22 @@ void Display::keyboard(unsigned char key, int x, int y){
 		break;
 	case 'g':
 	case 'G':
-		this->makePossibleList();
 		this->moveNextList();
+		this->makePossibleList();
 		this->field->print();
 		glutPostRedisplay();
+		break;
+
+
+		//実験用
+	case 't':
+	case 'T':
+
+		//this->field->genRandMap();
+		astar->move(this->field);
+
+		glutPostRedisplay();
+		
 		break;
 	default:
 		break;

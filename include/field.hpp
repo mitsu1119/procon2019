@@ -106,7 +106,7 @@ private:
 	void setPanelAttr(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr);
 
 	// フィールドランダム生成用関数
-	void genRandMap();
+	//void genRandMap();
 
 	// agentがdirectionの方向に動けるかどうか true:動ける false:動けない
 	// bool canMove(Agent &agent, Direction direction);
@@ -127,6 +127,7 @@ private:
 
 public:
 
+	void genRandMap();
 	std::vector<Agent> agents;
 	
 	// agentがdirectionの方向に動けるかどうか true:動ける false:動けない

@@ -438,7 +438,7 @@ void Field::testMoveAgent() {
 	Direction buf;
 	for(auto &i: this->agents) {
 RE_CONSIDER:
-		buf = (Direction)this->random(DIRECTION_SIZE - 1);
+		buf = (Direction)this->random(DIRECTION_SIZE - 2);
 		if(canMove(i, buf)) i.move(buf);
 		else goto RE_CONSIDER; // もし動ける方向でなければ方向を検討し直す
 	}	

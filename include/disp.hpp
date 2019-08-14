@@ -37,6 +37,8 @@ public:
 	AI* mine;
 	AI* enemy;
 
+	AI* astar;
+
 	DisplayWrapper();
 	virtual ~DisplayWrapper();
 	
