@@ -136,7 +136,7 @@ private:
 public:
 	Random();
 	~Random();
-	void mineMove(Field* field);
-	void enemyMove(Field* field);
+	void mineMove(Field& field);
+	void enemyMove(Field& field);
 	void move(Field *field, uint_fast32_t attr) override;
 };

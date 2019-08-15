@@ -213,8 +213,8 @@ void Display::makePossibleList(){
 			this->possible_list.push_back(possible);
 			possible.clear();
 		});
-	this->next_list.clear();
-	this->next_list.resize(this->field->agents.size());
+	//this->next_list.clear();
+	//this->next_list.resize(this->field->agents.size());
 	std::fill(this->next_list.begin(), this->next_list.end(), STOP);
 	this->mine_flag=0;
 	this->enemy_flag=0;
@@ -264,28 +264,34 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'q':
 	case 'Q':
 	case '\033':
+		
 		std::exit(0);
 		break;
+		
 	case 'w':
 	case 'W':
+		
+		this->makePossibleList();
 		this->field->testMoveAgent();
 		this->field->print();
 		glutPostRedisplay();
-		this->makePossibleList();
 		break;
 	case 'm':
 	case 'M':
+
+		this->makePossibleList();
 		this->random->move(this->field, MINE_ATTR);
 		this->random->move(this->field, ENEMY_ATTR);
 		field->applyNextAgents();		
-		this->makePossibleList();
 		this->field->print();
 		glutPostRedisplay();
 		break;
+		
 	case 'g':
 	case 'G':
-		this->moveNextList();
+		
 		this->makePossibleList();
+		this->moveNextList();
 		this->field->print();
 		glutPostRedisplay();
 		break;
@@ -294,12 +300,13 @@ void Display::keyboard(unsigned char key, int x, int y){
 		//実験用
 	case 't':
 	case 'T':
+		
 		this->field->genRandMap();
 		this->astar->move(this->field, MINE_ATTR);
 		this->astar->move(this->field, MINE_ATTR);
-		glutPostRedisplay();
-		
+		glutPostRedisplay();		
 		break;
+		
 	default:
 		break;
 	}	

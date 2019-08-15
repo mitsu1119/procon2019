@@ -228,13 +228,13 @@ Random::Random(){
 Random::~Random(){
 }
 
-void Random::mineMove(Field* field){
+void Random::mineMove(Field& field){
 	std::random_device rnd;
 	std::mt19937 mt(rnd());
 	std::uniform_int_distribution<> rand(0, DIRECTION_SIZE - 3);
 	uint_fast32_t val = 0;
 	Direction buf;
-	for(auto &i: field->agents) {
+	for(auto &i: field.agents) {
 		if(i.getAttr() == MINE_ATTR){
 RE_CONSIDER:
 			if(val > 100){
@@ -242,7 +242,7 @@ RE_CONSIDER:
 				return;
 			}
 			buf = (Direction)rand(mt);			
-			if(field->canMove(i, buf))
+			if(field.canMove(i, buf))
 				i.move(buf);
 			else{
 				val++;
@@ -252,13 +252,13 @@ RE_CONSIDER:
 	}
 }
 
-void Random::enemyMove(Field* field){
+void Random::enemyMove(Field& field){
 	std::random_device rnd;
 	std::mt19937 mt(rnd());
 	std::uniform_int_distribution<> rand(0, DIRECTION_SIZE - 3);
 	uint_fast32_t val = 0;
 	Direction buf;
-	for(auto &i: field->agents) {
+	for(auto &i: field.agents) {
 		if(i.getAttr() == ENEMY_ATTR){
 RE_CONSIDER:
 			if(val > 100){
@@ -266,7 +266,7 @@ RE_CONSIDER:
 				return;
 			}
 			buf = (Direction)rand(mt);			
-			if(field->canMove(i, buf))
+			if(field.canMove(i, buf))
 				i.move(buf);
 			else{
 				val++;
@@ -277,9 +277,11 @@ RE_CONSIDER:
 }
 
 void Random::move(Field *field, uint_fast32_t attr){
+	Field obj = static_cast<Field> (*field);
 	if(attr == MINE_ATTR)
-		this->mineMove(field);
+		this->mineMove(obj);
 	else
-		this->enemyMove(field);
+		this->enemyMove(obj);
+	*field = obj;
 }
 
