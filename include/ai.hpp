@@ -12,7 +12,28 @@ private:
 public:
 	AI();
 	~AI();
-	virtual void move(Field *field)=0;
+	virtual void move(Field *field, uint_fast32_t attr) = 0;
+};
+
+class Greedy : public AI{
+private:
+	
+	std::vector<Direction> decided_direction;
+	
+public:
+	
+	Greedy();
+	~Greedy();
+	void init(const Field& field);
+	//指定したエージェントを貪欲法で動かす
+	void mineMove(Field& field);
+	void enemyMove(Field& field);
+	void singleMove(Field& field, const uint_fast32_t agent);
+	int_fast32_t nextScore(Field field, const uint_fast32_t agent, Direction direction) const;
+	void decidedMove(Field& field, uint_fast32_t attr) const;
+	//エージェントの移動
+	void move(Field *field, uint_fast32_t attr) override;
+	
 };
 
 enum Status{
@@ -45,9 +66,7 @@ public:
 	
 };
 
-
-
-class AstarMine : public AI{
+class Astar : public AI{
 private:
 	
 	//何個目まで探索をかけるか？
@@ -57,10 +76,8 @@ private:
 	static const uint_fast32_t score_weight = 3;
 	//盤の平均値
 	int_fast32_t average_score;
-
-	//方向を表すベクター
-	std::vector<int> vec_x={0,1,1,1,0,-1,-1,-1,0};
-	std::vector<int> vec_y={-1,-1,0,1,1,1,0,-1,0};
+	//貪欲法
+	Greedy greedy;
 	
 private:
 	
@@ -82,8 +99,7 @@ private:
 	std::vector<std::vector<Direction>> decided_direction;
 
 private:
-	//指定したエージェントを貪欲法で動かす
-	void greedyMove(Field& field, const uint_fast32_t agent);
+	
 	//指定したエージェントを確定方向で動かす	
 	void decidedMove(Field& field, const uint_fast32_t agent);
 
@@ -106,38 +122,21 @@ private:
 	
 public:
 	
-	AstarMine();
-	~AstarMine();
+	Astar();
+	~Astar();
 	
-	//探索の準備
 	void init(const Field& field);
-	//エージェントの移動
-	void move(Field *field) override;
-	//表示
+	void move(Field *field, uint_fast32_t attr) override;
 	void print() const;
 	
 };
 
-class AstarEnemy : public AI{
+class Random : public AI{
 private:
 public:
-	AstarEnemy();
-	~AstarEnemy();
-	void move(Field *field) override;
-};
-
-class RandomMine : public AI{
-private:
-public:
-	RandomMine();
-	~RandomMine();
-	void move(Field *field) override;
-};
-
-class RandomEnemy : public AI{
-private:
-public:
-	RandomEnemy();
-	~RandomEnemy();
-	void move(Field *field) override;
+	Random();
+	~Random();
+	void mineMove(Field* field);
+	void enemyMove(Field* field);
+	void move(Field *field, uint_fast32_t attr) override;
 };

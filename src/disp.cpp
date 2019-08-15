@@ -3,21 +3,15 @@
 // ---------------------------------------- DisplayWrapper ----------------------------------------
 
 DisplayWrapper::DisplayWrapper(){
-	mine = new RandomMine();
-  enemy = new RandomEnemy();
-
-	
-	astar = new AstarMine();
-
-	
+	random = new Random();
+	astar = new Astar();
 }
 
 DisplayWrapper::~DisplayWrapper(){
 	delete instance;
 	delete field;
-	delete mine;
-	delete enemy;
-
+	
+	delete random;
 	delete astar;
 }
 
@@ -281,8 +275,8 @@ void Display::keyboard(unsigned char key, int x, int y){
 		break;
 	case 'm':
 	case 'M':
-		mine->move(this->field);
-		enemy->move(this->field);
+		this->random->move(this->field, MINE_ATTR);
+		this->random->move(this->field, ENEMY_ATTR);
 		field->applyNextAgents();		
 		this->makePossibleList();
 		this->field->print();
@@ -300,10 +294,9 @@ void Display::keyboard(unsigned char key, int x, int y){
 		//実験用
 	case 't':
 	case 'T':
-
-		//this->field->genRandMap();
-		astar->move(this->field);
-
+		this->field->genRandMap();
+		this->astar->move(this->field, MINE_ATTR);
+		this->astar->move(this->field, MINE_ATTR);
 		glutPostRedisplay();
 		
 		break;

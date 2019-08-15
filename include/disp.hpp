@@ -33,10 +33,8 @@ public:
 	static const unsigned int cell_size=30;
 	
 	Field* field;
-	
-	AI* mine;
-	AI* enemy;
 
+	AI* random;
 	AI* astar;
 
 	DisplayWrapper();

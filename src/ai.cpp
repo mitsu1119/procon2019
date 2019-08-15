@@ -18,44 +18,73 @@ const double Node::getScore() const{
 	return this->moveCost + this->stateCost + this->heuristic;
 }
 
-//----------------A*algorithm--------------
-AstarMine::AstarMine(){
+//----------------Greedy--------------
+
+Greedy::Greedy(){	
 }
 
-AstarMine::~AstarMine(){
+Greedy::~Greedy(){	
 }
 
-void AstarMine::init(const Field& field){
+void Greedy::init(const Field& field){
+	this->decided_direction.clear();
+	this->decided_direction.resize(field.agents.size());
+	std::fill(this->decided_direction.begin(), this->decided_direction.end(), EMPTY);
+}
+
+void Greedy::mineMove(Field& field){
 	
 }
 
-void AstarMine::greedyMove(Field& field, const uint_fast32_t agent){
-
-	//修正必須
-	if(agent >= field.agents.size())
-		return;
-	int_fast32_t x, y, buf, max = -100;
-	Direction dir;
-	for(size_t i = 0; i < DIRECTION_SIZE - 1; i++){
-		if(field.canMove(field.agents.at(agent), (Direction)i)){
-			x = field.agents.at(agent).getX() + this->vec_x.at(i);
-			y = field.agents.at(agent).getY() + this->vec_y.at(i);
-			buf = field.at(x, y)->getValue();
-			if(buf > max){
-				max = buf;
-				dir = (Direction)i;
-			}
-		}
-	}
-	if(max == -100){
-		field.agents.at(agent).move(STOP);
-		return;
-	}
-	if(field.canMove(field.agents.at(agent), dir))
-		field.agents.at(agent).move(dir);
+void Greedy::enemyMove(Field& field){
+	
 }
 
-void AstarMine::decidedMove(Field& field, const uint_fast32_t agent){
+void Greedy::singleMove(Field& field, const uint_fast32_t agent){
+	int_fast32_t max = -100, value;
+	Direction direction = STOP;
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++){
+		value = this->nextScore(field, agent, (Direction)i);
+		if(value > max){
+			max = value;
+			direction = (Direction)i;
+		}
+	}
+	field.agents.at(agent).move(direction);
+	this->decided_direction.at(agent) = direction;
+}
+
+int_fast32_t Greedy::nextScore(Field field, const uint_fast32_t agent, Direction direction) const{
+	if(agent >= field.agents.size())
+		return -1;
+	field.agents.at(agent).move(direction);
+	if(field.agents.at(agent).getAttr() == MINE_ATTR)
+		return field.calcMinepanelScore() - field.calcMinepanelScore();
+	else
+		return field.calcMinepanelScore() - field.calcMinepanelScore();
+	return -1;
+}
+
+void Greedy::decidedMove(Field& field, uint_fast32_t attr) const{
+	
+}
+
+void Greedy::move(Field *field, uint_fast32_t attr){
+	
+}
+
+//----------------A*algorithm--------------
+Astar::Astar(){
+}
+
+Astar::~Astar(){
+}
+
+void Astar::init(const Field& field){
+	
+}
+
+void Astar::decidedMove(Field& field, const uint_fast32_t agent){
 	
 }
 
@@ -97,7 +126,8 @@ void AstarMine::sortSearchTargetList(Field field, const uint_fast32_t agent){
 }
 */
 
-void AstarMine::setAverageScore(const Field& field){
+
+void Astar::setAverageScore(const Field& field){
 	int val = 0, buf = 0;
 	for(size_t i = 0; i < field.getHeight(); i++) {
 		for(size_t j = 0; j < field.getWidth(); j++) {
@@ -108,7 +138,7 @@ void AstarMine::setAverageScore(const Field& field){
 	this->average_score = buf / val;
 }
 
-void AstarMine::setSearchTargetList(Field field, const uint_fast32_t agent){
+void Astar::setSearchTargetList(Field field, const uint_fast32_t agent){
 	std::vector<std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>> condidate_list;
 	int_fast32_t value;
 	if(agent >= field.agents.size())
@@ -136,9 +166,11 @@ void AstarMine::setSearchTargetList(Field field, const uint_fast32_t agent){
 	
 }
 
-int_fast32_t AstarMine::selectGoalCondidate(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> coord){
+int_fast32_t Astar::selectGoalCondidate(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> coord){
 	int_fast32_t value;
 	double heuristic;
+	if(agent >= field.agents.size());
+		return -1;
 	if(field.agents.at(agent).getX() == coord.first && field.agents.at(agent).getY() == coord.second)
 		return -1;
 	if(this->isDecidedRoute(field, agent, coord))
@@ -150,7 +182,10 @@ int_fast32_t AstarMine::selectGoalCondidate(Field field, const uint_fast32_t age
 	return value;
 }
 
-bool AstarMine::isDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> coord){
+bool Astar::isDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> coord){
+	if(agent >= field.agents.size())
+		return false;
+
 	if(this->decided_route.empty())
 		return false;
 	
@@ -165,42 +200,38 @@ bool AstarMine::isDecidedRoute(Field field, const uint_fast32_t agent, const std
 	return false;
 }
 
-const uint_fast32_t AstarMine::heuristicCost(std::pair<uint_fast32_t, uint_fast32_t> coord, std::pair<uint_fast32_t, uint_fast32_t> goal) const{
+const uint_fast32_t Astar::heuristicCost(std::pair<uint_fast32_t, uint_fast32_t> coord, std::pair<uint_fast32_t, uint_fast32_t> goal) const{
 	const uint_fast32_t dx = std::abs((int_fast32_t)(goal.first - coord.first));
 	const uint_fast32_t dy = std::abs((int_fast32_t)(goal.second - coord.second));
 	const double distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
 	return distance;
 }
 
-const double AstarMine::estimeteMoveCost(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal) const{
+const double Astar::estimeteMoveCost(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal) const{
 	
 }
 
-void AstarMine::move(Field *field){
-	Field fields = static_cast<Field> (*field);
-	for(size_t i = 0; i < fields.agents.size(); i++)
-		this->greedyMove(fields, i);
-	fields.applyNextAgents();		
-	*field = fields;
+void Astar::move(Field *field, uint_fast32_t attr){
+	Field obj = static_cast<Field> (*field);
 	//this->setAverageScore(fields);
 	//this->setSearchTargetList(fields, 0);
 }
 
-void AstarMine::print() const{
+void Astar::print() const{
 	
 }
 
 //----------------Random--------------
-RandomMine::RandomMine(){
+Random::Random(){
 }
 
-RandomMine::~RandomMine(){
+Random::~Random(){
 }
 
-void RandomMine::move(Field *field){
-	std::random_device rnd;  
+void Random::mineMove(Field* field){
+	std::random_device rnd;
 	std::mt19937 mt(rnd());
-	std::uniform_int_distribution<> rand(0, DIRECTION_SIZE - 2);
+	std::uniform_int_distribution<> rand(0, DIRECTION_SIZE - 3);
 	uint_fast32_t val = 0;
 	Direction buf;
 	for(auto &i: field->agents) {
@@ -221,16 +252,10 @@ RE_CONSIDER:
 	}
 }
 
-RandomEnemy::RandomEnemy(){
-}
-
-RandomEnemy::~RandomEnemy(){
-}
-
-void RandomEnemy::move(Field *field){
+void Random::enemyMove(Field* field){
 	std::random_device rnd;
 	std::mt19937 mt(rnd());
-	std::uniform_int_distribution<> rand(0, DIRECTION_SIZE - 2);
+	std::uniform_int_distribution<> rand(0, DIRECTION_SIZE - 3);
 	uint_fast32_t val = 0;
 	Direction buf;
 	for(auto &i: field->agents) {
@@ -240,7 +265,7 @@ RE_CONSIDER:
 				i.move(STOP);
 				return;
 			}
-			buf = (Direction)rand(mt);
+			buf = (Direction)rand(mt);			
 			if(field->canMove(i, buf))
 				i.move(buf);
 			else{
@@ -250,3 +275,11 @@ RE_CONSIDER:
 		}
 	}
 }
+
+void Random::move(Field *field, uint_fast32_t attr){
+	if(attr == MINE_ATTR)
+		this->mineMove(field);
+	else
+		this->enemyMove(field);
+}
+
