@@ -36,6 +36,7 @@ public:
 
 	AI* random;
 	AI* astar;
+	AI* greedy;
 
 	DisplayWrapper();
 	virtual ~DisplayWrapper();

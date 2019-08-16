@@ -7,45 +7,61 @@
 class Agent;
 class Field;
 
+class MoveLogMonitoring{
+private:
+	
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t> move_log;
+	
+public:
+	
+	MoveLogMonitoring();
+	~MoveLogMonitoring();
+	
+}
+
 class AI{
 private:
 public:
+	
+	std::vector<int> vec_x={0,1,1,1,0,-1,-1,-1,0};
+	std::vector<int> vec_y={-1,-1,0,1,1,1,0,-1,0};
+	
+public:
+	
 	AI();
 	~AI();
 	virtual void move(Field *field, uint_fast32_t attr) = 0;
+	
 };
 
 class Greedy : public AI{
 private:
 	
-	std::vector<Direction> decided_direction;
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 	
 public:
 	
 	Greedy();
 	~Greedy();
-	void init(const Field& field);
-	//指定したエージェントを貪欲法で動かす
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
 	void singleMove(Field& field, const uint_fast32_t agent);
 	int_fast32_t nextScore(Field field, const uint_fast32_t agent, Direction direction) const;
-	void decidedMove(Field& field, uint_fast32_t attr) const;
 	//エージェントの移動
 	void move(Field *field, uint_fast32_t attr) override;
 	
-};
-
-enum Status{
-NONE,
-OPEN,
-CLOSED
 };
 
 //各座標の状況を表すクラス
 class Node{
 private:
 public:
+
+	enum Status{
+		NONE,
+		OPEN,
+		CLOSED
+	};
 	
 	Node();
 	~Node();

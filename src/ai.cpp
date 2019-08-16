@@ -7,17 +7,6 @@ AI::AI(){
 AI::~AI(){
 }
 
-//----------------Node--------------
-Node::Node(){
-}
-
-Node::~Node(){
-}
-
-const double Node::getScore() const{
-	return this->moveCost + this->stateCost + this->heuristic;
-}
-
 //----------------Greedy--------------
 
 Greedy::Greedy(){	
@@ -26,24 +15,29 @@ Greedy::Greedy(){
 Greedy::~Greedy(){	
 }
 
-void Greedy::init(const Field& field){
-	this->decided_direction.clear();
-	this->decided_direction.resize(field.agents.size());
-	std::fill(this->decided_direction.begin(), this->decided_direction.end(), EMPTY);
-}
-
 void Greedy::mineMove(Field& field){
-	
+	this->decided_coord.clear();
+	for(size_t i =0; i < field.agents.size(); i++)
+		if(field.agents.at(i).getAttr() == MINE_ATTR)
+			this->singleMove(field, i);
 }
 
 void Greedy::enemyMove(Field& field){
-	
+	this->decided_coord.clear();
+	for(size_t i =0; i < field.agents.size(); i++)
+		if(field.agents.at(i).getAttr() == ENEMY_ATTR)
+			this->singleMove(field, i);
 }
 
 void Greedy::singleMove(Field& field, const uint_fast32_t agent){
-	int_fast32_t max = -100, value;
+	int_fast32_t max = 0, value = -1000;
 	Direction direction = STOP;
-	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++){
+	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
+		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), std::make_pair(field.agents.at(agent).getX() + this->vec_x.at(i), field.agents.at(agent).getY() + this->vec_y.at(i)));
+		if(result != this->decided_coord.end())
+			continue;
+		if(!field.canMove(field.agents.at(agent), (Direction)i))
+			continue;
 		value = this->nextScore(field, agent, (Direction)i);
 		if(value > max){
 			max = value;
@@ -51,26 +45,49 @@ void Greedy::singleMove(Field& field, const uint_fast32_t agent){
 		}
 	}
 	field.agents.at(agent).move(direction);
-	this->decided_direction.at(agent) = direction;
+	this->decided_coord.push_back(std::make_pair(field.agents.at(agent).getX() + this->vec_x.at(direction), field.agents.at(agent).getY() + this->vec_y.at(direction)));
 }
 
 int_fast32_t Greedy::nextScore(Field field, const uint_fast32_t agent, Direction direction) const{
 	if(agent >= field.agents.size())
 		return -1;
-	field.agents.at(agent).move(direction);
+	
+	std::for_each(field.agents.begin(), field.agents.end(), [&, this](auto& a){
+			a.move(STOP);
+		});
+	if(field.canMove(field.agents.at(agent), direction))
+		field.agents.at(agent).move(direction);
+	field.applyNextAgents();
+	
 	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		return field.calcMinepanelScore() - field.calcMinepanelScore();
+		return field.calcMinepanelScore() - field.calcEnemypanelScore();
+		//return field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
 	else
-		return field.calcMinepanelScore() - field.calcMinepanelScore();
+		return field.calcEnemypanelScore() - field.calcMinepanelScore();
+		//return field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
+	
 	return -1;
 }
 
-void Greedy::decidedMove(Field& field, uint_fast32_t attr) const{
-	
+void Greedy::move(Field *field, uint_fast32_t attr){
+	Field obj = static_cast<Field> (*field);
+	if(attr == MINE_ATTR)
+		this->mineMove(obj);
+	else
+		this->enemyMove(obj);
+	*field = obj;
 }
 
-void Greedy::move(Field *field, uint_fast32_t attr){
-	
+//----------------Node--------------
+Node::Node(){
+}
+
+Node::~Node(){
+	delete parent;
+}
+
+const double Node::getScore() const{
+	return this->moveCost + this->stateCost + this->heuristic;
 }
 
 //----------------A*algorithm--------------

@@ -5,6 +5,7 @@
 DisplayWrapper::DisplayWrapper(){
 	random = new Random();
 	astar = new Astar();
+	greedy = new Greedy();
 }
 
 DisplayWrapper::~DisplayWrapper(){
@@ -13,9 +14,10 @@ DisplayWrapper::~DisplayWrapper(){
 	
 	delete random;
 	delete astar;
+	delete greedy;
 }
 
-DisplayWrapper* DisplayWrapper::instance=0;
+DisplayWrapper* DisplayWrapper::instance = 0;
 
 void DisplayWrapper::init(){
 	instance->initInstance();
@@ -189,7 +191,7 @@ void DisplayWrapper::renderString(float x, float y, const std::string& str) cons
 Display::Display() : flag(0) ,mine_flag(0), enemy_flag(0) {
 }
 
-Display::~Display(){	
+Display::~Display(){
 }
 
 void Display::makePossibleList(){
@@ -213,8 +215,6 @@ void Display::makePossibleList(){
 			this->possible_list.push_back(possible);
 			possible.clear();
 		});
-	//this->next_list.clear();
-	//this->next_list.resize(this->field->agents.size());
 	std::fill(this->next_list.begin(), this->next_list.end(), STOP);
 	this->mine_flag=0;
 	this->enemy_flag=0;
@@ -290,8 +290,8 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'g':
 	case 'G':
 		
-		this->makePossibleList();
 		this->moveNextList();
+		this->makePossibleList();
 		this->field->print();
 		glutPostRedisplay();
 		break;
@@ -300,11 +300,21 @@ void Display::keyboard(unsigned char key, int x, int y){
 		//実験用
 	case 't':
 	case 'T':
+
+		this->field->print();
+		glutPostRedisplay();
 		
-		this->field->genRandMap();
-		this->astar->move(this->field, MINE_ATTR);
-		this->astar->move(this->field, MINE_ATTR);
-		glutPostRedisplay();		
+		this->greedy->move(this->field, MINE_ATTR);
+		this->random->move(this->field, ENEMY_ATTR);
+		//this->greedy->move(this->field, ENEMY_ATTR);
+		this->makePossibleList();
+		this->field->applyNextAgents();
+		
+		//this->field->genRandMap();
+		
+		///this->astar->move(this->field, MINE_ATTR);
+		//this->astar->move(this->field, MINE_ATTR);
+
 		break;
 		
 	default:
