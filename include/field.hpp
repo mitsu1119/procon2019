@@ -22,6 +22,19 @@ class Agent;
 class Display;
 class DisplayWrapper;
 
+class MoveLog {
+private:
+	
+	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> move_log;
+	
+public:
+	
+	MoveLog();
+	~MoveLog();
+	void set(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
+	
+};
+
 /*
  * Panel 一つ一つの情報を管理するクラス
  */

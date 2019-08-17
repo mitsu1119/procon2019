@@ -7,6 +7,7 @@
 class Agent;
 class Field;
 
+/*
 class MoveLogMonitoring{
 private:
 	
@@ -20,6 +21,7 @@ public:
 	void setLog(const uint_fast32_t agent, const Direction direction);
 	bool isPossible(const uint_fast32_t agent, const Direction direction) const;
 };
+*/
 
 class AI{
 private:
@@ -49,7 +51,6 @@ public:
 	void enemyMove(Field& field);
 	void singleMove(Field& field, const uint_fast32_t agent);
 	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
-	//エージェントの移動
 	void move(Field *field, const uint_fast32_t attr) override;
 	
 };

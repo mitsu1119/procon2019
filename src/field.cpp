@@ -146,12 +146,12 @@ void Field::genRandMap() {
 		}
 	}
 	
-	int val=0;
+	int count=0;
 	
 	for(int i=0;i<this->height;i++){
 		for(int j=0;j<this->width;j++){
-			this->setPanelScore(j, i, field_rand.at(val));
-			val++;
+			this->setPanelScore(j, i, field_rand.at(count));
+			count++;
 		}
 	}
 }
@@ -296,6 +296,9 @@ int_fast32_t Field::calcEnemypanelScore() {
 bool Field::isPanelMineBetween(uint_fast32_t x, uint_fast32_t y) {
 	int_fast32_t buf = 0;
 	
+	// For over flow
+	if(x == 0 || y == 0 || x == width - 1 || y == height - 1) return false;
+
 	// left
 	for(size_t i = x-1; i >= 0; i--) {
 		if(this->at(i, y)->isMyPanel()) {
@@ -336,6 +339,9 @@ bool Field::isPanelMineBetween(uint_fast32_t x, uint_fast32_t y) {
 
 bool Field::isPanelEnemyBetween(uint_fast32_t x, uint_fast32_t y) {
 	int_fast32_t buf = 0;
+	
+	// For over flow
+	if(x == 0 || y == 0 || x == width - 1 || y == height - 1) return false;
 	
 	// left
 	for(size_t i = x-1; i >= 0; i--) {
@@ -382,12 +388,13 @@ bool Field::checkLocalArea(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr)
 
 int_fast32_t Field::calcMineScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree) {
 	int_fast32_t totalscore = 0, score;
-	bool check;
+	bool check, test;
 
 	for(const auto &[key, vec]: pureTree) {
 		check = true;
 		score = 0;
 		for(auto pn: vec) {
+			test = checkLocalArea(indexX(pn), indexY(pn), MINE_ATTR);
 			if(!checkLocalArea(indexX(pn), indexY(pn), MINE_ATTR)) {
 				check = false;
 				break;

@@ -1,12 +1,5 @@
 #include "ai.hpp"
 
-//----------------MoveLogMonitoring--------------
-MoveLogMonitoring::MoveLogMonitoring(){
-}
-
-MoveLogMonitoring::~MoveLogMonitoring(){
-}
-
 //----------------AI--------------
 AI::AI(){
 }
@@ -58,24 +51,13 @@ void Greedy::singleMove(Field& field, const uint_fast32_t agent){
 int_fast32_t Greedy::nextScore(Field field, const uint_fast32_t agent, const Direction direction) const{
 	if(agent >= field.agents.size())
 		return -1;
-
-	/*
-	std::for_each(field.agents.begin(), field.agents.end(), [&, this](auto& a){
-			a.move(STOP);
-		});
-	*/
-	
 	if(field.canMove(field.agents.at(agent), direction))
 		field.agents.at(agent).move(direction);
 	field.applyNextAgents();
-	
 	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		return field.calcMinepanelScore() - field.calcEnemypanelScore();
-		//return field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
+		return field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
 	else
-		return field.calcEnemypanelScore() - field.calcMinepanelScore();
-		//return field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
-	
+		return field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
 	return -1;
 }
 
