@@ -16,17 +16,6 @@ int main(int argc, char *argv[]) {
 	test->start(argc, argv);
 
 	delete test;
-	
-	/*
-	Field test(10, 15);
-
-	test.print();	
-
-	for(size_t i = 0; i < 20; i++) {
-		test.testMoveAgent();
-		test.print();
-	}
-	*/
 
 	return 0;
 }
