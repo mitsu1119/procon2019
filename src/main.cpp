@@ -14,7 +14,6 @@ int main(int argc, char *argv[]) {
 	framework->setField(&field);
 	framework->setInstance(framework);
 	framework->start(argc, argv);
-
 	delete framework;
 	
 	return 0;

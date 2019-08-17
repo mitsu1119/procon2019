@@ -10,14 +10,16 @@ class Field;
 class MoveLogMonitoring{
 private:
 	
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t> move_log;
+	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> move_log;
 	
 public:
 	
 	MoveLogMonitoring();
 	~MoveLogMonitoring();
-	
-}
+	void init(const Field& field);
+	void setLog(const uint_fast32_t agent, const Direction direction);
+	bool isPossible(const uint_fast32_t agent, const Direction direction) const;
+};
 
 class AI{
 private:
@@ -30,7 +32,7 @@ public:
 	
 	AI();
 	~AI();
-	virtual void move(Field *field, uint_fast32_t attr) = 0;
+	virtual void move(Field *field, const uint_fast32_t attr) = 0;
 	
 };
 
@@ -46,9 +48,9 @@ public:
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
 	void singleMove(Field& field, const uint_fast32_t agent);
-	int_fast32_t nextScore(Field field, const uint_fast32_t agent, Direction direction) const;
+	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
 	//エージェントの移動
-	void move(Field *field, uint_fast32_t attr) override;
+	void move(Field *field, const uint_fast32_t attr) override;
 	
 };
 
@@ -142,7 +144,9 @@ public:
 	~Astar();
 	
 	void init(const Field& field);
-	void move(Field *field, uint_fast32_t attr) override;
+	void mineMove(Field& field);
+	void enemyMove(Field& field);
+	void move(Field *field, const uint_fast32_t attr) override;
 	void print() const;
 	
 };
@@ -154,5 +158,5 @@ public:
 	~Random();
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
-	void move(Field *field, uint_fast32_t attr) override;
+	void move(Field *field, const uint_fast32_t attr) override;
 };

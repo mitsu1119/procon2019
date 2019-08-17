@@ -8,9 +8,67 @@
 #include "field.hpp"
 #include "ai.hpp"
 
-class Display;
+constexpr uint_fast32_t cell_size  = 30;
 class Field;
 
+const std::vector<int> vec_x = {0, 1, 1, 1, 0, -1, -1, -1, 0};
+const std::vector<int> vec_y = {-1, -1, 0, 1, 1, 1, 0, -1, 0};
+
+
+class Print{
+private:
+
+	static const uint_fast32_t half = cell_size / 2;
+	static const uint_fast32_t line_size  = 1;
+	static const uint_fast32_t panel_size = 30;
+	static const uint_fast32_t agent_size = 15;
+
+private:
+
+	void renderString(float x, float y, const std::string& str) const;
+	
+public:
+
+	Print();
+	~Print();
+
+	void line(const Field* field) const;
+	void score(const Field* field) const;
+	void panel(const Field* field) const;
+	void agent(Field* field) const;
+	void agentNum(Field* field) const;
+	void point(const Field* field) const;
+	void candidate(Field* field, const std::vector<Direction>& next_list) const;
+
+	virtual void print(Field* field, const std::vector<Direction> next_list) = 0;
+	virtual void print(Field* field) = 0;
+	
+};
+
+class PrintDisplay : public Print{
+private:
+public:
+	
+	PrintDisplay();
+	~PrintDisplay();
+	
+	void print(Field* field, const std::vector<Direction> next_list) override;
+	void print(Field* field) override;
+};
+
+class PrintSelfDirectedGame : public Print{
+private:
+public:
+	
+	PrintSelfDirectedGame();
+	~PrintSelfDirectedGame();
+	
+	void print(Field* field, const std::vector<Direction> next_list) override;
+	void print(Field* field) override;
+	
+};
+
+class Display;
 class AI;
 class RandomMine;
 class RandomEnemy;
@@ -19,21 +77,16 @@ class DisplayWrapper{
 private:
 
 	static DisplayWrapper* instance;
-	static const unsigned int window_width_size=800;
-	static const unsigned int window_height_size=800;
-	static const unsigned int window_width_position=100;
-	static const unsigned int window_height_position=100;
-
-	static const unsigned int line_size=1;
-	static const unsigned int panel_size=30;
+	static const unsigned int window_width_size  = 800;
+	static const unsigned int window_height_size = 800;
+	static const unsigned int window_width_position  = 100;
+	static const unsigned int window_height_position = 100;
 
 public:
 
-	static const unsigned int agent_size=15;
-	static const unsigned int cell_size=30;
-	
 	Field* field;
-
+	Print* print;
+	
 	AI* random;
 	AI* astar;
 	AI* greedy;
@@ -44,7 +97,6 @@ public:
 	void init();
 	void start(int argc, char *argv[]);
 	void setField(Field* object);
-	//	void reverseBoard(Field& field);
 	
 	static void resizeWrapper(int w, int h);
 	static void displayWrapper();
@@ -54,37 +106,33 @@ public:
 	static void motionWrapper(int x, int y);
 	static void setInstance(DisplayWrapper* framework);
 
-	virtual void initInstance()=0;
-	virtual void resize(int w, int h)=0;
-	virtual void display()=0;
-	virtual void keyboard(unsigned char key, int x, int y)=0;
-	virtual void specialKeyboard(int key, int x, int y)=0;
-	virtual void mouse(int button, int state, int x, int y)=0;
-	virtual void motion(int x, int y)=0;
-
-	void line() const;
-	void score() const;
-	void panel() const;
-	void agent() const;
-	void point() const;
- 	void renderString(float x, float y, const std::string& str) const;
-
+	virtual void initInstance() = 0;
+	virtual void resize(int w, int h) = 0;
+	virtual void display() = 0;
+	virtual void keyboard(unsigned char key, int x, int y) = 0;
+	virtual void specialKeyboard(int key, int x, int y) = 0;
+	virtual void mouse(int button, int state, int x, int y) = 0;
+	virtual void motion(int x, int y) = 0;
+	
 };
 
 class Display : public DisplayWrapper{
 private:
 	
-	std::vector<std::vector<std::pair<int, int>>> possible_list;
+	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> possible_list;
 	std::vector<Direction> next_list;
 
-	//flag==0:mineの入力 flag==1:enemyの入力
-	unsigned int flag;
-	unsigned int mine_flag;
-	unsigned int enemy_flag;
+	//flag==false:mineの入力 flag==true:enemyの入力
+	bool flag;
+	uint_fast32_t mine_flag;
+	uint_fast32_t enemy_flag;
 
 	void makePossibleList();
 	void moveNextList();
-	void candidate() const;
+	void selectAgent(uint_fast32_t x, uint_fast32_t y);
+	void selectDirection(uint_fast32_t x, uint_fast32_t y);
+	void init();
+	const bool isOutOfRange(int button, int state, int x, int y) const;
 	
 public:
 

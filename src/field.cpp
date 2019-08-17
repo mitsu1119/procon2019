@@ -80,6 +80,10 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 		setPanelAttr(i.getX(), i.getY(), i.getAttr());
 	}
 
+	//とりあえずSTOPにセット
+	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
+			a.move(STOP);
+		});
 }
 
 uint_fast32_t Field::xyIndex(uint_fast32_t x, uint_fast32_t y) {
@@ -186,6 +190,11 @@ void Field::applyNextAgents() {
 			this->canmoveAgents[i] = true;
 		}
 	}
+
+	//とりあえずSTOPにセット
+	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
+			a.move(STOP);
+		});
 }
 
 UF Field::makePureTreeMine() {
