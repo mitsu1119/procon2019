@@ -1,5 +1,24 @@
 #include "field.hpp"
 
+// ---------------------------------------- MoveLog ----------------------------------------
+MoveLog::MoveLog(){
+}
+
+MoveLog::~MoveLog(){
+}
+
+void MoveLog::init(const Field& field){
+	
+}
+
+void MoveLog::set(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord){
+	
+}
+
+bool MoveLog::repetitionOfMoves(const uint_fast32_t agent, const Direction direction) const{
+	
+}
+
 // ---------------------------------------- Panel ----------------------------------------
 
 Panel::Panel():value(0) {

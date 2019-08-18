@@ -7,22 +7,6 @@
 class Agent;
 class Field;
 
-/*
-class MoveLogMonitoring{
-private:
-	
-	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> move_log;
-	
-public:
-	
-	MoveLogMonitoring();
-	~MoveLogMonitoring();
-	void init(const Field& field);
-	void setLog(const uint_fast32_t agent, const Direction direction);
-	bool isPossible(const uint_fast32_t agent, const Direction direction) const;
-};
-*/
-
 class AI{
 private:
 public:
@@ -88,30 +72,25 @@ public:
 class Astar : public AI{
 private:
 	
-	//何個目まで探索をかけるか？
-	static const uint_fast16_t search_depth = 15;
-	//重さ
+	//何個目まで探索
+	static const uint_fast16_t search_depth     = 15;
+	static const uint_fast16_t expect_distance  = 4;
 	static const uint_fast32_t heuristic_weight = 3;
-	static const uint_fast32_t score_weight = 3;
-	//盤の平均値
+	static const uint_fast32_t move_weight      = 3;
+	
 	int_fast32_t average_score;
-	//貪欲法
 	Greedy greedy;
 	
 private:
-	
+
 	//探索かけるたびにクリアする
 	//各座標の状況を格納するリスト
-	std::vector<std::vector<Node>> node;
-	//ノードと対にして予測盤情報を格納するリスト
-	std::vector<std::vector<Field>> forecast_field;
-	
-	//ゴールの候補リスト
-	//std::vector<std::pair<uint_fast32_t, uint_fast32_t>> goal_condidate_list;
+	//std::vector<std::vector<Node>> node;
+	//一次元で表す
+	std::vector<Node> node;
 	
 	//探索対象リスト
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> search_target_list;
-	
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> search_target;	
 	//確定ルートリスト
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> decided_route;
 	//確定方向リスト
@@ -119,25 +98,23 @@ private:
 
 private:
 	
-	//指定したエージェントを確定方向で動かす	
 	void decidedMove(Field& field, const uint_fast32_t agent);
 
 private:
 	
 	//ゴール候補の選定
 	void setAverageScore(const Field& field);
-	void setSearchTargetList(Field field, const uint_fast32_t agent);
-	int_fast32_t selectGoalCondidate(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> coord);
-	bool isDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> coord);
+	void setSearchTarget(Field field, const uint_fast32_t agent);
+	int_fast32_t goalEvaluation(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+	//ゴール選定用の評価関数関連
+	const bool expectTarget(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+  const bool isOnDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const bool anotherDistance(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const uint_fast32_t whosePanel(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
-	
-	//void setGoalCondidateList(const Field& field);
-	//void sortSearchTargetList(Field field, const uint_fast32_t agent);
-
-		//ヒューリスティックコスト（推定コスト）の計算
-	const uint_fast32_t heuristicCost(const std::pair<uint_fast32_t, uint_fast32_t> coord, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
-	//A*による推定移動コスト
-	const double estimeteMoveCost(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
+	//評価値関連
+	const uint_fast32_t heuristic(const std::pair<uint_fast32_t, uint_fast32_t> coord, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
+	const double search(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
 	
 public:
 	

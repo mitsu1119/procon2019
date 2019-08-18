@@ -385,17 +385,17 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 't':
 	case 'T':
 
+		//this->greedy->move(this->field, MINE_ATTR);
+		//this->random->move(this->field, ENEMY_ATTR);
+		//this->greedy->move(this->field, ENEMY_ATTR);
+		//this->field->genRandMap();
+		this->astar->move(this->field, MINE_ATTR);
+		//this->astar->move(this->field, MINE_ATTR);
+		
+		this->field->applyNextAgents();
+		this->makePossibleList();
 		this->field->print();
 		glutPostRedisplay();
-		
-		this->greedy->move(this->field, MINE_ATTR);
-		this->random->move(this->field, ENEMY_ATTR);
-		//this->greedy->move(this->field, ENEMY_ATTR);
-		this->makePossibleList();
-		this->field->applyNextAgents();
-		//this->field->genRandMap();
-		///this->astar->move(this->field, MINE_ATTR);
-		//this->astar->move(this->field, MINE_ATTR);
 		break;
 		
 	default:

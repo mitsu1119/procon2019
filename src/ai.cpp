@@ -89,111 +89,71 @@ Astar::Astar(){
 Astar::~Astar(){
 }
 
-void Astar::init(const Field& field){
-	
-}
-
 void Astar::decidedMove(Field& field, const uint_fast32_t agent){
 	
 }
 
-/*
-void AstarMine::setGoalCondidateList(const Field& field){
-	this->goal_condidate_list.clear();
-	for(size_t i = 0; i < field.getHeight(); i++) {
-		for(size_t j = 0; j < field.getWidth(); j++) {
-			if(field.at(j, i)->getValue() > this->average_score)
-				this->goal_condidate_list.push_back(std::make_pair(j, i));
-		}
-	}
-}
-
-void AstarMine::sortSearchTargetList(Field field, const uint_fast32_t agent){
-	if(agent >= field.agents.size())
-		return;
-	this->search_target_list.clear();
-	int_fast32_t value, x, y;
-	//	double heuristic;
-	std::vector<std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>> condidate_list;
-	std::for_each(this->goal_condidate_list.begin(), this->goal_condidate_list.end(), [&, this](auto coord){
-			x = coord.first;
-			y = coord.second;
-			if(field.agents.at(agent).getX() == x && field.agents.at(agent).getY() == y)
-				return;
-			//			heuristic = this->heuristicCost(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), std::make_pair(x, y));
-			value = field.at(x, y)->getValue();
-			condidate_list.push_back(std::make_pair(value, std::make_pair(x, y)));
-		});
-	std::sort(condidate_list.rbegin(), condidate_list.rend());
-	for(size_t i = 0; i < this->search_depth; i++)
-		if(i < condidate_list.size())
-			this->search_target_list.push_back(condidate_list.at(i).second);
-	
-	std::for_each(this->search_target_list.begin(), this->search_target_list.end(), [&, this](auto& a){
-			std::cout << "(" << a.first << "," << a.second << ")" << std::endl;
-		});
-}
-*/
-
-
 void Astar::setAverageScore(const Field& field){
-	int val = 0, buf = 0;
+	int count = 0, sum = 0;
 	for(size_t i = 0; i < field.getHeight(); i++) {
 		for(size_t j = 0; j < field.getWidth(); j++) {
-			buf += field.at(j, i)->getValue();
-			val++;
+			sum += field.at(j, i)->getValue();
+			count++;
 		}
 	}
-	this->average_score = buf / val;
+	this->average_score = sum / count;
 }
 
-void Astar::setSearchTargetList(Field field, const uint_fast32_t agent){
-	std::vector<std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>> condidate_list;
-	int_fast32_t value;
+void Astar::setSearchTarget(Field field, const uint_fast32_t agent){
+	std::vector<std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>> condidate;
 	if(agent >= field.agents.size())
 		return;
-	this->search_target_list.clear();
+	this->search_target.clear();
 	for(size_t i = 0; i < field.getHeight(); i++) {
 		for(size_t j = 0; j < field.getWidth(); j++) {
-	 
-			value = this->selectGoalCondidate(field, agent, std::make_pair(j, i));
-			if(value)
-				condidate_list.push_back(std::make_pair(value, std::make_pair(j, i)));
-			
+			if(this->goalEvaluation(field, agent, std::make_pair(j, i)))
+				condidate.push_back(std::make_pair(this->goalEvaluation(field, agent, std::make_pair(j, i)), std::make_pair(j, i)));
 		}
 	}
-	std::sort(condidate_list.rbegin(), condidate_list.rend());
-	for(size_t i = 0; i < this->search_depth; i++)
-		if(i < condidate_list.size())
-			this->search_target_list.push_back(condidate_list.at(i).second);
-
-	
-	std::for_each(this->search_target_list.begin(), this->search_target_list.end(), [&, this](auto& a){
-			std::cout << "(" << a.first << "," << a.second << ")" << std::endl;
-		});
+	std::sort(condidate.rbegin(), condidate.rend());
+	for(size_t i = 0; i < this->search_depth; i++){
+		if(i >= condidate.size())
+			break;
+		this->search_target.push_back(condidate.at(i).second);
+	}
 }
 
-int_fast32_t Astar::selectGoalCondidate(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> coord){
+int_fast32_t Astar::goalEvaluation(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
 	int_fast32_t value;
 	double heuristic;
-	if(agent >= field.agents.size());
-		return -1;
-	if(field.agents.at(agent).getX() == coord.first && field.agents.at(agent).getY() == coord.second)
-		return -1;
-	if(this->isDecidedRoute(field, agent, coord))
-		return -1;
-	heuristic = this->heuristicCost(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), std::make_pair(coord.first, coord.second));
-	value = field.at(coord.first, coord.second)->getValue();
+	if(this->expectTarget(field, agent, goal))
+		return false;
+	heuristic = this->heuristic(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), std::make_pair(goal.first, goal.second));
+	value = field.at(goal.first, goal.second)->getValue();
+
+	
 	return value;
 }
 
-bool Astar::isDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> coord){
+const bool Astar::expectTarget(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
 	if(agent >= field.agents.size())
-		return false;
-	if(this->decided_route.empty())
-		return false;
-	for(size_t i = 0; i < field.getWidth(); i++){
-		if(this->decided_route.at(i).empty())
+		return true;
+	if(field.agents.at(agent).getX() == coord.first && field.agents.at(agent).getY() == coord.second)
+		return true;
+	if(this->isOnDecidedRoute(field, agent, coord))
+		return true;
+	if(this->whosePanel(field, agent, coord) == MINE_ATTR)
+		return true;
+	if(this->anotherDistance(field, agent, coord))
+		return true;
+	return false;
+}
+
+const bool Astar::isOnDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
+	for(size_t i = 0; i < this->decided_route.size(); i++){
+		if(this->decided_route.at(i).size() == 0)
+			continue;
+		if(field.agents.at(agent).getAttr() != field.agents.at(i).getAttr())
 			continue;
 		auto result = std::find(this->decided_route.at(i).begin(), this->decided_route.at(i).end(), coord);
 		if(result != this->decided_route.at(i).end())
@@ -202,21 +162,63 @@ bool Astar::isDecidedRoute(Field field, const uint_fast32_t agent, const std::pa
 	return false;
 }
 
-const uint_fast32_t Astar::heuristicCost(std::pair<uint_fast32_t, uint_fast32_t> coord, std::pair<uint_fast32_t, uint_fast32_t> goal) const{
+const bool Astar::anotherDistance(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
+	double mine_distance, another_distance;
+	mine_distance = this->heuristic(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), coord);
+	for(size_t i = 0; i < field.agents.size(); i++){
+		if(agent == i)
+			continue;
+		if(field.agents.at(agent).getAttr() != field.agents.at(i).getAttr())
+			continue;
+		another_distance = this->heuristic(std::make_pair(field.agents.at(i).getX(), field.agents.at(i).getY()), coord);		
+		if(another_distance < mine_distance && another_distance < tihs->expect_distance)
+			return true;
+	}
+	return false;
+}
+
+const uint_fast32_t Astar::whosePanel(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
+	uint_fast32_t attr = MINE_ATTR;
+	if(field.at(coord.first, coord.second)->getAttr() == PURE_ATTR)
+	  attr = PURE_ATTR;
+	if(field.agents.at(agent).getAttr() == MINE_ATTR && field.at(coord.first, coord.second)->getAttr() == ENEMY_ATTR)
+		attr = ENEMY_ATTR;
+	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(coord.first, coord.second)->getAttr() == MINE_ATTR)
+		attr = ENEMY_ATTR;
+	return attr;
+}
+
+const uint_fast32_t Astar::heuristic(std::pair<uint_fast32_t, uint_fast32_t> coord, std::pair<uint_fast32_t, uint_fast32_t> goal) const{
 	const uint_fast32_t dx = std::abs((int_fast32_t)(goal.first - coord.first));
 	const uint_fast32_t dy = std::abs((int_fast32_t)(goal.second - coord.second));
 	const double distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
 	return distance;
 }
 
-const double Astar::estimeteMoveCost(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal) const{
+const double Astar::search(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal) const{
+	
+}
+
+void Astar::init(const Field& field){
+	this->setAverageScore(field);	
+}
+
+void Astar::mineMove(Field& field){
+	
+}
+
+void Astar::enemyMove(Field& field){
 	
 }
 
 void Astar::move(Field *field, const uint_fast32_t attr){
 	Field obj = static_cast<Field> (*field);
-	//this->setAverageScore(fields);
-	//this->setSearchTargetList(fields, 0);
+	this->init(obj);
+	this->setSearchTarget(obj, 0);
+	
+	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& a){
+			std::cout << "(" << a.first << "," << a.second << ")" << std::endl;
+		});
 }
 
 void Astar::print() const{
