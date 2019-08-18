@@ -43,8 +43,9 @@ void Print::score(const Field* field) const{
 }
 
 void Print::panel(const Field* field) const{
-	glPointSize(this->agent_size);
 	const int_fast32_t half = cell_size / 2;
+	glPointSize(this->agent_size);
+	glBegin(GL_POINTS);
 	for(size_t i = 0; i < field->getWidth(); i++){
 		for(size_t j = 0; j < field->getHeight(); j++){
 			if(field->at(i, j)->isPurePanel())
@@ -53,31 +54,30 @@ void Print::panel(const Field* field) const{
 				glColor3f(0.6f, 0.6f, 1.0f);
 			if(field->at(i, j)->isEnemyPanel())
 				glColor3f(1.0f, 0.6f, 0.6f);
-			glBegin(GL_POINTS);
 			glVertex2i(half + cell_size * i, half + cell_size * j);
-			glEnd();
 		}
 	}
+	glEnd();
 }
 
 void Print::agent(Field* field) const{
-	const int_fast32_t half = cell_size / 2;
+	const uint_fast32_t half = cell_size / 2;
 	uint_fast32_t flag;
 	glPointSize(this->agent_size);
+	glBegin(GL_POINTS);
 	std::for_each(field->agents.begin(), field->agents.end(), [&, this](auto& a){
 			flag = a.getAttr();
 			if(flag == MINE_ATTR)
 				glColor3f(0.0f, 0.0f, 0.8f);
 			if(flag == ENEMY_ATTR)
 				glColor3f(0.8f, 0.0f, 0.0f);
-			glBegin(GL_POINTS);
 			glVertex2i(half+cell_size * a.getX(), half + cell_size * a.getY());
-			glEnd();
 		});
+	glEnd();
 }
 
 void Print::agentNum(Field* field) const{
-	const int_fast32_t half = cell_size / 2;
+	const uint_fast32_t half = cell_size / 2;
 	uint_fast32_t flag, mine = 0, enemy = 0;
 	std::string value, str;
 	glColor3f(0.0f, 0.0f, 0.0f);
@@ -395,7 +395,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 		this->field->applyNextAgents();
 		this->makePossibleList();
 		this->field->print();
-		glutPostRedisplay();
+		//glutPostRedisplay();
 		break;
 		
 	default:

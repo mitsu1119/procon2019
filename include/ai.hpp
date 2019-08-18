@@ -73,10 +73,12 @@ class Astar : public AI{
 private:
 	
 	//何個目まで探索
-	static const uint_fast16_t search_depth     = 15;
-	static const uint_fast16_t expect_distance  = 4;
+	static const uint_fast16_t search_depth     = 8;
 	static const uint_fast32_t heuristic_weight = 3;
 	static const uint_fast32_t move_weight      = 3;
+
+	const std::vector<int> vec_x = {0, 1, 1, 1, 0, -1, -1, -1, 0};
+	const std::vector<int> vec_y = {-1, -1, 0, 1, 1, 1, 0, -1, 0};
 	
 	int_fast32_t average_score;
 	Greedy greedy;
@@ -111,6 +113,7 @@ private:
   const bool isOnDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherDistance(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t whosePanel(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const uint_fast32_t occupancyRate(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
 	//評価値関連
 	const uint_fast32_t heuristic(const std::pair<uint_fast32_t, uint_fast32_t> coord, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
@@ -125,6 +128,7 @@ public:
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
+	
 	void print() const;
 	
 };

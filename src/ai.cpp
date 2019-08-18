@@ -128,11 +128,7 @@ int_fast32_t Astar::goalEvaluation(Field field, const uint_fast32_t agent, const
 	double heuristic;
 	if(this->expectTarget(field, agent, goal))
 		return false;
-	heuristic = this->heuristic(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), std::make_pair(goal.first, goal.second));
-	value = field.at(goal.first, goal.second)->getValue();
-
-	
-	return value;
+	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) * 2;
 }
 
 const bool Astar::expectTarget(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
@@ -140,6 +136,8 @@ const bool Astar::expectTarget(Field field, const uint_fast32_t agent, const std
 		return true;
 	if(field.agents.at(agent).getX() == coord.first && field.agents.at(agent).getY() == coord.second)
 		return true;
+	if(field.at(coord.first, coord.second)->getValue() < this->average_score)
+		return true;		
 	if(this->isOnDecidedRoute(field, agent, coord))
 		return true;
 	if(this->whosePanel(field, agent, coord) == MINE_ATTR)
@@ -165,13 +163,15 @@ const bool Astar::isOnDecidedRoute(Field field, const uint_fast32_t agent, const
 const bool Astar::anotherDistance(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
 	double mine_distance, another_distance;
 	mine_distance = this->heuristic(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), coord);
+	if(mine_distance < 3 || mine_distance > 7)
+		return true;
 	for(size_t i = 0; i < field.agents.size(); i++){
 		if(agent == i)
 			continue;
 		if(field.agents.at(agent).getAttr() != field.agents.at(i).getAttr())
 			continue;
 		another_distance = this->heuristic(std::make_pair(field.agents.at(i).getX(), field.agents.at(i).getY()), coord);		
-		if(another_distance < mine_distance && another_distance < tihs->expect_distance)
+		if(another_distance < mine_distance && another_distance <= 2)
 			return true;
 	}
 	return false;
@@ -186,6 +186,15 @@ const uint_fast32_t Astar::whosePanel(Field field, const uint_fast32_t agent, co
 	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(coord.first, coord.second)->getAttr() == MINE_ATTR)
 		attr = ENEMY_ATTR;
 	return attr;
+}
+
+const uint_fast32_t Astar::occupancyRate(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
+	uint_fast32_t count = 0;
+	for(size_t i = 0; i < DIRECTION_SIZE - 1; i++){
+		if(this->whosePanel(field, agent, std::make_pair(coord.first + this->vec_x.at(i), coord.second + this->vec_y.at(i))) == ENEMY_ATTR)
+			count++;
+	}
+	return count;
 }
 
 const uint_fast32_t Astar::heuristic(std::pair<uint_fast32_t, uint_fast32_t> coord, std::pair<uint_fast32_t, uint_fast32_t> goal) const{
@@ -215,14 +224,26 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	Field obj = static_cast<Field> (*field);
 	this->init(obj);
 	this->setSearchTarget(obj, 0);
-	
-	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& a){
-			std::cout << "(" << a.first << "," << a.second << ")" << std::endl;
-		});
+	this->print();
 }
 
 void Astar::print() const{
 	
+	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
+			std::cout<< "(" << coord.first << "," << coord.second << ")" << std::endl;
+		});
+	
+	const uint_fast32_t cell_size  = 30;
+	const uint_fast32_t point_size = 15;
+	const uint_fast32_t half = cell_size / 2;
+	glPointSize(point_size);
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glBegin(GL_POINTS);
+	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
+			glVertex2i(half+cell_size * coord.first, half + cell_size * coord.second);
+		});
+	glEnd();
+	glFlush();
 }
 
 //----------------Random--------------
