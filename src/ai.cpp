@@ -72,10 +72,11 @@ void Greedy::move(Field *field, const uint_fast32_t attr){
 
 //----------------Node--------------
 Node::Node(){
+	this->status = NONE;
+	this->parent = nullptr;
 }
 
 Node::~Node(){
-	delete parent;
 }
 
 const double Node::getScore() const{
@@ -106,13 +107,15 @@ void Astar::setAverageScore(const Field& field){
 
 void Astar::setSearchTarget(Field field, const uint_fast32_t agent){
 	std::vector<std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>> condidate;
+	double value;
 	if(agent >= field.agents.size())
 		return;
 	this->search_target.clear();
 	for(size_t i = 0; i < field.getHeight(); i++) {
 		for(size_t j = 0; j < field.getWidth(); j++) {
-			if(this->goalEvaluation(field, agent, std::make_pair(j, i)))
-				condidate.push_back(std::make_pair(this->goalEvaluation(field, agent, std::make_pair(j, i)), std::make_pair(j, i)));
+			value = this->goalEvaluation(field, agent, std::make_pair(j, i));
+			if(value)
+				condidate.push_back(std::make_pair(value, std::make_pair(j, i)));
 		}
 	}
 	std::sort(condidate.rbegin(), condidate.rend());
@@ -123,12 +126,10 @@ void Astar::setSearchTarget(Field field, const uint_fast32_t agent){
 	}
 }
 
-int_fast32_t Astar::goalEvaluation(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
-	int_fast32_t value;
-	double heuristic;
+const double Astar::goalEvaluation(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const{
 	if(this->expectTarget(field, agent, goal))
 		return false;
-	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) * 2;
+	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) * 1.5;
 }
 
 const bool Astar::expectTarget(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
@@ -204,12 +205,98 @@ const uint_fast32_t Astar::heuristic(std::pair<uint_fast32_t, uint_fast32_t> coo
 	return distance;
 }
 
-const double Astar::search(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal) const{
+const double Astar::search(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal){
+	std::vector<std::pair<Node*, Field>> open;
+	Node *start , *current , *next;
+	this->initNode(field);
+	start =& this->node.at(field.agents.at(agent).getX()).at(field.agents.at(agent).getY());
+	start->status = Node::OPEN;
+	start->moveCost = 0;
+	start->stateCost = field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
+	start->heuristic = this->heuristic(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), goal);
+	open.push_back(std::make_pair(start, field));
 	
+	while(!open.empty()){
+		std::sort(open.begin(), open.end(), comp);
+		
+		current = open.at(0).first;
+		Field current_field = open.at(0).second;
+		
+		if(current->coord == goal)
+			return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
+		
+		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
+			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
+				Field next_field = current_field;
+				//とりあえず自分だけ動かす
+				next_field.agents.at(agent).move((Direction)i);
+				next_field.applyNextAgents();
+				
+				next =& this->node.at(next_field.agents.at(agent).getX()).at(next_field.agents.at(agent).getY());
+				if(next->status == Node::NONE){
+					next->status = Node::OPEN;
+					if(current_field.agents.at(agent).getX() == next_field.agents.at(agent).getX() && current_field.agents.at(agent).getY() == next_field.agents.at(agent).getY())
+						next->moveCost = current->moveCost;
+					else
+						next->moveCost = current->moveCost + 1;
+					
+					next->heuristic = this->heuristic(std::make_pair(next_field.agents.at(agent).getX(), next_field.agents.at(agent).getY()), goal);
+					next->parent = current;
+
+					open.push_back(std::make_pair(next, next_field));
+				}
+			}
+		}
+		current->status = Node::CLOSED;
+		open.erase(open.begin());
+	}
+	
+	return NULL;
+}
+
+void Astar::initNode(const Field& field){
+	this->node.clear();
+	this->node.resize(field.getWidth());
+	std::for_each(this->node.begin(), this->node.end(),[&, this](auto& obj){
+			obj.resize(field.getHeight());
+		});
+	for(size_t i = 0; i < field.getWidth(); i++)
+		for(size_t j = 0; j < field.getHeight(); j++)
+			this->node.at(i).at(j).coord = std::make_pair(i, j);
+}
+
+const bool Astar::comp(std::pair<Node*, Field> lhs, std::pair<Node*, Field> rhs){
+	bool result = lhs.first->getScore() != rhs.first->getScore();
+	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->heuristic < rhs.first->heuristic);
 }
 
 void Astar::init(const Field& field){
-	this->setAverageScore(field);	
+	this->setAverageScore(field);
+	
+	this->decided_route.clear();
+	this->decided_direction.clear();
+	
+	this->decided_route.resize(field.agents.size());
+	this->decided_direction.resize(field.agents.size());
+}
+
+const void Astar::print() const{	
+	const uint_fast32_t cell_size  = 30;
+	const uint_fast32_t point_size = 15;
+	const uint_fast32_t half = cell_size / 2;
+	glPointSize(point_size);
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glBegin(GL_POINTS);
+	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
+			glVertex2i(half+cell_size * coord.first, half + cell_size * coord.second);
+		});
+	glEnd();
+	glFlush();
+	
+	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
+			std::cout<< "(" << coord.first << "," << coord.second << ")" << std::endl;
+		});
+	
 }
 
 void Astar::mineMove(Field& field){
@@ -224,26 +311,8 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	Field obj = static_cast<Field> (*field);
 	this->init(obj);
 	this->setSearchTarget(obj, 0);
+	std::cout << this->search(obj, 0, this->search_target.at(0)) << std::endl;
 	this->print();
-}
-
-void Astar::print() const{
-	
-	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
-			std::cout<< "(" << coord.first << "," << coord.second << ")" << std::endl;
-		});
-	
-	const uint_fast32_t cell_size  = 30;
-	const uint_fast32_t point_size = 15;
-	const uint_fast32_t half = cell_size / 2;
-	glPointSize(point_size);
-	glColor3f(0.0f, 0.0f, 0.0f);
-	glBegin(GL_POINTS);
-	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
-			glVertex2i(half+cell_size * coord.first, half + cell_size * coord.second);
-		});
-	glEnd();
-	glFlush();
 }
 
 //----------------Random--------------

@@ -33,8 +33,8 @@ void Print::line(const Field* field) const{
 void Print::score(const Field* field) const{
 	int_fast32_t value = 0;
 	glColor3f(0.0f, 0.0f, 0.0f);
-	for(size_t i = 0; i < field->getWidth(); i++){
-		for(size_t j = 0; j < field->getHeight(); j++){
+	for(size_t j = 0; j < field->getHeight(); j++){
+			for(size_t i = 0; i < field->getWidth(); i++){
 			value = field->at(i, j)->getValue();
 			std::string str = std::to_string(value);
 			this->renderString(i * cell_size + 5, (j + 1) * cell_size - 5, str);
@@ -46,8 +46,8 @@ void Print::panel(const Field* field) const{
 	const int_fast32_t half = cell_size / 2;
 	glPointSize(this->agent_size);
 	glBegin(GL_POINTS);
-	for(size_t i = 0; i < field->getWidth(); i++){
-		for(size_t j = 0; j < field->getHeight(); j++){
+	for(size_t j = 0; j < field->getHeight(); j++){
+		for(size_t i = 0; i < field->getWidth(); i++){
 			if(field->at(i, j)->isPurePanel())
 				continue;
 			if(field->at(i, j)->isMyPanel())
@@ -102,15 +102,15 @@ void Print::point(const Field* field) const{
 	;
 }
 
-void Print::candidate(Field* field, const std::vector<Direction>& next_list) const{
+void Print::candidate(Field* field, const std::vector<Direction>& next) const{
 	const uint_fast32_t half = cell_size / 2;
 	Direction direction;
 	uint_fast32_t coordX, coordY;
 	glPointSize(this->agent_size - 8);
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glBegin(GL_POINTS);
-	for(size_t i = 0; i < field->agents.size(); i++){
-		direction = next_list.at(i);
+	for(size_t i = 0; i < next.size(); i++){
+		direction = next.at(i);
 		coordX = field->agents.at(i).getX() + vec_x.at((int_fast32_t)direction);
 		coordY = field->agents.at(i).getY() + vec_y.at((int_fast32_t)direction);
 		glVertex2i(half + cell_size * coordX, half + cell_size * coordY);
@@ -124,11 +124,11 @@ PrintDisplay::PrintDisplay(){
 PrintDisplay::~PrintDisplay(){	
 }
 
-void PrintDisplay::print(Field* field, const std::vector<Direction> next_list){
+void PrintDisplay::print(Field* field, const std::vector<Direction> next){
 	this->line(field);
 	this->panel(field);
 	this->agent(field);
-	this->candidate(field, next_list);
+	this->candidate(field, next);
 	this->agentNum(field);
 	this->score(field);
 	this->point(field);
@@ -144,7 +144,7 @@ PrintSelfDirectedGame::PrintSelfDirectedGame(){
 PrintSelfDirectedGame::~PrintSelfDirectedGame(){
 }
 
-void PrintSelfDirectedGame::print(Field* field, const std::vector<Direction> next_list){
+void PrintSelfDirectedGame::print(Field* field, const std::vector<Direction> next){
 	;
 }
 
@@ -233,38 +233,40 @@ void DisplayWrapper::setField(Field* object){
 
 // ---------------------------------------- Display ----------------------------------------
 
-Display::Display() : flag(0) ,mine_flag(0), enemy_flag(0) {
+Display::Display() : agent_flag(0), mine_flag(0), enemy_flag(0) {
 	this->print = new PrintDisplay();
 }
 
 Display::~Display(){
 }
 
-void Display::makePossibleList(){
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> coord, possible;
+void Display::setPossible(){
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> coord, buf;
 	uint_fast32_t x, y;
-	this->possible_list.clear();
+	this->possible.clear();
 	for(size_t i = 0; i < DIRECTION_SIZE - 1; i++)
 		coord.push_back(std::make_pair(vec_x.at(i), vec_y.at(i)));
 	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
 			std::for_each(coord.begin(), coord.end(), [&, this](auto& c){
 					x = a.getX() + c.first;
-					y = a.getY() + c.second;
-					possible.push_back(std::make_pair(x, y));
+					y = a.getY() + c.second;	
+					if(this->isOutOfRange(GLUT_LEFT_BUTTON, GLUT_DOWN, x, y))
+						return;
+					buf.push_back(std::make_pair(x, y));
 				});
-			this->possible_list.push_back(possible);
-			possible.clear();
+			this->possible.push_back(buf);
+			buf.clear();
 		});
 	this->init();
 }
 
-void Display::moveNextList(){
+void Display::moveNext(){
 	uint_fast32_t count = 0;
 	std::for_each(this->field->agents.begin(), this->field->agents.end(), [&, this](auto& a){
-			if(this->next_list.at(count) == NONE)
+			if(this->next.at(count) == NONE)
 				goto RE_CONSIDER;
-			if(this->field->canMove(a, this->next_list.at(count)))
-				a.move(this->next_list.at(count));
+			if(this->field->canMove(a, this->next.at(count)))
+				a.move(this->next.at(count));
 			else
 				a.move(STOP);
 		RE_CONSIDER:			
@@ -277,32 +279,33 @@ void Display::selectAgent(uint_fast32_t x, uint_fast32_t y){
 	for(size_t i = 0; i < this->field->agents.size(); i++){
 		if(this->field->agents.at(i).getX() == x && this->field->agents.at(i).getY() == y){
 			if(this->field->agents.at(i).getAttr() == ENEMY_ATTR){
-				this->flag = true;
+				this->agent_flag = 1;
 				this->enemy_flag = i;
 			}
 			if(this->field->agents.at(i).getAttr() == MINE_ATTR){
-				this->flag = false;
+				this->agent_flag = 0;
 				this->mine_flag = i;
 			}
+			return;
 		}
 	}
 }
 
 void Display::selectDirection(uint_fast32_t x, uint_fast32_t y){
 	std::pair<uint_fast32_t, uint_fast32_t> coord = std::make_pair(x, y);
-	if(this->flag){
-		for(size_t i = 0; i < this->possible_list.at(this->enemy_flag).size(); i++){
-			if(this->possible_list.at(this->enemy_flag).at(i) == coord){
-				this->next_list.at(this->enemy_flag) = (Direction)i;
+	if(this->agent_flag){
+		for(size_t i = 0; i < this->possible.at(this->enemy_flag).size(); i++){
+			if(this->possible.at(this->enemy_flag).at(i) == coord){
+				this->next.at(this->enemy_flag) = (Direction)i;
 				glutPostRedisplay();
 				return;
 			}
 		}
 	}
 	else{
-		for(size_t i = 0; i < this->possible_list.at(this->mine_flag).size(); i++){
-			if(this->possible_list.at(this->mine_flag).at(i) == coord){
-				this->next_list.at(this->mine_flag) = (Direction)i;
+		for(size_t i = 0; i < this->possible.at(this->mine_flag).size(); i++){
+			if(this->possible.at(this->mine_flag).at(i) == coord){
+				this->next.at(this->mine_flag) = (Direction)i;
 				glutPostRedisplay();				
 				return;
 			}
@@ -311,10 +314,10 @@ void Display::selectDirection(uint_fast32_t x, uint_fast32_t y){
 }
 
 void Display::init(){
-	std::fill(this->next_list.begin(), this->next_list.end(), STOP);
+	std::fill(this->next.begin(), this->next.end(), STOP);
+	this->agent_flag = 0;
 	this->mine_flag = 0;
 	this->enemy_flag = 0;
-	this->flag = false;
 }
 
 const bool Display::isOutOfRange(int button, int state, int x, int y) const{
@@ -326,10 +329,10 @@ const bool Display::isOutOfRange(int button, int state, int x, int y) const{
 }
 
 void Display::initInstance(){
-	this->next_list.clear();
-	this->next_list.resize(this->field->agents.size());
-	std::fill(this->next_list.begin(), this->next_list.end(), NONE);
-	this->makePossibleList();
+	this->next.clear();
+	this->next.resize(this->field->agents.size());
+	std::fill(this->next.begin(), this->next.end(), NONE);
+	this->setPossible();
 }
 
 void Display::resize(int w, int h){
@@ -340,7 +343,7 @@ void Display::resize(int w, int h){
 	
 void Display::display(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	this->print->print(this->field, next_list);
+	this->print->print(this->field, next);
 	glFlush();
 }
 
@@ -357,7 +360,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'W':
 		
 		this->field->testMoveAgent();
-		this->makePossibleList();
+		this->setPossible();
 		this->field->print();
 		glutPostRedisplay();
 		break;
@@ -368,7 +371,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 		this->random->move(this->field, MINE_ATTR);
 		this->random->move(this->field, ENEMY_ATTR);
 		field->applyNextAgents();
-		this->makePossibleList();
+		this->setPossible();
 		this->field->print();
 		glutPostRedisplay();
 		break;
@@ -376,8 +379,8 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'g':
 	case 'G':
 		
-		this->moveNextList();
-		this->makePossibleList();
+		this->moveNext();
+		this->setPossible();
 		this->field->print();
 		glutPostRedisplay();
 		break;
@@ -393,7 +396,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 		//this->astar->move(this->field, MINE_ATTR);
 		
 		this->field->applyNextAgents();
-		this->makePossibleList();
+		this->setPossible();
 		this->field->print();
 		//glutPostRedisplay();
 		break;

@@ -38,9 +38,9 @@ public:
 	void agent(Field* field) const;
 	void agentNum(Field* field) const;
 	void point(const Field* field) const;
-	void candidate(Field* field, const std::vector<Direction>& next_list) const;
+	void candidate(Field* field, const std::vector<Direction>& next) const;
 
-	virtual void print(Field* field, const std::vector<Direction> next_list) = 0;
+	virtual void print(Field* field, const std::vector<Direction> next) = 0;
 	virtual void print(Field* field) = 0;
 	
 };
@@ -52,7 +52,7 @@ public:
 	PrintDisplay();
 	~PrintDisplay();
 	
-	void print(Field* field, const std::vector<Direction> next_list) override;
+	void print(Field* field, const std::vector<Direction> next) override;
 	void print(Field* field) override;
 };
 
@@ -63,7 +63,7 @@ public:
 	PrintSelfDirectedGame();
 	~PrintSelfDirectedGame();
 	
-	void print(Field* field, const std::vector<Direction> next_list) override;
+	void print(Field* field, const std::vector<Direction> next) override;
 	void print(Field* field) override;
 	
 };
@@ -119,16 +119,16 @@ public:
 class Display : public DisplayWrapper{
 private:
 	
-	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> possible_list;
-	std::vector<Direction> next_list;
+	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> possible;
+	std::vector<Direction> next;
 
-	//flag==false:mineの入力 flag==true:enemyの入力
-	bool flag;
+	//agent_flag == 0:mineの入力 agent_flag == 1:enemyの入力
+	bool agent_flag;
 	uint_fast32_t mine_flag;
 	uint_fast32_t enemy_flag;
 
-	void makePossibleList();
-	void moveNextList();
+	void setPossible();
+	void moveNext();
 	void selectAgent(uint_fast32_t x, uint_fast32_t y);
 	void selectDirection(uint_fast32_t x, uint_fast32_t y);
 	void init();

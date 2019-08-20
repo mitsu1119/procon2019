@@ -11,8 +11,8 @@ class AI{
 private:
 public:
 	
-	std::vector<int> vec_x={0,1,1,1,0,-1,-1,-1,0};
-	std::vector<int> vec_y={-1,-1,0,1,1,1,0,-1,0};
+	const std::vector<int> vec_x={0,1,1,1,0,-1,-1,-1,0};
+	const std::vector<int> vec_y={-1,-1,0,1,1,1,0,-1,0};
 	
 public:
 	
@@ -62,8 +62,10 @@ public:
 	uint_fast32_t heuristic;
   //親のノード
 	Node* parent;
+	
 	//座標
 	std::pair<uint_fast32_t, uint_fast32_t> coord;
+	
 	//スコア所得
 	const double getScore() const;
 	
@@ -76,9 +78,6 @@ private:
 	static const uint_fast16_t search_depth     = 8;
 	static const uint_fast32_t heuristic_weight = 3;
 	static const uint_fast32_t move_weight      = 3;
-
-	const std::vector<int> vec_x = {0, 1, 1, 1, 0, -1, -1, -1, 0};
-	const std::vector<int> vec_y = {-1, -1, 0, 1, 1, 1, 0, -1, 0};
 	
 	int_fast32_t average_score;
 	Greedy greedy;
@@ -87,9 +86,7 @@ private:
 
 	//探索かけるたびにクリアする
 	//各座標の状況を格納するリスト
-	//std::vector<std::vector<Node>> node;
-	//一次元で表す
-	std::vector<Node> node;
+	std::vector<std::vector<Node>> node;
 	
 	//探索対象リスト
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> search_target;	
@@ -107,7 +104,7 @@ private:
 	//ゴール候補の選定
 	void setAverageScore(const Field& field);
 	void setSearchTarget(Field field, const uint_fast32_t agent);
-	int_fast32_t goalEvaluation(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+	const double goalEvaluation(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
 	//ゴール選定用の評価関数関連
 	const bool expectTarget(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
   const bool isOnDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
@@ -117,19 +114,21 @@ private:
 
 	//評価値関連
 	const uint_fast32_t heuristic(const std::pair<uint_fast32_t, uint_fast32_t> coord, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
-	const double search(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
-	
+
+	const double search(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal);
+	void initNode(const Field& field);
+	static const bool comp(std::pair<Node*, Field> lhs, std::pair<Node*, Field> rhs);
+
 public:
 	
 	Astar();
 	~Astar();
 	
 	void init(const Field& field);
+	const void print() const;
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
-	
-	void print() const;
 	
 };
 
