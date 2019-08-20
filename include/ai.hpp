@@ -125,7 +125,8 @@ public:
 	~Astar();
 	
 	void init(const Field& field);
-	const void print() const;
+	const void printGoal() const;
+	const void printRoute(std::pair<uint_fast32_t, uint_fast32_t> goal) const;
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
