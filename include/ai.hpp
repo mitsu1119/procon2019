@@ -87,7 +87,7 @@ private:
 	const uint_fast32_t half = cell_size / 2;
 	
 	//何個目まで探索
-	static const uint_fast16_t search_depth = 10;
+	static const uint_fast16_t search_depth = 12;
 	
 	int_fast32_t average_score;
 	Greedy greedy;
@@ -108,7 +108,7 @@ private:
 private:
 	
 	void decidedMove(Field& field, const uint_fast32_t agent);
-	const Direction nextDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
+	const Direction changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
 
 private:
 
@@ -118,9 +118,13 @@ private:
 	const double goalEvaluation(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
 	//ゴール選定用の評価関数関連
 	const bool expectTarget(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
-	
   const bool isOnDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherAgentDistance(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+
+	
+	const bool anotherGoalDistance(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+
+	
 	const uint_fast32_t whosePanel(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t occupancyRate(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
