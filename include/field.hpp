@@ -10,6 +10,7 @@
 #include <ctime>
 #include <algorithm>
 #include <numeric>
+#include <climits>
 #include "agent.hpp"
 #include "useful.hpp"
 #include "disp.hpp"

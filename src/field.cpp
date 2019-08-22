@@ -230,7 +230,6 @@ void Field::genRandMap() {
 			count++;
 		}
 	}
-	
 }
 
 bool Field::canMove(Agent &agent, Direction direction) {

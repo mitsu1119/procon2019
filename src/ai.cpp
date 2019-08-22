@@ -98,6 +98,12 @@ void Astar::decidedMove(Field& field, const uint_fast32_t agent){
 	
 }
 
+const Direction Astar::nextDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
+	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
+		if(now.first == next.first + this->vec_x.at(i) && now.second == next.second + this->vec_y.at(i))
+			return (Direction)i;
+}
+
 void Astar::setAverageScore(const Field& field){
 	int count = 0, sum = 0;
 	for(size_t i = 0; i < field.getHeight(); i++) {
@@ -110,6 +116,7 @@ void Astar::setAverageScore(const Field& field){
 }
 
 void Astar::setSearchTarget(Field field, const uint_fast32_t agent){
+	this->search_target.clear();
 	std::vector<std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>> condidate;
 	double value;
 	if(agent >= field.agents.size())
@@ -147,10 +154,12 @@ const bool Astar::expectTarget(Field field, const uint_fast32_t agent, const std
 		return true;
 	if(this->whosePanel(field, agent, coord) == MINE_ATTR)
 		return true;
-	if(this->anotherDistance(field, agent, coord))
+	if(this->anotherAgentDistance(field, agent, coord))
 		return true;
 	return false;
 }
+
+
 
 const bool Astar::isOnDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
 	for(size_t i = 0; i < this->decided_route.size(); i++){
@@ -165,10 +174,10 @@ const bool Astar::isOnDecidedRoute(Field field, const uint_fast32_t agent, const
 	return false;
 }
 
-const bool Astar::anotherDistance(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
+const bool Astar::anotherAgentDistance(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
 	double mine_distance, another_distance;
 	mine_distance = this->heuristic(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), coord);
-	if(mine_distance < 3 || mine_distance > 7)
+	if(mine_distance < 3 || mine_distance > 10)
 		return true;
 	for(size_t i = 0; i < field.agents.size(); i++){
 		if(agent == i)
@@ -176,7 +185,7 @@ const bool Astar::anotherDistance(Field field, const uint_fast32_t agent, const 
 		if(field.agents.at(agent).getAttr() != field.agents.at(i).getAttr())
 			continue;
 		another_distance = this->heuristic(std::make_pair(field.agents.at(i).getX(), field.agents.at(i).getY()), coord);		
-		if(another_distance < mine_distance && another_distance <= 2)
+		if(another_distance < mine_distance && another_distance <= 3)
 			return true;
 	}
 	return false;
@@ -209,10 +218,26 @@ const uint_fast32_t Astar::heuristic(std::pair<uint_fast32_t, uint_fast32_t> coo
 	return distance;
 }
 
-const double Astar::search(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal){
+void Astar::initNode(const Field& field){
+	this->node.clear();
+	this->node.resize(field.getWidth());
+	std::for_each(this->node.begin(), this->node.end(),[&, this](auto& obj){
+			obj.resize(field.getHeight());
+		});
+	for(size_t i = 0; i < field.getWidth(); i++)
+		for(size_t j = 0; j < field.getHeight(); j++)
+			this->node.at(i).at(j).coord = std::make_pair(i, j);
+}
+
+const bool Astar::comp(std::pair<Node*, Field> lhs, std::pair<Node*, Field> rhs){
+	bool result = lhs.first->getScore() != rhs.first->getScore();
+	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->getHeuristic() < rhs.first->getHeuristic());
+}
+
+const double Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal){
 	std::vector<std::pair<Node*, Field>> open;
 	Node *start , *current , *next;
-	this->init(field);
+	this->initNode(field);
 	start =& this->node.at(field.agents.at(agent).getX()).at(field.agents.at(agent).getY());
 	start->status = Node::OPEN;
 	start->move_cost = 0;
@@ -224,12 +249,11 @@ const double Astar::search(Field field, const uint_fast32_t agent, const std::pa
 		current = open.at(0).first;
 		Field current_field = open.at(0).second;
 		
-		//if(current->moveCost > 15)
+		//if(current->move_cost > 15)
 			//return NULL;
   		
 		if(current->coord == goal)
 			return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
-
 		
 		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
 			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
@@ -267,63 +291,48 @@ const double Astar::search(Field field, const uint_fast32_t agent, const std::pa
 		current->status = Node::CLOSED;
 		open.erase(open.begin());
 	}
-	return NULL;
+	return - INT_MAX;
 }
 
-void Astar::initNode(const Field& field){
-	this->node.clear();
-	this->node.resize(field.getWidth());
-	std::for_each(this->node.begin(), this->node.end(),[&, this](auto& obj){
-			obj.resize(field.getHeight());
-		});
-	for(size_t i = 0; i < field.getWidth(); i++)
-		for(size_t j = 0; j < field.getHeight(); j++)
-			this->node.at(i).at(j).coord = std::make_pair(i, j);
-}
-
-const bool Astar::comp(std::pair<Node*, Field> lhs, std::pair<Node*, Field> rhs){
-	bool result = lhs.first->getScore() != rhs.first->getScore();
-	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->getHeuristic() < rhs.first->getHeuristic());
-}
-
-void Astar::init(const Field& field){
-	this->setAverageScore(field);
-
-	this->initNode(field);
-	
-	this->decided_route.clear();
-	this->decided_direction.clear();
-	
-	this->decided_route.resize(field.agents.size());
-	this->decided_direction.resize(field.agents.size());
-}
-
-const void Astar::printGoal() const{
-	glPointSize(point_size);
-	glColor3f(0.0f, 0.0f, 0.0f);
-	glBegin(GL_POINTS);
-
-	
-	glVertex2i(half + cell_size * this->search_target.at(0).first, half + cell_size * this->search_target.at(0).second);
-	glEnd();
-	glFlush();
-
-	
-	/*
-		std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
-			glVertex2i(half + cell_size * coord.first, half + cell_size * coord.second);
-		});
-	glEnd();
-	glFlush();
-
+void Astar::searchBestRoute(Field field, const uint_fast32_t agent){
+	int_fast32_t value, max = - INT_MAX;
+	std::pair<uint_fast32_t, uint_fast32_t> goal;
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
+	this->setSearchTarget(field, agent);
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
-			std::cout<< "(" << coord.first << "," << coord.second << ")" << std::endl;
+			value = this->searchRoute(field, agent, coord);
+			if(value > max){
+				max = value;
+				goal = coord;
+				route = this->makeRoute(agent, coord);
+			}
 		});
-	*/
-
+	this->decided_route.at(agent) = route;
+	this->printRoute(route, goal);
 }
 
-const void Astar::printRoute(std::pair<uint_fast32_t, uint_fast32_t> goal) const{
+void 	Astar::search(Field field, const uint_fast32_t attr){
+	this->decided_route.clear();
+	this->decided_route.resize(field.agents.size());
+	for(size_t i = 0; i < field.agents.size(); i++)
+		if(field.agents.at(i).getAttr() == attr)
+			this->searchBestRoute(field, i);
+
+	//ゴールを表示
+	glPointSize(point_size - 10);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glBegin(GL_POINTS);
+	for(size_t i = 0; i < this->decided_route.size(); i++){
+		if(field.agents.at(i).getAttr() == attr){
+			glVertex2i(half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).first, half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).second);
+		}
+	}
+	glEnd();
+	glFlush();
+	
+}
+
+const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> goal) const{
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	std::pair<uint_fast32_t, uint_fast32_t> from;
 	route.push_back(goal);
@@ -336,7 +345,22 @@ const void Astar::printRoute(std::pair<uint_fast32_t, uint_fast32_t> goal) const
 	  route.push_back(from);
 	}
 	std::reverse(route.begin(), route.end());
-	
+	return route;
+}
+
+const void Astar::printGoal() const{
+	glPointSize(point_size);
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glBegin(GL_POINTS);
+	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
+			glVertex2i(half + cell_size * coord.first, half + cell_size * coord.second);
+			std::cout<< "(" << coord.first << "," << coord.second << ")" << std::endl;
+		});
+	glEnd();
+	glFlush();
+}
+
+const void Astar::printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route, std::pair<uint_fast32_t, uint_fast32_t> goal){
 	glPointSize(point_size);
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_POINTS);
@@ -344,7 +368,7 @@ const void Astar::printRoute(std::pair<uint_fast32_t, uint_fast32_t> goal) const
 			glVertex2i(half + cell_size * coord.first, half + cell_size * coord.second);
 		});
 	glEnd();
-	glFlush();
+	glFlush();	
 }
 
 void Astar::mineMove(Field& field){
@@ -357,20 +381,20 @@ void Astar::enemyMove(Field& field){
 
 void Astar::move(Field *field, const uint_fast32_t attr){
 	Field obj = static_cast<Field> (*field);
-	this->init(obj);
-	this->setSearchTarget(obj, 0);
-	
-	/*	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
-			std::cout << this->search(obj, 0, coord) << std::endl;
-			});*/
-	std::cout << this->average_score << "hoge" << std::endl;
-	
-	this->printGoal();
-	std::this_thread::sleep_for(std::chrono::seconds(3));
-	std::cout << this->search(obj, 0, this->search_target.at(0)) << std::endl;
+	this->setAverageScore(obj);
+	this->search(obj, MINE_ATTR);
 
-	
-	this->printRoute(this->search_target.at(0));
+	//ゴール地点を表示
+	glPointSize(point_size - 10);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glBegin(GL_POINTS);
+	for(size_t i = 0; i < this->decided_route.size(); i++){
+		if(obj.agents.at(i).getAttr() == attr){
+			glVertex2i(half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).first, half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).second);
+		}
+	}
+	glEnd();
+	glFlush();
 }
 
 //----------------Random--------------
