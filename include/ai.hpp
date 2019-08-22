@@ -3,6 +3,7 @@
 #include "agent.hpp"
 #include "field.hpp"
 #include "useful.hpp"
+#include <thread>
 
 class Agent;
 class Field;
@@ -42,6 +43,11 @@ public:
 //各座標の状況を表すクラス
 class Node{
 private:
+	
+	static const uint_fast32_t move_weight      = 8;
+	static const uint_fast32_t state_weight     = 1;
+	static const uint_fast32_t heuristic_weight = 3;
+	
 public:
 
 	enum Status{
@@ -55,9 +61,9 @@ public:
 	//ステータス
 	Status status;
 	//移動コスト
-	uint_fast32_t moveCost;
+	uint_fast32_t move_cost;
 	//盤の状態によるコスト
-	double stateCost;
+	double state_cost;
 	//ヒューリスティックコスト（推定コスト）
 	uint_fast32_t heuristic;
   //親のノード
@@ -68,16 +74,20 @@ public:
 	
 	//スコア所得
 	const double getScore() const;
+	const double getHeuristic() const;
 	
 };
 
 class Astar : public AI{
 private:
+
+	//描画用
+	const uint_fast32_t cell_size  = 30;
+	const uint_fast32_t point_size = 15;
+	const uint_fast32_t half = cell_size / 2;
 	
 	//何個目まで探索
-	static const uint_fast16_t search_depth     = 8;
-	static const uint_fast32_t heuristic_weight = 3;
-	static const uint_fast32_t move_weight      = 3;
+	static const uint_fast16_t search_depth = 8;
 	
 	int_fast32_t average_score;
 	Greedy greedy;
@@ -114,7 +124,7 @@ private:
 
 	//評価値関連
 	const uint_fast32_t heuristic(const std::pair<uint_fast32_t, uint_fast32_t> coord, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
-
+	//探索関連
 	const double search(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal);
 	void initNode(const Field& field);
 	static const bool comp(std::pair<Node*, Field> lhs, std::pair<Node*, Field> rhs);
@@ -135,6 +145,7 @@ public:
 
 class Random : public AI{
 private:
+	XorOshiro128p random;
 public:
 	Random();
 	~Random();

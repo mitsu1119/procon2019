@@ -131,6 +131,63 @@ void Field::setPanelAttr(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr) {
 }
 
 void Field::genRandMap() {
+	/*
+	int N = 32;
+	std::vector<int> field_rand;
+  std::vector<int> field_rev;
+  std::vector<int> buf;
+	int buf_height, buf_width;
+
+	int field_rand_sum = -1;
+	
+	buf_height=(this->height/2)+(this->height%2);
+	buf_width=(this->width/2)+(this->width%2);
+
+	while((field_rand_sum < 20) || (field_rand_sum >= 24)){
+		field_rand.clear();
+		field_rev.clear();
+		field_rand_sum = 0;
+		
+		for(int i=0; i < buf_height; i++){
+			for(int j=0; j < buf_width; j++){
+				buf.push_back(this->random(N) - (N / 2));
+			}
+			field_rand.insert(field_rand.end(), buf.begin(), buf.end());
+			std::reverse(buf.begin(), buf.end());
+			field_rand.insert(field_rand.end(), buf.begin(), buf.end());
+			buf.clear();
+		}
+
+		field_rev = field_rand;
+		std::reverse(field_rev.begin(), field_rev.end());
+		field_rand.insert(field_rand.begin(), field_rev.begin(), field_rev.end());
+
+		field_rand_sum = std::accumulate(field_rand.begin(),field_rand.end(),0);
+	}
+	// show field_sum pt
+	std::cout << "[*] field_sum:" << field_rand_sum << std::endl;
+	
+	//奇数業に対応させる
+
+	if(this->height%2){
+		field_rand.erase(field_rand.begin()+(field_rand.size()/2), field_rand.begin()+(field_rand.size()/2)+this->height+1);
+	}
+	if(this->width%2){
+		for(int i=0;i<field_rand.size();i++){
+			if(i%this->width==this->width/2)
+				field_rand.erase(field_rand.begin()+i);
+		}
+	}
+	
+	int count=0;
+	
+	for(int i=0;i<this->height;i++){
+		for(int j=0;j<this->width;j++){
+			this->setPanelScore(j, i, field_rand.at(count));
+			count++;
+		}
+	}
+	*/
 	int N = 32;
 	std::vector<int> field_rand;
   std::vector<int> field_rev;
@@ -141,7 +198,7 @@ void Field::genRandMap() {
 	
 	for(int i=0; i < buf_height; i++){
 		for(int j=0; j < buf_width; j++){
-			buf.push_back((rand() % N)-16);
+			buf.push_back(this->random(N) - (N / 2));
 		}
 		field_rand.insert(field_rand.end(), buf.begin(), buf.end());
 		std::reverse(buf.begin(), buf.end());
@@ -173,6 +230,7 @@ void Field::genRandMap() {
 			count++;
 		}
 	}
+	
 }
 
 bool Field::canMove(Agent &agent, Direction direction) {

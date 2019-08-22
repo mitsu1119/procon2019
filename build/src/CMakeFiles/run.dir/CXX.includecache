@@ -19,6 +19,8 @@ field.hpp
 ../include/field.hpp
 useful.hpp
 ../include/useful.hpp
+thread
+-
 
 ../include/disp.hpp
 iostream
@@ -54,6 +56,8 @@ iomanip
 ctime
 -
 algorithm
+-
+numeric
 -
 agent.hpp
 ../include/agent.hpp

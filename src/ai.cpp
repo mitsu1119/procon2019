@@ -79,8 +79,12 @@ Node::Node(){
 Node::~Node(){
 }
 
+const double Node::getHeuristic() const{
+	return this->heuristic * this->heuristic_weight;
+}
+
 const double Node::getScore() const{
-	return this->moveCost + this->stateCost + this->heuristic;
+	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight);
 }
 
 //----------------A*algorithm--------------
@@ -211,49 +215,58 @@ const double Astar::search(Field field, const uint_fast32_t agent, const std::pa
 	this->init(field);
 	start =& this->node.at(field.agents.at(agent).getX()).at(field.agents.at(agent).getY());
 	start->status = Node::OPEN;
-	start->moveCost = 0;
-	start->stateCost = - (field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR));
-	start->heuristic = this->heuristic(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), goal);
+	start->move_cost = 0;
+	start->state_cost = - (field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR));
+	start->heuristic = this->heuristic(start->coord, goal);
 	open.push_back(std::make_pair(start, field));
-	
 	while(!open.empty()){
 		std::sort(open.begin(), open.end(), comp);
-		
 		current = open.at(0).first;
 		Field current_field = open.at(0).second;
 		
+		//if(current->moveCost > 15)
+			//return NULL;
+  		
 		if(current->coord == goal)
 			return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
+
 		
 		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
 			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
 				Field next_field = current_field;
-				
-				//とりあえず自分だけ動かす
 				next_field.agents.at(agent).move((Direction)i);
 				next_field.applyNextAgents();
-				
 				next =& this->node.at(next_field.agents.at(agent).getX()).at(next_field.agents.at(agent).getY());
-				if(next->status == Node::NONE){
-					next->status = Node::OPEN;
+				
+				if(current->coord == next->coord){
+					next_field.agents.at(agent).move((Direction)i);
+					next_field.applyNextAgents();
+					next =& this->node.at(next_field.agents.at(agent).getX()).at(next_field.agents.at(agent).getY());
 					
-					if(current_field.agents.at(agent).getX() == next_field.agents.at(agent).getX() && current_field.agents.at(agent).getY() == next_field.agents.at(agent).getY())
-						next->moveCost = current->moveCost;
-					else
-						next->moveCost = current->moveCost + 1;
-					
-					next->stateCost = - (next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR));
-					next->heuristic = this->heuristic(std::make_pair(next_field.agents.at(agent).getX(), next_field.agents.at(agent).getY()), goal);
-					next->parent = current;
-
-					open.push_back(std::make_pair(next, next_field));
+					if(next->status == Node::NONE && next->coord != current->coord){
+						next->status = Node::OPEN;
+						next->move_cost = current->move_cost + 2;
+						next->state_cost = - (next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR));
+						next->heuristic = this->heuristic(next->coord, goal);
+						next->parent = current;
+						open.push_back(std::make_pair(next, next_field));
+					}
+				}
+				else{
+					if(next->status == Node::NONE){
+						next->status = Node::OPEN;
+						next->move_cost = current->move_cost + 1;
+						next->state_cost = - (next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR));
+						next->heuristic = this->heuristic(next->coord, goal);
+						next->parent = current;
+						open.push_back(std::make_pair(next, next_field));
+					}
 				}
 			}
 		}
 		current->status = Node::CLOSED;
 		open.erase(open.begin());
 	}
-	
 	return NULL;
 }
 
@@ -270,7 +283,7 @@ void Astar::initNode(const Field& field){
 
 const bool Astar::comp(std::pair<Node*, Field> lhs, std::pair<Node*, Field> rhs){
 	bool result = lhs.first->getScore() != rhs.first->getScore();
-	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->heuristic < rhs.first->heuristic);
+	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->getHeuristic() < rhs.first->getHeuristic());
 }
 
 void Astar::init(const Field& field){
@@ -286,23 +299,27 @@ void Astar::init(const Field& field){
 }
 
 const void Astar::printGoal() const{
-	/*
-	const uint_fast32_t cell_size  = 30;
-	const uint_fast32_t point_size = 15;
-	const uint_fast32_t half = cell_size / 2;
 	glPointSize(point_size);
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_POINTS);
-	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
+
+	
+	glVertex2i(half + cell_size * this->search_target.at(0).first, half + cell_size * this->search_target.at(0).second);
+	glEnd();
+	glFlush();
+
+	
+	/*
+		std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
 			glVertex2i(half + cell_size * coord.first, half + cell_size * coord.second);
 		});
 	glEnd();
 	glFlush();
-	*/
 
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
 			std::cout<< "(" << coord.first << "," << coord.second << ")" << std::endl;
 		});
+	*/
 
 }
 
@@ -320,10 +337,6 @@ const void Astar::printRoute(std::pair<uint_fast32_t, uint_fast32_t> goal) const
 	}
 	std::reverse(route.begin(), route.end());
 	
-	
-	const uint_fast32_t cell_size  = 30;
-	const uint_fast32_t point_size = 15;
-	const uint_fast32_t half = cell_size / 2;
 	glPointSize(point_size);
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_POINTS);
@@ -346,22 +359,29 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	Field obj = static_cast<Field> (*field);
 	this->init(obj);
 	this->setSearchTarget(obj, 0);
-	std::cout << this->search(obj, 0, this->search_target.at(0)) << std::endl;
-	this->printRoute(this->search_target.at(0));
+	
+	/*	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
+			std::cout << this->search(obj, 0, coord) << std::endl;
+			});*/
+	std::cout << this->average_score << "hoge" << std::endl;
+	
 	this->printGoal();
+	std::this_thread::sleep_for(std::chrono::seconds(3));
+	std::cout << this->search(obj, 0, this->search_target.at(0)) << std::endl;
+
+	
+	this->printRoute(this->search_target.at(0));
 }
 
 //----------------Random--------------
 Random::Random(){
+	this->random = XorOshiro128p(time(NULL));
 }
 
 Random::~Random(){
 }
 
 void Random::mineMove(Field& field){
-	std::random_device rnd;
-	std::mt19937 mt(rnd());
-	std::uniform_int_distribution<> rand(0, DIRECTION_SIZE - 3);
 	uint_fast32_t val = 0;
 	Direction buf;
 	for(auto &i: field.agents) {
@@ -371,7 +391,7 @@ RE_CONSIDER:
 				i.move(STOP);
 				return;
 			}
-			buf = (Direction)rand(mt);			
+			buf = (Direction)(this->random(DIRECTION_SIZE - 3));
 			if(field.canMove(i, buf))
 				i.move(buf);
 			else{
@@ -383,9 +403,6 @@ RE_CONSIDER:
 }
 
 void Random::enemyMove(Field& field){
-	std::random_device rnd;
-	std::mt19937 mt(rnd());
-	std::uniform_int_distribution<> rand(0, DIRECTION_SIZE - 3);
 	uint_fast32_t val = 0;
 	Direction buf;
 	for(auto &i: field.agents) {
@@ -395,7 +412,7 @@ RE_CONSIDER:
 				i.move(STOP);
 				return;
 			}
-			buf = (Direction)rand(mt);			
+			buf = (Direction)(this->random(DIRECTION_SIZE - 3));
 			if(field.canMove(i, buf))
 				i.move(buf);
 			else{
