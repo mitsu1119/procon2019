@@ -17,7 +17,7 @@ void Print::renderString(float x, float y, const std::string& str) const{
 
 void Print::line(const Field* field) const{
 	glColor3f(0.0f, 0.0f, 0.0f);
-	glLineWidth(this->line_size);
+	glLineWidth(line_size);
 	glBegin(GL_LINES);
 	for(size_t i = 0; i <= field->getWidth(); i++){
 		glVertex2i(cell_size * i, 0);
@@ -44,7 +44,7 @@ void Print::score(const Field* field) const{
 
 void Print::panel(const Field* field) const{
 	const int_fast32_t half = cell_size / 2;
-	glPointSize(this->agent_size);
+	glPointSize(agent_size);
 	glBegin(GL_POINTS);
 	for(size_t j = 0; j < field->getHeight(); j++){
 		for(size_t i = 0; i < field->getWidth(); i++){
@@ -63,7 +63,7 @@ void Print::panel(const Field* field) const{
 void Print::agent(Field* field) const{
 	const uint_fast32_t half = cell_size / 2;
 	uint_fast32_t flag;
-	glPointSize(this->agent_size);
+	glPointSize(agent_size);
 	glBegin(GL_POINTS);
 	std::for_each(field->agents.begin(), field->agents.end(), [&, this](auto& a){
 			flag = a.getAttr();
@@ -106,7 +106,7 @@ void Print::candidate(Field* field, const std::vector<Direction>& next) const{
 	const uint_fast32_t half = cell_size / 2;
 	Direction direction;
 	uint_fast32_t coordX, coordY;
-	glPointSize(this->agent_size - 8);
+	glPointSize(agent_size - 8);
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glBegin(GL_POINTS);
 	for(size_t i = 0; i < next.size(); i++){
@@ -181,8 +181,8 @@ void DisplayWrapper::init(){
 	instance->initInstance();
 	gluOrtho2D(0, 100, 100, 0);
 	glutInitDisplayMode(GLUT_SINGLE|GLUT_RGBA|GLUT_DOUBLE);
-	glutInitWindowPosition(this->window_width_position, this->window_height_position);
-	glutInitWindowSize(this->window_width_size, this->window_height_size);
+	glutInitWindowPosition(window_width_position, window_height_position);
+	glutInitWindowSize(window_width_size, window_height_size);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 }
 
