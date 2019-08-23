@@ -86,6 +86,7 @@ Astar::Astar(){
 Astar::~Astar(){
 }
 
+//なんかだめ
 void Astar::decidedMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num){
 	Direction direction;
 	for(size_t i = 0; i < agent; i++){
@@ -288,13 +289,13 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 				Field next_field = current_field;
 				next_field.agents.at(agent).move((Direction)i);
 				//確定ルートで動かす
-				this->decidedMove(next_field, agent, current->move_num);
+				//this->decidedMove(next_field, agent, current->move_num);
 				next_field.applyNextAgents();
 				next =& this->node.at(next_field.agents.at(agent).getX()).at(next_field.agents.at(agent).getY());
 				if(current->coord == next->coord){
 					next_field.agents.at(agent).move((Direction)i);
 					//確定ルートで動かす
-					this->decidedMove(next_field, agent, next->move_num);
+					//this->decidedMove(next_field, agent, next->move_num);
 					next_field.applyNextAgents();
 					next =& this->node.at(next_field.agents.at(agent).getX()).at(next_field.agents.at(agent).getY());
 					if(next->status == Node::NONE && next->coord != current->coord){
@@ -350,6 +351,7 @@ void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	this->decided_route.at(agent) = route;
 	this->decided_goal.at(agent) = goal;
 	this->printRoute(route, goal);
+	std::cout<<max<<std::endl;
 }
 
 void 	Astar::search(Field& field, const uint_fast32_t attr){

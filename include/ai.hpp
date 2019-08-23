@@ -43,7 +43,7 @@ public:
 constexpr uint_fast32_t move_weight                = 5;
 constexpr uint_fast32_t state_weight               = 1;
 constexpr uint_fast32_t heuristic_weight           = 5;
-constexpr uint_fast32_t is_on_decided_route_weight = 0;
+constexpr uint_fast32_t is_on_decided_route_weight = 3;
 
 //各座標の状況を表すクラス
 class Node{
