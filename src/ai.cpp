@@ -158,18 +158,18 @@ const uint_fast32_t Astar::occupancyRate(Field& field, const uint_fast32_t agent
 		if(this->whosePanel(field, agent, std::make_pair(x, y)) == ENEMY_ATTR)
 			count++;
 	}
-	return count * 1.5;
+	return count * 2.0;
 }
 
 const uint_fast32_t Astar::isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord){
 	if(coord.first == 0 && coord.second == 0 || coord.first == 0 && coord.second == field.getHeight() || coord.first == field.getWidth() && coord.second == 0 || coord.first == field.getWidth() && coord.second == field.getHeight())
-		return -8;
+		return true;
 	if(coord.first == 0 || coord.second == 0 || coord.first == field.getWidth() || coord.second == field.getHeight())
-		return -4;
+		return -20;
 	return false;
 }
 
-const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
+const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord){
 	if(agent >= field.agents.size())
 		return true;
 	if(field.agents.at(agent).getX() == coord.first && field.agents.at(agent).getY() == coord.second)
@@ -183,6 +183,8 @@ const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const st
 	if(this->anotherAgentDistance(field, agent, coord))
 		return true;
 	if(this->anotherGoalDistance(field, agent, coord))
+		return true;
+	if(this->isSideOrAngle(field, coord))
 		return true;
 	return false;
 }
@@ -199,7 +201,7 @@ const bool Astar::isOnDecidedRoute(Field& field, const uint_fast32_t agent, cons
 const bool Astar::anotherAgentDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
 	double mine_distance, another_distance;
 	mine_distance = this->heuristic(std::make_pair(field.agents.at(agent).getX(), field.agents.at(agent).getY()), coord);
-	if(mine_distance < 3 || mine_distance > 12)
+	if(mine_distance < 3 || mine_distance > 15)
 		return true;
 	for(size_t i = 0; i < field.agents.size(); i++){
 		if(agent == i)
@@ -207,7 +209,7 @@ const bool Astar::anotherAgentDistance(Field& field, const uint_fast32_t agent, 
 		if(field.agents.at(agent).getAttr() != field.agents.at(i).getAttr())
 			continue;
 		another_distance = this->heuristic(std::make_pair(field.agents.at(i).getX(), field.agents.at(i).getY()), coord);		
-		if(another_distance < mine_distance && another_distance <= 3)
+		if(another_distance < mine_distance && another_distance <= 2)
 			return true;
 	}
 	return false;
@@ -268,21 +270,24 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 	start->move_cost = 0;
 	start->state_cost = - (field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR));
 	start->heuristic = this->heuristic(start->coord, goal);
-	
-	start->is_on_decided_route = this->isOnDecidedRoute(field, agent, start->coord);
-	
+	start->is_on_decided_route = 0;
 	start->move_num = 0;
 	open.push_back(std::make_pair(start, field));
 	while(!open.empty()){
 		std::sort(open.begin(), open.end(), comp);
 		current = open.at(0).first;
-		Field current_field = open.at(0).second;
+		Field current_field = open.at(0).second;		
+
+		//if(current->move_cost > 18)
+		//goto SKIP_NODE;
 		
-		//if(current->move_cost > 15)
-			//return NULL;
-  		
-		if(current->coord == goal)
+		if(current->coord == goal){
+			
+			if(current->move_cost <= 5)
+				goto SKIP_NODE;
+			
 			return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
+		}
 		
 		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
 			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
@@ -303,9 +308,7 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 						next->move_cost = current->move_cost + 2;
 						next->state_cost = - (next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR));
 						next->heuristic = this->heuristic(next->coord, goal);
-
-						next->is_on_decided_route = this->isOnDecidedRoute(next_field, agent, next->coord);
-						
+						next->is_on_decided_route = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
 						next->move_num = current->move_num + 1;
 						next->parent = current;
 						open.push_back(std::make_pair(next, next_field));
@@ -317,9 +320,7 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 						next->move_cost = current->move_cost + 1;
 						next->state_cost = - (next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR));
 						next->heuristic = this->heuristic(next->coord, goal);
-						
-						next->is_on_decided_route = this->isOnDecidedRoute(next_field, agent, next->coord);
-						
+						next->is_on_decided_route = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
 						next->move_num = current->move_num + 1;
 						next->parent = current;
 						open.push_back(std::make_pair(next, next_field));
@@ -327,6 +328,7 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 				}
 			}
 		}
+	SKIP_NODE:
 		current->status = Node::CLOSED;
 		open.erase(open.begin());
 	}
@@ -342,6 +344,7 @@ void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 		return;
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
 			value = this->searchRoute(field, agent, coord);
+			std::cout<<value<<std::endl;
 			if(value > max){
 				max = value;
 				goal = coord;

@@ -41,7 +41,7 @@ public:
 };
 
 constexpr uint_fast32_t move_weight                = 5;
-constexpr uint_fast32_t state_weight               = 1;
+constexpr uint_fast32_t state_weight               = 3;
 constexpr uint_fast32_t heuristic_weight           = 5;
 constexpr uint_fast32_t is_on_decided_route_weight = 3;
 
@@ -68,7 +68,7 @@ public:
 	//ヒューリスティックコスト（推定コスト）
 	uint_fast32_t heuristic;
 	//確定ルートにかぶっているか？
-	bool is_on_decided_route;
+  uint_fast32_t is_on_decided_route;
 	//何回移動したか
 	uint_fast32_t move_num;
   //親のノード
@@ -88,7 +88,7 @@ inline const double Node::getScore() const{
 }
 
 inline const double Node::getHeuristic() const{
-	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) - (this->is_on_decided_route * is_on_decided_route_weight);
+	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight);
 }
 
 constexpr uint_fast16_t search_depth = 20;
@@ -123,13 +123,14 @@ private:
 	void setAverageScore(const Field& field);
 	void setSearchTarget(Field& field, const uint_fast32_t agent);
 	const double goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+
 	
 	//ゴール選定用の評価関数関連
 	const uint_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord);
 
 	
-	const bool expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const bool expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord);
   const bool isOnDecidedRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherAgentDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherGoalDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
@@ -138,6 +139,8 @@ private:
 	
 	//評価値関連
 	const uint_fast32_t heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coord, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
+
+	
 	//探索関連
 	void initNode(const Field& field);
 	static const bool comp(std::pair<Node*, Field> lhs, std::pair<Node*, Field> rhs);
