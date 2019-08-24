@@ -86,20 +86,36 @@ Astar::Astar(){
 Astar::~Astar(){
 }
 
-//なんかだめ
-void Astar::decidedMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num){
+
+
+
+//うまく行ってない
+void Astar::decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route){
 	Direction direction;
 	for(size_t i = 0; i < agent; i++){
-		if(this->decided_route.at(i).empty())
+		if(route.at(i).empty())
 			continue;
-		if(move_num + 1 >= this->decided_route.at(i).size())
+		if(i >= route.at(i).size() - 1)
 			continue;
-		direction = this->changeDirection(this->decided_route.at(i).at(move_num), this->decided_route.at(i).at(move_num + 1));
-		if(field.canMove(field.agents.at(i), direction)){
+		direction = this->changeDirection(route.at(i).at(0), route.at(i).at(1));
+		std::cout<<direction<<std::endl;
+		if(field.canMove(field.agents.at(i), direction))
 			field.agents.at(i).move(direction);
-		}
+	}
+	
+	field.applyNextAgents();
+	//field.print();
+	
+	for(size_t i = 0; i < agent; i++){
+		if(route.at(i).empty())
+			continue;
+		if(field.agents.at(i).getX() == route.at(i).at(0).first && field.agents.at(i).getY() == route.at(i).at(0).second)
+			continue;
+		route.at(i).erase(route.at(i).begin());
 	}
 }
+
+
 
 const Direction Astar::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
 	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
@@ -119,9 +135,9 @@ void Astar::setAverageScore(const Field& field){
 }
 
 void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
-	this->search_target.clear();
 	std::vector<std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>> condidate;
 	double value;
+	this->search_target.clear();
 	if(agent >= field.agents.size())
 		return;
 	this->search_target.clear();
@@ -145,7 +161,7 @@ void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
 const double Astar::goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
 	if(this->expectTarget(field, agent, goal))
 		return false;
-	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) + this->isSideOrAngle(field, goal);
+	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal);// + this->isSideOrAngle(field, goal);
 }
 
 const uint_fast32_t Astar::occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
@@ -161,13 +177,15 @@ const uint_fast32_t Astar::occupancyRate(Field& field, const uint_fast32_t agent
 	return count * 2.0;
 }
 
+/*
 const uint_fast32_t Astar::isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord){
-	if(coord.first == 0 && coord.second == 0 || coord.first == 0 && coord.second == field.getHeight() || coord.first == field.getWidth() && coord.second == 0 || coord.first == field.getWidth() && coord.second == field.getHeight())
+	if(coord.first == 0 && coord.second == 0 || coord.first == 0 && coord.second == field.getHeight() - 1 || coord.first == field.getWidth() - 1 && coord.second == 0 || coord.first == field.getWidth() - 1 && coord.second == field.getHeight() - 1)
 		return true;
-	if(coord.first == 0 || coord.second == 0 || coord.first == field.getWidth() || coord.second == field.getHeight())
+	if(coord.first == 0 || coord.second == 0 || coord.first == field.getWidth() - 1 || coord.second == field.getHeight() - 1)
 		return -20;
 	return false;
 }
+*/
 
 const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord){
 	if(agent >= field.agents.size())
@@ -184,8 +202,8 @@ const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const st
 		return true;
 	if(this->anotherGoalDistance(field, agent, coord))
 		return true;
-	if(this->isSideOrAngle(field, coord))
-		return true;
+	//if(this->isSideOrAngle(field, coord))
+	//return true;
 	return false;
 }
 
@@ -229,11 +247,13 @@ const bool Astar::anotherGoalDistance(Field& field, const uint_fast32_t agent, c
 
 const uint_fast32_t Astar::whosePanel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
 	uint_fast32_t attr = MINE_ATTR;
-	if(field.at(coord.first, coord.second)->getAttr() == PURE_ATTR)
+	uint_fast32_t	agent_attr  = field.at(coord.first, coord.second)->getAttr();
+	uint_fast32_t	pannel_attr = field.at(coord.first, coord.second)->getAttr();
+	if(pannel_attr == PURE_ATTR)
 	  attr = PURE_ATTR;
-	if(field.agents.at(agent).getAttr() == MINE_ATTR && field.at(coord.first, coord.second)->getAttr() == ENEMY_ATTR)
+	if(agent_attr == MINE_ATTR  && pannel_attr == ENEMY_ATTR)
 		attr = ENEMY_ATTR;
-	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(coord.first, coord.second)->getAttr() == MINE_ATTR)
+	if(agent_attr == ENEMY_ATTR && pannel_attr == MINE_ATTR)
 		attr = ENEMY_ATTR;
 	return attr;
 }
@@ -241,8 +261,101 @@ const uint_fast32_t Astar::whosePanel(Field& field, const uint_fast32_t agent, c
 const uint_fast32_t Astar::heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coord, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const{
 	const uint_fast32_t dx = std::abs((int_fast32_t)(goal.first - coord.first));
 	const uint_fast32_t dy = std::abs((int_fast32_t)(goal.second - coord.second));
-	const double distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+	const double distance  = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
 	return distance;
+}
+
+const double Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal){
+	std::vector<std::pair<Node*, Field>> open;
+	Node *start , *current , *next;
+	this->initNode(field);
+	
+	start =& this->node.at(field.agents.at(agent).getY() * field.getHeight() + field.agents.at(agent).getX());
+	this->setStartNode(field, agent, goal, start);	
+	open.push_back(std::make_pair(start, field));
+	
+	while(!open.empty()){
+		std::sort(open.begin(), open.end(), comp);
+		current = open.at(0).first;
+		Field current_field = open.at(0).second;
+		
+		//if(this->branchingCondition(current))
+		//goto SKIP_NODE;
+		
+		if(current->coord == goal){
+			if(this->endCondition(current))
+				goto SKIP_NODE;
+			return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
+		}
+		
+		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
+			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
+				Field next_field = current_field;
+				next_field.agents.at(agent).move((Direction)i);
+				
+				//確定ルートで動かす
+				//this->decidedMove(next_field, agent, current->decided_route);
+				
+				next_field.applyNextAgents();
+				next =& this->node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
+				if(current->coord == next->coord){
+					next_field.agents.at(agent).move((Direction)i);
+					
+					//確定ルートで動かす
+					//this->decidedMove(next_field, agent, current->decided_route);
+					
+					next_field.applyNextAgents();
+					next =& this->node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());				
+					if(next->status == Node::NONE && next->coord != current->coord){
+						this->setNextNode(next_field, agent, goal, current, next);
+						next->move_cost = current->move_cost + 2;
+						open.push_back(std::make_pair(next, next_field));
+					}
+				}
+				else{
+					if(next->status == Node::NONE){
+						this->setNextNode(next_field, agent, goal, current, next);
+						next->move_cost = current->move_cost + 1;
+						open.push_back(std::make_pair(next, next_field));
+					}
+				}
+			}
+		}
+	SKIP_NODE:
+		current->status = Node::CLOSED;
+		open.erase(open.begin());
+	}
+	return - INT_MAX;	
+}
+
+void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start){
+	start->status     = Node::OPEN;
+	start->move_cost  = 0;
+	start->state_cost = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
+	start->heuristic  = this->heuristic(start->coord, goal);
+	start->is_on_decided_route = 0;
+
+	
+	//start->decided_route = this->decided_route;
+}
+
+void Astar::setNextNode(Field& next_field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next){
+	next->status = Node::OPEN;
+	next->state_cost = current->state_cost + next_field.calcScore(ENEMY_ATTR) - next_field.calcScore(MINE_ATTR);
+	next->heuristic = this->heuristic(next->coord, goal);
+	next->is_on_decided_route = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
+	next->parent = current;
+
+	
+	//next->decided_route = current->decided_route;
+}
+
+const bool Astar::branchingCondition(Node* current) const{
+	return (current->move_cost > 18);
+}
+
+const bool Astar::endCondition(Node* current) const{
+	return (current->move_cost <= 3);
 }
 
 void Astar::initNode(const Field& field){
@@ -251,197 +364,32 @@ void Astar::initNode(const Field& field){
 	for(size_t i = 0; i < field.getWidth(); i++)
 		for(size_t j = 0; j < field.getHeight(); j++)
 			this->node.at(j * field.getHeight() + i).coord = std::make_pair(i, j);
-	
-	/*
-	this->node.resize(field.getWidth());
-	std::for_each(this->node.begin(), this->node.end(),[&, this](auto& obj){
-			obj.resize(field.getHeight());
-		});
-	for(size_t i = 0; i < field.getWidth(); i++)
-		for(size_t j = 0; j < field.getHeight(); j++)
-			this->node.at(i).at(j).coord = std::make_pair(i, j);
-	*/
 }
 
-const bool Astar::comp(std::pair<Node*, Field> lhs, std::pair<Node*, Field> rhs){
+const bool Astar::comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs){
 	bool result = lhs.first->getScore() != rhs.first->getScore();
 	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->getHeuristic() < rhs.first->getHeuristic());
-}
-
-const double Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal){
-	std::vector<std::pair<Node*, Field>> open;
-	Node *start , *current , *next;
-	this->initNode(field);
-	//start =& this->node.at(field.agents.at(agent).getX()).at(field.agents.at(agent).getY());
-	start =& this->node.at(field.agents.at(agent).getY() * field.getHeight() + field.agents.at(agent).getX());
-	
-	start->status = Node::OPEN;
-	start->move_cost = 0;
-	start->state_cost = - (field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR));
-	start->heuristic = this->heuristic(start->coord, goal);
-	start->is_on_decided_route = 0;
-	start->move_num = 0;
-	open.push_back(std::make_pair(start, field));
-	while(!open.empty()){
-		std::sort(open.begin(), open.end(), comp);
-		current = open.at(0).first;
-		Field current_field = open.at(0).second;		
-
-		//if(current->move_cost > 18)
-		//goto SKIP_NODE;
-		
-		if(current->coord == goal){
-			if(current->move_cost <= 4)
-				goto SKIP_NODE;
-			return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
-		}
-		
-		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
-			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
-				Field next_field = current_field;
-				next_field.agents.at(agent).move((Direction)i);
-				//確定ルートで動かす
-				//this->decidedMove(next_field, agent, current->move_num);
-				next_field.applyNextAgents();
-				
-				//next =& this->node.at(next_field.agents.at(agent).getX()).at(next_field.agents.at(agent).getY());
-				next =& this->node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
-				
-				if(current->coord == next->coord){
-					next_field.agents.at(agent).move((Direction)i);
-					//確定ルートで動かす
-					//this->decidedMove(next_field, agent, next->move_num);
-					next_field.applyNextAgents();
-					
-					//next =& this->node.at(next_field.agents.at(agent).getX()).at(next_field.agents.at(agent).getY());
-					next =& this->node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
-					
-					if(next->status == Node::NONE && next->coord != current->coord){
-						next->status = Node::OPEN;
-						next->move_cost = current->move_cost + 2;
-						next->state_cost = - (next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR));
-						next->heuristic = this->heuristic(next->coord, goal);
-						next->is_on_decided_route = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
-						next->move_num = current->move_num + 1;
-						next->parent = current;
-						open.push_back(std::make_pair(next, next_field));
-					}
-				}
-				else{
-					if(next->status == Node::NONE){
-						next->status = Node::OPEN;
-						next->move_cost = current->move_cost + 1;
-						next->state_cost = - (next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR));
-						next->heuristic = this->heuristic(next->coord, goal);
-						next->is_on_decided_route = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
-						next->move_num = current->move_num + 1;
-						next->parent = current;
-						open.push_back(std::make_pair(next, next_field));
-					}
-				}
-			}
-		}
-	SKIP_NODE:
-		current->status = Node::CLOSED;
-		open.erase(open.begin());
-	}
-	return - INT_MAX;
-	
-	/*
-	std::vector<std::pair<Node*, Field>> open;
-	Node *start , *current , *next;
-	this->initNode(field);
-	start =& this->node.at(field.agents.at(agent).getX()).at(field.agents.at(agent).getY());
-	start->status = Node::OPEN;
-	start->move_cost = 0;
-	start->state_cost = - (field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR));
-	start->heuristic = this->heuristic(start->coord, goal);
-	start->is_on_decided_route = 0;
-	start->move_num = 0;
-	open.push_back(std::make_pair(start, field));
-	while(!open.empty()){
-		std::sort(open.begin(), open.end(), comp);
-		current = open.at(0).first;
-		Field current_field = open.at(0).second;		
-
-		//if(current->move_cost > 18)
-		//goto SKIP_NODE;
-		
-		if(current->coord == goal){
-			
-			if(current->move_cost <= 5)
-				goto SKIP_NODE;
-			
-			return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
-		}
-		
-		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
-			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
-				Field next_field = current_field;
-				next_field.agents.at(agent).move((Direction)i);
-				//確定ルートで動かす
-				//this->decidedMove(next_field, agent, current->move_num);
-				next_field.applyNextAgents();
-				next =& this->node.at(next_field.agents.at(agent).getX()).at(next_field.agents.at(agent).getY());
-				if(current->coord == next->coord){
-					next_field.agents.at(agent).move((Direction)i);
-					//確定ルートで動かす
-					//this->decidedMove(next_field, agent, next->move_num);
-					next_field.applyNextAgents();
-					next =& this->node.at(next_field.agents.at(agent).getX()).at(next_field.agents.at(agent).getY());
-					if(next->status == Node::NONE && next->coord != current->coord){
-						next->status = Node::OPEN;
-						next->move_cost = current->move_cost + 2;
-						next->state_cost = - (next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR));
-						next->heuristic = this->heuristic(next->coord, goal);
-						next->is_on_decided_route = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
-						next->move_num = current->move_num + 1;
-						next->parent = current;
-						open.push_back(std::make_pair(next, next_field));
-					}
-				}
-				else{
-					if(next->status == Node::NONE){
-						next->status = Node::OPEN;
-						next->move_cost = current->move_cost + 1;
-						next->state_cost = - (next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR));
-						next->heuristic = this->heuristic(next->coord, goal);
-						next->is_on_decided_route = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
-						next->move_num = current->move_num + 1;
-						next->parent = current;
-						open.push_back(std::make_pair(next, next_field));
-					}
-				}
-			}
-		}
-	SKIP_NODE:
-		current->status = Node::CLOSED;
-		open.erase(open.begin());
-	}
-	return - INT_MAX;
-	*/
 }
 
 void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	int_fast32_t value, max = - INT_MAX;
 	std::pair<uint_fast32_t, uint_fast32_t> goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
+	
 	this->setSearchTarget(field, agent);
 	if(this->search_target.empty())
 		return;
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
 			value = this->searchRoute(field, agent, coord);
-			std::cout<<value<<std::endl;
 			if(value > max){
-				max = value;
-				goal = coord;
+				max   = value;
+				goal  = coord;
 				route = this->makeRoute(field, agent, coord);
 			}
 		});
 	this->decided_route.at(agent) = route;
-	this->decided_goal.at(agent) = goal;
+	this->decided_goal.at(agent)  = goal;
 	this->printRoute(route, goal);
-	std::cout<<max<<std::endl;
 }
 
 void 	Astar::search(Field& field, const uint_fast32_t attr){
@@ -461,18 +409,12 @@ const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Fiel
 	std::pair<uint_fast32_t, uint_fast32_t> from;
 	route.push_back(goal);
 	this->decided_coord.push_back(goal);
-	//from = this->node.at(goal.first).at(goal.second).parent->coord;
 	from = this->node.at(goal.second * field.getHeight() + goal.first).parent->coord;
-	
 	route.push_back(from);
 	while(true){
 		if(this->node.at(from.second * field.getHeight() + from.first).parent == nullptr)
 			break;
-		
-		//from = this->node.at(from.first).at(from.second).parent->coord;
-		
 		from = this->node.at(from.second * field.getHeight() + from.first).parent->coord;
-		
 	  route.push_back(from);
 		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), from);
 		if(result == this->decided_coord.end())
@@ -482,7 +424,19 @@ const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Fiel
 	return route;
 }
 
-const void Astar::printGoal() const{
+const void Astar::printGoal(Field& field, const uint_fast32_t attr) const{
+	glPointSize(point_size - 10);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glBegin(GL_POINTS);
+	for(size_t i = 0; i < this->decided_route.size(); i++){
+		if(field.agents.at(i).getAttr() == attr){
+			glVertex2i(half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).first, half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).second);
+		}
+	}
+	glEnd();
+	glFlush();
+
+	/*
 	glPointSize(point_size);
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_POINTS);
@@ -492,6 +446,7 @@ const void Astar::printGoal() const{
 		});
 	glEnd();
 	glFlush();
+	*/
 }
 
 const void Astar::printRoute(const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& route, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
@@ -518,17 +473,7 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	this->setAverageScore(obj);
 	this->search(obj, MINE_ATTR);
 	
-	//ゴールを表示
-	glPointSize(point_size - 10);
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glBegin(GL_POINTS);
-	for(size_t i = 0; i < this->decided_route.size(); i++){
-		if(obj.agents.at(i).getAttr() == attr){
-			glVertex2i(half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).first, half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).second);
-		}
-	}
-	glEnd();
-	glFlush();
+	this->printGoal(obj, attr);
 }
 
 //----------------Random--------------
