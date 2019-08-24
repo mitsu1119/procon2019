@@ -103,8 +103,8 @@ private:
 
 	//探索かけるたびにクリアする
 	//各座標の状況を格納するリスト
-	std::vector<std::vector<Node>> node;
-	//std::vector<Node> node;
+	//std::vector<std::vector<Node>> node;
+	std::vector<Node> node;
 
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> search_target;	
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> decided_route;
@@ -149,7 +149,8 @@ private:
 	void search(Field& field, const uint_fast32_t attr);
 
 	
-	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+	
 	//描画関連
 	const void printGoal() const;
 	const void printRoute(const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& route, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
