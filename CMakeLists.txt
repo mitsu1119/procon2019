@@ -14,6 +14,7 @@ set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -g")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_definitions("-I/foo/dir1")
 add_definitions("-DMACRO1=bar")
+add_definitions("-fpermissive")
 
 #サブディレクトリを追加
 add_subdirectory(src)
