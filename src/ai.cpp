@@ -336,28 +336,28 @@ void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pai
 	start->status     = Node::OPEN;
 	start->move_cost  = 0;
 	
-	//start->state_cost = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
-	start->state_cost = - field.calcScore(MINE_ATTR);
+	start->state_cost = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
+	//start->state_cost = - field.calcScore(MINE_ATTR);
 	
 	start->heuristic  = this->heuristic(start->coord, goal);
 	start->is_on_decided_route = 0;
 
 	
-	start->decided_route = this->decided_route;
+	//start->decided_route = this->decided_route;
 }
 
 void Astar::setNextNode(Field& next_field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next){
 	next->status = Node::OPEN;
 	
-	//next->state_cost = current->state_cost + next_field.calcScore(ENEMY_ATTR) - next_field.calcScore(MINE_ATTR);
-	next->state_cost = current->state_cost - next_field.calcScore(MINE_ATTR);
+	next->state_cost = current->state_cost + next_field.calcScore(ENEMY_ATTR) - next_field.calcScore(MINE_ATTR);
+	//next->state_cost = current->state_cost - next_field.calcScore(MINE_ATTR);
 	
 	next->heuristic = this->heuristic(next->coord, goal);
 	next->is_on_decided_route = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
 	next->parent = current;
 
 	
-	next->decided_route = current->decided_route;
+	//next->decided_route = current->decided_route;
 }
 
 const bool Astar::branchingCondition(Node* current) const{
@@ -378,7 +378,8 @@ void Astar::initNode(const Field& field){
 
 const bool Astar::comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs){
 	bool result = lhs.first->getScore() != rhs.first->getScore();
-	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->getHeuristic() < rhs.first->getHeuristic());
+	//return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->getHeuristic() < rhs.first->getHeuristic());
+	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->state_cost < rhs.first->state_cost);
 }
 
 void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){

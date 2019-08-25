@@ -40,10 +40,10 @@ public:
 	
 };
 
-constexpr uint_fast32_t move_weight                = 1;
-constexpr uint_fast32_t state_weight               = 20;
+constexpr uint_fast32_t move_weight                = 2;
+constexpr uint_fast32_t state_weight               = 10;
 constexpr uint_fast32_t heuristic_weight           = 1;
-constexpr uint_fast32_t is_on_decided_route_weight = 2;
+constexpr uint_fast32_t is_on_decided_route_weight = 0;
 
 //各座標の状況を表すクラス
 class Node{
@@ -89,7 +89,7 @@ inline const double Node::getScore() const{
 }
 
 inline const double Node::getHeuristic() const{
-	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight);
+	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight));
 }
 
 constexpr uint_fast16_t search_depth = 20;
