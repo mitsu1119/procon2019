@@ -8,20 +8,21 @@
 #include "field.hpp"
 #include "ai.hpp"
 
-constexpr uint_fast32_t cell_size  = 30;
 class Field;
 
 const std::vector<int> vec_x = {0, 1, 1, 1, 0, -1, -1, -1, 0};
 const std::vector<int> vec_y = {-1, -1, 0, 1, 1, 1, 0, -1, 0};
 
+constexpr uint_fast32_t cell_size  = 30;
+constexpr uint_fast32_t half = cell_size / 2;
+
+constexpr uint_fast32_t line_size  = 1;
+constexpr uint_fast32_t panel_size = 30;
+constexpr uint_fast32_t agent_size = 15;
+constexpr uint_fast32_t point_size = 15;
 
 class Print{
 private:
-
-	static const uint_fast32_t half = cell_size / 2;
-	static const uint_fast32_t line_size  = 1;
-	static const uint_fast32_t panel_size = 30;
-	static const uint_fast32_t agent_size = 15;
 
 private:
 
@@ -73,14 +74,15 @@ class AI;
 class RandomMine;
 class RandomEnemy;
 
+constexpr unsigned int window_width_size      = 800;
+constexpr unsigned int window_height_size     = 800;
+constexpr unsigned int window_width_position  = 100;
+constexpr unsigned int window_height_position = 100;
+
 class DisplayWrapper{
 private:
 
 	static DisplayWrapper* instance;
-	static const unsigned int window_width_size  = 800;
-	static const unsigned int window_height_size = 800;
-	static const unsigned int window_width_position  = 100;
-	static const unsigned int window_height_position = 100;
 
 public:
 

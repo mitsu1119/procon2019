@@ -40,14 +40,13 @@ public:
 	
 };
 
-//各座標の状況を表すクラス
+constexpr uint_fast32_t move_weight      = 11;
+constexpr uint_fast32_t state_weight     = 3;
+constexpr uint_fast32_t heuristic_weight = 4;
+
 class Node{
 private:
-	
-	static const uint_fast32_t move_weight      = 11;
-	static const uint_fast32_t state_weight     = 1;
-	static const uint_fast32_t heuristic_weight = 4;
-	
+
 public:
 
 	enum Status{
@@ -67,8 +66,7 @@ public:
 	//ヒューリスティックコスト（推定コスト）
 	uint_fast32_t heuristic;
   //親のノード
-	Node* parent;
-	
+	Node* parent;	
 	//座標
 	std::pair<uint_fast32_t, uint_fast32_t> coord;
 	
@@ -78,16 +76,18 @@ public:
 	
 };
 
+inline const double Node::getHeuristic() const{
+	return this->heuristic * heuristic_weight;
+}
+
+inline const double Node::getScore() const{
+	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight);
+}
+
+constexpr uint_fast16_t search_depth = 10;
+
 class Astar : public AI{
 private:
-
-	//描画用
-	const uint_fast32_t cell_size  = 30;
-	const uint_fast32_t point_size = 15;
-	const uint_fast32_t half = cell_size / 2;
-	
-	//何個目まで探索
-	static const uint_fast16_t search_depth = 10;
 	
 	int_fast32_t average_score;
 	Greedy greedy;
@@ -95,15 +95,12 @@ private:
 private:
 
 	//探索かけるたびにクリアする
-	//各座標の状況を格納するリスト
 	std::vector<std::vector<Node>> node;
-	
-	//探索対象
+	//std::vector<Node> node;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> search_target;	
-	//確定ルート
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> decided_route;
-	//確定ゴール
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_goal;
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 
 private:
 	
@@ -115,29 +112,39 @@ private:
 	//ゴール候補の選定
 	void setAverageScore(const Field& field);
 	void setSearchTarget(Field field, const uint_fast32_t agent);
+
+	
 	const double goalEvaluation(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
+
+	
 	//ゴール選定用の評価関数関連
 	const bool expectTarget(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
-	
   const bool isOnDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherAgentDistance(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t whosePanel(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t occupancyRate(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
+	
 	//評価値関連
 	const uint_fast32_t heuristic(const std::pair<uint_fast32_t, uint_fast32_t> coord, const std::pair<uint_fast32_t, uint_fast32_t> goal) const;
+
+	
 	//探索関連
 	void initNode(const Field& field);
 	static const bool comp(std::pair<Node*, Field> lhs, std::pair<Node*, Field> rhs);
 	const double searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t> goal);
 	void searchBestRoute(Field field, const uint_fast32_t agent);
 	void search(Field field, const uint_fast32_t attr);
+
 	
+	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> goal);
+
+
 	//描画
-	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> goal) const;
-	const void printGoal() const;
+	const void printGoal(Field field, const uint_fast32_t attr) const;
 	const void printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route, std::pair<uint_fast32_t, uint_fast32_t> goal);
 
+	
 public:
 	
 	Astar();

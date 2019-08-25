@@ -79,14 +79,6 @@ Node::Node(){
 Node::~Node(){
 }
 
-const double Node::getHeuristic() const{
-	return this->heuristic * this->heuristic_weight;
-}
-
-const double Node::getScore() const{
-	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight);
-}
-
 //----------------A*algorithm--------------
 Astar::Astar(){
 }
@@ -100,7 +92,7 @@ void Astar::decidedMove(Field& field, const uint_fast32_t agent){
 
 const Direction Astar::nextDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
 	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
-		if(now.first == next.first + this->vec_x.at(i) && now.second == next.second + this->vec_y.at(i))
+		if(next.first == now.first + this->vec_x.at(i) && next.second == now.second + this->vec_y.at(i))
 			return (Direction)i;
 }
 
@@ -130,7 +122,7 @@ void Astar::setSearchTarget(Field field, const uint_fast32_t agent){
 		}
 	}
 	std::sort(condidate.rbegin(), condidate.rend());
-	for(size_t i = 0; i < this->search_depth; i++){
+	for(size_t i = 0; i < search_depth; i++){
 		if(i >= condidate.size())
 			break;
 		this->search_target.push_back(condidate.at(i).second);
@@ -162,15 +154,11 @@ const bool Astar::expectTarget(Field field, const uint_fast32_t agent, const std
 
 
 const bool Astar::isOnDecidedRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
-	for(size_t i = 0; i < this->decided_route.size(); i++){
-		if(this->decided_route.at(i).size() == 0)
-			continue;
-		if(field.agents.at(agent).getAttr() != field.agents.at(i).getAttr())
-			continue;
-		auto result = std::find(this->decided_route.at(i).begin(), this->decided_route.at(i).end(), coord);
-		if(result != this->decided_route.at(i).end())
+	if(this->decided_coord.empty())
+		return false;
+	auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), coord);
+	if(result != this->decided_coord.end())
 			return true;
-	}
 	return false;
 }
 
@@ -308,17 +296,43 @@ void Astar::searchBestRoute(Field field, const uint_fast32_t agent){
 			}
 		});
 	this->decided_route.at(agent) = route;
+	this->decided_goal.at(agent) = goal;
 	this->printRoute(route, goal);
 }
 
 void 	Astar::search(Field field, const uint_fast32_t attr){
 	this->decided_route.clear();
 	this->decided_route.resize(field.agents.size());
+	this->decided_goal.clear();
+	this->decided_goal.resize(field.agents.size());
+	this->decided_coord.clear();
+	
 	for(size_t i = 0; i < field.agents.size(); i++)
 		if(field.agents.at(i).getAttr() == attr)
 			this->searchBestRoute(field, i);
+}
 
-	//ゴールを表示
+const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> goal){
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
+	std::pair<uint_fast32_t, uint_fast32_t> from;
+	route.push_back(goal);
+	this->decided_coord.push_back(goal);
+	from = this->node.at(goal.first).at(goal.second).parent->coord;
+	route.push_back(from);
+	while(true){
+		if(this->node.at(from.first).at(from.second).parent == nullptr)
+			break;
+		from = this->node.at(from.first).at(from.second).parent->coord;
+	  route.push_back(from);
+		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), from);
+		if(result == this->decided_coord.end())
+			this->decided_coord.push_back(from);
+	}
+	std::reverse(route.begin(), route.end());
+	return route;
+}
+
+const void Astar::printGoal(Field field, const uint_fast32_t attr) const{
 	glPointSize(point_size - 10);
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glBegin(GL_POINTS);
@@ -329,26 +343,8 @@ void 	Astar::search(Field field, const uint_fast32_t attr){
 	}
 	glEnd();
 	glFlush();
-	
-}
 
-const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> goal) const{
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
-	std::pair<uint_fast32_t, uint_fast32_t> from;
-	route.push_back(goal);
-	from = this->node.at(goal.first).at(goal.second).parent->coord;
-	route.push_back(from);
-	while(true){
-		if(this->node.at(from.first).at(from.second).parent == nullptr)
-			break;
-		from = this->node.at(from.first).at(from.second).parent->coord;
-	  route.push_back(from);
-	}
-	std::reverse(route.begin(), route.end());
-	return route;
-}
-
-const void Astar::printGoal() const{
+	/*
 	glPointSize(point_size);
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_POINTS);
@@ -358,6 +354,7 @@ const void Astar::printGoal() const{
 		});
 	glEnd();
 	glFlush();
+	*/
 }
 
 const void Astar::printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route, std::pair<uint_fast32_t, uint_fast32_t> goal){
@@ -383,18 +380,7 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	Field obj = static_cast<Field> (*field);
 	this->setAverageScore(obj);
 	this->search(obj, MINE_ATTR);
-
-	//ゴール地点を表示
-	glPointSize(point_size - 10);
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glBegin(GL_POINTS);
-	for(size_t i = 0; i < this->decided_route.size(); i++){
-		if(obj.agents.at(i).getAttr() == attr){
-			glVertex2i(half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).first, half + cell_size * this->decided_route.at(i).at(this->decided_route.at(i).size() - 1).second);
-		}
-	}
-	glEnd();
-	glFlush();
+	this->printGoal(obj, MINE_ATTR);
 }
 
 //----------------Random--------------
