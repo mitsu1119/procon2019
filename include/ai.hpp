@@ -12,8 +12,8 @@ class AI{
 private:
 public:
 	
-	const std::vector<int> vec_x={0,1,1,1,0,-1,-1,-1,0};
-	const std::vector<int> vec_y={-1,-1,0,1,1,1,0,-1,0};
+	const std::vector<int> vec_x={0,  1,1,1,0,-1,-1,-1,0};
+	const std::vector<int> vec_y={-1,-1,0,1,1, 1, 0,-1,0};
 	
 public:
 	
@@ -41,9 +41,9 @@ public:
 };
 
 constexpr uint_fast32_t move_weight                = 1;
-constexpr uint_fast32_t state_weight               = 3;
-constexpr uint_fast32_t heuristic_weight           = 0.8;
-constexpr uint_fast32_t is_on_decided_route_weight = 3;
+constexpr uint_fast32_t state_weight               = 20;
+constexpr uint_fast32_t heuristic_weight           = 1;
+constexpr uint_fast32_t is_on_decided_route_weight = 2;
 
 //各座標の状況を表すクラス
 class Node{
