@@ -177,6 +177,8 @@ public:
   //width、heightを外部から所得
 	const uint_fast32_t getWidth() const;
 	const uint_fast32_t getHeight() const;
+
+	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> decided_route;
 	
 };
 
