@@ -12,7 +12,6 @@ class AI{
 private:
 public:
 
-	//DECLARE_ENUM(Direction, direction2name, UP, RUP, RIGHT, RDOWN, DOWN, LDOWN, LEFT, LUP, STOP ,NONE, DIRECTION_SIZE);
 	const std::vector<int> vec_x = { 0, 1, 1, 1, 0,-1,-1, -1, 0};
 	const std::vector<int> vec_y = {-1,-1, 0, 1, 1, 1, 0, -1, 0};
 	
@@ -24,10 +23,26 @@ public:
 	
 };
 
-class Greedy : public AI{
+class Random : public AI{
 private:
 	
+	XorOshiro128p random;
+	
+public:
+	
+	Random();
+	~Random();
+	void mineMove(Field& field);
+	void enemyMove(Field& field);
+	void move(Field *field, const uint_fast32_t attr) override;
+	
+};
+
+class Greedy : public AI{
+private:
+
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
+	XorOshiro128p random;
 	
 public:
 	
@@ -35,16 +50,19 @@ public:
 	~Greedy();
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
+	
 	void singleMove(Field& field, const uint_fast32_t agent);
+	
+	void randomMove(Field& field, const uint_fast32_t agent);
 	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
 	void move(Field *field, const uint_fast32_t attr) override;
 	
 };
 
 constexpr uint_fast32_t move_weight      = 15;
-constexpr uint_fast32_t state_weight     = 2;
+constexpr uint_fast32_t state_weight     = 4;
 constexpr uint_fast32_t heuristic_weight = 4;
-constexpr uint_fast32_t is_on_decided_route_weight = 4;
+constexpr uint_fast32_t is_on_decided_route_weight = 10;
 
 class Node{
 private:
@@ -88,7 +106,7 @@ inline const double Node::getScore() const{
 	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight));
 }
 
-constexpr uint_fast16_t search_depth = 20;
+constexpr uint_fast16_t search_depth = 5;
 
 class Astar : public AI{
 private:
@@ -100,7 +118,6 @@ private:
 
 	//探索かけるたびにクリアする
 	std::vector<Node> node;
-	//std::vector<std::vector<Node>> node;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> search_target;
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> decided_route;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_goal;
@@ -108,6 +125,10 @@ private:
 
 private:
 
+	//貪欲での移動
+	void greedyMove(Field& field, const uint_fast32_t agent);
+
+	
 	//探索内での確定移動
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
 	const Direction changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
@@ -168,16 +189,5 @@ public:
 	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
 	
-};
-
-class Random : public AI{
-private:
-	XorOshiro128p random;
-public:
-	Random();
-	~Random();
-	void mineMove(Field& field);
-	void enemyMove(Field& field);
-	void move(Field *field, const uint_fast32_t attr) override;
 };
 

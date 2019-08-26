@@ -130,85 +130,69 @@ void Field::setPanelAttr(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr) {
 	}
 }
 
-void Field::genRandMap() {
-	/*
+void Field::genRandMap(){
+	static const int m = 30;
+  static const double s = 7.0;
+  //static const int n = 100; //Debug
+  static const double slide = 25;
+  static const double pi = 3.1415926535;
+
+  double x,y;
+  double r1,r2;
+
 	int N = 32;
 	std::vector<int> field_rand;
   std::vector<int> field_rev;
   std::vector<int> buf;
 	int buf_height, buf_width;
+  int field_rand_sum = -1; // <- Debug
 
-	int field_rand_sum = -1;
-	
+
+
 	buf_height=(this->height/2)+(this->height%2);
 	buf_width=(this->width/2)+(this->width%2);
 
-	while((field_rand_sum < 20) || (field_rand_sum >= 24)){
-		field_rand.clear();
-		field_rev.clear();
-		field_rand_sum = 0;
-		
-		for(int i=0; i < buf_height; i++){
-			for(int j=0; j < buf_width; j++){
-				buf.push_back(this->random(N) - (N / 2));
-			}
-			field_rand.insert(field_rand.end(), buf.begin(), buf.end());
-			std::reverse(buf.begin(), buf.end());
-			field_rand.insert(field_rand.end(), buf.begin(), buf.end());
-			buf.clear();
-		}
+  // fix bug(for even) -----------------------
+  // Add while loop
+  // ----- INFO ------------------------------
+  // (field_rand_sum < m)||(field_rand_sum >= n)
+  //
+  // field_rand_sum == m + 4
+  //
+  // if n == m+4
+  // field_rand_sum == m
+  // -----------------------------------------
+  while(field_rand_sum < 0){
+    field_rand.clear(); // <- Debug
+    field_rev.clear();  // <- Debug
+    field_rand_sum = 0; // <- Debug
+    for(int i=0; i < buf_height; i++){
+      for(int j=0; j < buf_width; j++){
+        r2 = rand() / 2147483647.1;
+        r1 = rand() / 2147483647.1;
+        x = s * sqrt(-2 * log(r1)) * cos(2 * pi * r2)+m-slide;
+				if((int)x > 16)
+					x = 16;
+				if((int)x < -16)
+					x = -16;
+        buf.push_back((int)x);
+        //buf.push_back((rand() % N)-16);
+      }
 
-		field_rev = field_rand;
-		std::reverse(field_rev.begin(), field_rev.end());
-		field_rand.insert(field_rand.begin(), field_rev.begin(), field_rev.end());
+      field_rand.insert(field_rand.end(), buf.begin(), buf.end());
+      std::reverse(buf.begin(), buf.end());
+      field_rand.insert(field_rand.end(), buf.begin(), buf.end());
+      buf.clear();
+    }
 
-		field_rand_sum = std::accumulate(field_rand.begin(),field_rand.end(),0);
-	}
-	// show field_sum pt
-	std::cout << "[*] field_sum:" << field_rand_sum << std::endl;
-	
-	//奇数業に対応させる
+    field_rev = field_rand;
+    std::reverse(field_rev.begin(), field_rev.end());
+    field_rand.insert(field_rand.begin(), field_rev.begin(), field_rev.end());
 
-	if(this->height%2){
-		field_rand.erase(field_rand.begin()+(field_rand.size()/2), field_rand.begin()+(field_rand.size()/2)+this->height+1);
-	}
-	if(this->width%2){
-		for(int i=0;i<field_rand.size();i++){
-			if(i%this->width==this->width/2)
-				field_rand.erase(field_rand.begin()+i);
-		}
-	}
-	
-	int count=0;
-	
-	for(int i=0;i<this->height;i++){
-		for(int j=0;j<this->width;j++){
-			this->setPanelScore(j, i, field_rand.at(count));
-			count++;
-		}
-	}
-	*/
-	int N = 32;
-	std::vector<int> field_rand;
-  std::vector<int> field_rev;
-  std::vector<int> buf;
-	int buf_height, buf_width;
-	buf_height=(this->height/2)+(this->height%2);
-	buf_width=(this->width/2)+(this->width%2);
-	
-	for(int i=0; i < buf_height; i++){
-		for(int j=0; j < buf_width; j++){
-			buf.push_back(this->random(N) - (N / 2));
-		}
-		field_rand.insert(field_rand.end(), buf.begin(), buf.end());
-		std::reverse(buf.begin(), buf.end());
-		field_rand.insert(field_rand.end(), buf.begin(), buf.end());
-		buf.clear();
+    field_rand_sum = std::accumulate(field_rand.begin(),field_rand.end(),0);  // <- Debug
   }
-
-  field_rev = field_rand;
-  std::reverse(field_rev.begin(), field_rev.end());
-  field_rand.insert(field_rand.begin(), field_rev.begin(), field_rev.end());
+  // showing field_sum pt ---------------------------------
+  std::cout << "[*]field_sum:" << field_rand_sum << std::endl;
 
 	//奇数業に対応させる
 
@@ -222,12 +206,12 @@ void Field::genRandMap() {
 		}
 	}
 	
-	int count=0;
+	int val=0;
 	
 	for(int i=0;i<this->height;i++){
 		for(int j=0;j<this->width;j++){
-			this->setPanelScore(j, i, field_rand.at(count));
-			count++;
+			this->setPanelScore(j, i, field_rand.at(val));
+			val++;
 		}
 	}
 }
