@@ -21,17 +21,13 @@ void Random::mineMove(Field& field){
 	for(auto &i: field.agents) {
 		if(i.getAttr() == MINE_ATTR){
 RE_CONSIDER:
-			if(count > 100){
-				i.move(STOP);
-				return;
-			}
+			if(count++ > 10)
+				break;
 			direction = (Direction)(this->random(DIRECTION_SIZE - 3));
 			if(field.canMove(i, direction))
 				i.move(direction);
-			else{
-				count++;
+			else
 				goto RE_CONSIDER;
-			}
 		}
 	}
 }
@@ -42,17 +38,13 @@ void Random::enemyMove(Field& field){
 	for(auto &i: field.agents) {
 		if(i.getAttr() == ENEMY_ATTR){
 RE_CONSIDER:
-			if(count > 100){
-				i.move(STOP);
-				return;
-			}
+			if(count++ > 10)
+				break;
 			direction = (Direction)(this->random(DIRECTION_SIZE - 3));
 			if(field.canMove(i, direction))
 				i.move(direction);
-			else{
-				count++;
+			else
 				goto RE_CONSIDER;
-			}
 		}
 	}
 }
@@ -76,6 +68,7 @@ Greedy::~Greedy(){
 }
 
 void Greedy::mineMove(Field& field){
+	current_score = field.calcScore(MINE_ATTR)  - field.calcScore(ENEMY_ATTR);
 	this->decided_coord.clear();
 	for(size_t i =0; i < field.agents.size(); i++)
 		if(field.agents.at(i).getAttr() == MINE_ATTR)
@@ -83,6 +76,7 @@ void Greedy::mineMove(Field& field){
 }
 
 void Greedy::enemyMove(Field& field){
+	current_score = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
 	this->decided_coord.clear();
 	for(size_t i =0; i < field.agents.size(); i++)
 		if(field.agents.at(i).getAttr() == ENEMY_ATTR)
@@ -90,16 +84,11 @@ void Greedy::enemyMove(Field& field){
 }
 
 void Greedy::singleMove(Field& field, const uint_fast32_t agent){
-	int_fast32_t max_score = - INT_MAX;
-	int_fast32_t current_score, next_score  = - INT_MAX;
-	uint_fast32_t x        = field.agents.at(agent).getX();
-	uint_fast32_t y        = field.agents.at(agent).getY();
-	Direction direction    = STOP;
-	
-	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		current_score = field.calcScore(MINE_ATTR)  - field.calcScore(ENEMY_ATTR);
-	else
-		current_score = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
+	int_fast32_t max_score   = - INT_MAX;
+	int_fast32_t next_score  = - INT_MAX;
+	uint_fast32_t x          = field.agents.at(agent).getX();
+	uint_fast32_t y          = field.agents.at(agent).getY();
+	Direction direction      = STOP;
 	
 	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
 		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), std::make_pair(x + this->vec_x.at(i), y + this->vec_y.at(i)));
@@ -107,6 +96,8 @@ void Greedy::singleMove(Field& field, const uint_fast32_t agent){
 			continue;
 		if(field.canMove(field.agents.at(agent), (Direction)i)){
 			next_score = this->nextScore(field, agent, (Direction)i);
+			if(next_score <= this->current_score)
+				continue;
 			if(next_score > max_score){
 				max_score = next_score;
 				direction = (Direction)i;
@@ -114,30 +105,25 @@ void Greedy::singleMove(Field& field, const uint_fast32_t agent){
 		}
 	}
 	
-	if(max_score <= current_score)
-		this->randomMove(field, agent);
+	if(max_score == - INT_MAX)
+		this->randomMove(field, agent, x, y);
 	else{
 		field.agents.at(agent).move(direction);
 		this->decided_coord.push_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
 	}
 }
 
-void Greedy::randomMove(Field& field, const uint_fast32_t agent){
+void Greedy::randomMove(Field& field, const uint_fast32_t agent, const uint_fast32_t x, const uint_fast32_t y){
+	Direction direction = STOP;
 	uint_fast32_t count = 0;
-	uint_fast32_t x     = field.agents.at(agent).getX();
-	uint_fast32_t y     = field.agents.at(agent).getY();
-	Direction direction;
-	
 	while(true){
-		if(count++ > 100){
-			field.agents.at(agent).move(STOP);
-			return;
-		}
+		if(count++ > 10)
+			break;
 		direction = (Direction)(this->random(DIRECTION_SIZE - 3));
 		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
 		if(result != this->decided_coord.end())
 			continue;
-		if(field.at(x + this->vec_x.at(direction), y + this->vec_y.at(direction))->getValue() < -5)
+		if(field.at(x + this->vec_x.at(direction), y + this->vec_y.at(direction))->getValue() < -10)
 			continue;
 		if(field.canMove(field.agents.at(agent), direction)){
 			field.agents.at(agent).move(direction);
@@ -145,7 +131,6 @@ void Greedy::randomMove(Field& field, const uint_fast32_t agent){
 			return;
 		}
 	}
-	
 }
 
 int_fast32_t Greedy::nextScore(Field field, const uint_fast32_t agent, const Direction direction) const{
@@ -184,8 +169,11 @@ Astar::Astar(){
 Astar::~Astar(){
 }
 
-void Astar::greedyMove(Field& field, const uint_fast32_t agent){
+void Astar::greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num){
+	if(move_num > 4)
+		return;
 	this->greedy.enemyMove(field);
+	
 	/*
 	for(size_t i = agent + 1; i < field.agents.size(); i++)
 		if(field.agents.at(i).getAttr() == field.agents.at(agent).getAttr())
@@ -382,7 +370,7 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 		std::sort(open.begin(), open.end(), comp);
 		current = open.at(0).first;
 		Field current_field = open.at(0).second;
-
+		
 		
 		if(this->branchingCondition(current))
 			goto SKIP_NODE;
@@ -399,16 +387,16 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
 				Field next_field = current_field;
 				next_field.agents.at(agent).move((Direction)i);
-
-				this->greedyMove(next_field, agent);
 				
+				this->greedyMove(next_field, agent, current->move_num);
+
 				this->decidedMove(next_field, agent, next_field.decided_route);
 				//next_field.applyNextAgents();
 				next =& this->node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
 				if(current->coord == next->coord){
 					next_field.agents.at(agent).move((Direction)i);
-
-					this->greedyMove(next_field, agent);
+					
+					this->greedyMove(next_field, agent, current->move_num + 1);
 					
 					this->decidedMove(next_field, agent, next_field.decided_route);
 					//next_field.applyNextAgents();
@@ -442,6 +430,15 @@ void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pai
 	start->state_cost          = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
 	start->heuristic           = this->heuristic(start->coord, goal);
 	start->is_on_decided_route = 0;
+	start->move_num            = 0;
+
+	
+	if(field.agents.at(agent).getAttr() != field.at(start->coord.first, start->coord.second)->getAttr())
+		start->value = field.at(start->coord.first, start->coord.second)->getValue();
+	else
+		start->value = 0;
+
+	
 }
 
 void Astar::setNextNode(Field& next_field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next){
@@ -449,11 +446,25 @@ void Astar::setNextNode(Field& next_field, const uint_fast32_t agent, const std:
 	next->state_cost           = current->state_cost + next_field.calcScore(ENEMY_ATTR) - next_field.calcScore(MINE_ATTR);
 	next->heuristic            = this->heuristic(next->coord, goal);
 	next->is_on_decided_route  = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
+	next->move_num             = current->move_num + 1;
 	next->parent               = current;
+
+	
+	if(next_field.agents.at(agent).getAttr() != next_field.at(next->coord.first, next->coord.second)->getAttr())
+		next->value = next_field.at(next->coord.first, next->coord.second)->getValue();
+	else
+		next->value = 0;
+
+	
 }
 
 const bool Astar::branchingCondition(Node* current) const{
-	return (current->move_cost > 25);
+	if(current->move_cost > 25)
+		return true;
+	if(current->value     < -7)
+		return true;
+	
+	return false;
 }
 
 const bool Astar::endCondition(Node* current) const{
