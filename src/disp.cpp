@@ -110,12 +110,31 @@ void Print::candidate(Field* field, const std::vector<Direction>& next) const{
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glBegin(GL_POINTS);
 	for(size_t i = 0; i < next.size(); i++){
+		if(field->agents.at(i).getAttr() == MINE_ATTR){
+			direction = next.at(i);
+			coordX = field->agents.at(i).getX() + vec_x.at((int_fast32_t)direction);
+			coordY = field->agents.at(i).getY() + vec_y.at((int_fast32_t)direction);
+			glVertex2i(half + cell_size * coordX, half + cell_size * coordY);
+		}
+	}
+	glEnd();
+
+	
+	/*
+	const uint_fast32_t half = cell_size / 2;
+	Direction direction;
+	uint_fast32_t coordX, coordY;
+	glPointSize(agent_size - 8);
+	glColor3f(1.0f, 1.0f, 0.0f);
+	glBegin(GL_POINTS);
+	for(size_t i = 0; i < next.size(); i++){
 		direction = next.at(i);
 		coordX = field->agents.at(i).getX() + vec_x.at((int_fast32_t)direction);
 		coordY = field->agents.at(i).getY() + vec_y.at((int_fast32_t)direction);
 		glVertex2i(half + cell_size * coordX, half + cell_size * coordY);
 	}
 	glEnd();
+	*/
 }
 
 PrintDisplay::PrintDisplay(){
@@ -232,12 +251,18 @@ void DisplayWrapper::setField(Field* object){
 }
 
 // ---------------------------------------- Display ----------------------------------------
-
-Display::Display() : agent_flag(0), mine_flag(0), enemy_flag(0) {
+Display::Display() : mine_flag(0) {
 	this->print = new PrintDisplay();
 }
 
 Display::~Display(){
+}
+
+
+/*
+
+Display::Display() : agent_flag(0), mine_flag(0), enemy_flag(0) {
+	this->print = new PrintDisplay();
 }
 
 void Display::setPossible(){
@@ -312,12 +337,81 @@ void Display::selectDirection(uint_fast32_t x, uint_fast32_t y){
 		}
 	}
 }
+*/
+
+
+void Display::setPossible(){
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> direction, tmp;
+	uint_fast32_t x, y;
+	
+	this->possible.clear();
+	this->possible.resize(this->field->agents.size());
+	
+	for(size_t i = 0; i < DIRECTION_SIZE - 1; i++)
+		direction.push_back(std::make_pair(vec_x.at(i), vec_y.at(i)));
+	
+	for(size_t i = 0; i < this->field->agents.size(); i++){
+		if(this->field->agents.at(i).getAttr() == MINE_ATTR){
+			std::for_each(direction.begin(), direction.end(), [&, this](auto& d){
+					x = this->field->agents.at(i).getX() + d.first;
+					y = this->field->agents.at(i).getY() + d.second;
+					if(this->isOutOfRange(GLUT_LEFT_BUTTON, GLUT_DOWN, x, y))
+						return;
+					tmp.push_back(std::make_pair(x, y));
+				});
+			this->possible.at(i) = tmp;
+			tmp.clear();
+		}
+	}
+	
+	this->init();
+}
+
+void Display::moveNext(){
+	for(size_t i = 0; i < this->field->agents.size(); i++){
+		if(this->field->agents.at(i).getAttr() == MINE_ATTR){
+			if(this->next.at(i) == NONE)
+				this->field->agents.at(i).move(STOP);
+			if(this->field->canMove(this->field->agents.at(i), this->next.at(i)))
+				this->field->agents.at(i).move(this->next.at(i));
+		}
+	}
+}
+
+bool Display::selectAgent(uint_fast32_t x, uint_fast32_t y){
+	for(size_t i = 0; i < this->field->agents.size(); i++){
+		if(this->field->agents.at(i).getAttr() == MINE_ATTR){
+			if(this->field->agents.at(i).getX() == x && this->field->agents.at(i).getY() == y){
+				this->mine_flag = i;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void Display::selectDirection(uint_fast32_t x, uint_fast32_t y){
+	Direction direction = STOP;
+	uint_fast32_t agentX = this->field->agents.at(this->mine_flag).getX();
+	uint_fast32_t agentY = this->field->agents.at(this->mine_flag).getY();
+	std::pair<uint_fast32_t, uint_fast32_t> coord = std::make_pair(x, y);
+	
+	for(size_t i = 0; i < this->possible.at(this->mine_flag).size(); i++){
+		if(this->possible.at(this->mine_flag).at(i) == coord){
+			direction = this->changeDirection(std::make_pair(agentX, agentY), std::make_pair(x, y));
+			this->next.at(this->mine_flag) = direction;
+			glutPostRedisplay();
+			return;
+		}
+	}
+}
 
 void Display::init(){
 	std::fill(this->next.begin(), this->next.end(), STOP);
-	this->agent_flag = 0;
 	this->mine_flag = 0;
-	this->enemy_flag = 0;
+	
+	//this->agent_flag = 0;	
+	//this->enemy_flag = 0;
 }
 
 const bool Display::isOutOfRange(int button, int state, int x, int y) const{
@@ -331,7 +425,7 @@ const bool Display::isOutOfRange(int button, int state, int x, int y) const{
 void Display::initInstance(){
 	this->next.clear();
 	this->next.resize(this->field->agents.size());
-	std::fill(this->next.begin(), this->next.end(), NONE);
+	std::fill(this->next.begin(), this->next.end(), STOP);
 	this->setPossible();
 }
 
@@ -380,6 +474,8 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'G':
 		
 		this->moveNext();
+		this->random->move(this->field, ENEMY_ATTR);
+		field->applyNextAgents();
 		this->setPossible();
 		this->field->print();
 		glutPostRedisplay();
@@ -427,7 +523,8 @@ void Display::mouse(int button, int state, int x, int y){
 		return;
 	const uint_fast32_t coordX = x / cell_size;
 	const uint_fast32_t coordY = y / cell_size;
-	this->selectAgent(coordX, coordY);
+	if(this->selectAgent(coordX, coordY))
+		return;
 	this->selectDirection(coordX, coordY);
 }
 

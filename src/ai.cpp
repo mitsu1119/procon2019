@@ -153,6 +153,43 @@ void Greedy::move(Field *field, const uint_fast32_t attr){
 	*field = obj;
 }
 
+//----------------BeamSearch--------------
+BeamSearch::BeamSearch(){
+}
+BeamSearch::~BeamSearch(){	
+}
+
+void BeamSearch::mineMove(Field& field){
+	
+}
+
+void BeamSearch::enemyMove(Field& field){
+	
+}
+
+void BeamSearch::move(Field *field, const uint_fast32_t attr){
+	
+}
+
+//----------------Nod--------------
+BreadthForceSearch::BreadthForceSearch(){	
+}
+
+BreadthForceSearch::~BreadthForceSearch(){
+}
+
+
+//----------------BreadthForceSearch--------------
+void BreadthForceSearch::mineMove(Field& field){
+}
+
+void BreadthForceSearch::enemyMove(Field& field){
+}
+
+void BreadthForceSearch::move(Field *field, const uint_fast32_t attr){
+	
+}
+
 //----------------Node--------------
 Node::Node(){
 	this->status = NONE;
@@ -200,12 +237,6 @@ void Astar::decidedMove(Field& field, const uint_fast32_t agent, std::vector<std
 		if(field.agents.at(i).getX() != route.at(i).at(0).first || field.agents.at(i).getY() != route.at(i).at(0).second)
 			route.at(i).erase(route.at(i).begin());
 	}
-}
-
-const Direction Astar::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
-	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
-		if(next.first == now.first + this->vec_x.at(i) && next.second == now.second + this->vec_y.at(i))
-			return (Direction)i;
 }
 
 void Astar::setAverageScore(const Field& field){
@@ -355,7 +386,7 @@ void Astar::initNode(const Field& field){
 
 const bool Astar::comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs){
 	bool result = lhs.first->getScore() != rhs.first->getScore();
-	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->getHeuristic() < rhs.first->getHeuristic());
+	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->value < rhs.first->value);
 }
 
 const double Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
@@ -461,7 +492,7 @@ void Astar::setNextNode(Field& next_field, const uint_fast32_t agent, const std:
 const bool Astar::branchingCondition(Node* current) const{
 	if(current->move_cost > 25)
 		return true;
-	if(current->value     < -7)
+	if(current->value < -7)
 		return true;
 	
 	return false;

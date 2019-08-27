@@ -58,27 +58,31 @@ public:
 	
 };
 
-class BeamSearch{
+class BeamSearch : public AI{
 private:
 	
 public:
 	
 	BeamSearch();
 	~BeamSearch();
+	void mineMove(Field& field);
+	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
 	
 };
 
-class BreadthForceSearch{
+class BreadthForceSearch : public AI{
 private:
 	
 public:
 
 	BreadthForceSearch();
 	~BreadthForceSearch();
+	void mineMove(Field& field);
+	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
 	
-}
+};
 
 constexpr uint_fast32_t move_weight                = 10;
 constexpr uint_fast32_t state_weight               = 4;
@@ -217,4 +221,10 @@ public:
 	void move(Field *field, const uint_fast32_t attr) override;
 	
 };
+
+inline const Direction Astar::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
+	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
+		if(next.first == now.first + this->vec_x.at(i) && next.second == now.second + this->vec_y.at(i))
+			return (Direction)i;
+}
 
