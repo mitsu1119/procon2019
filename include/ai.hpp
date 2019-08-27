@@ -84,11 +84,11 @@ public:
 	
 };
 
-constexpr uint_fast32_t move_weight                = 10;
+constexpr uint_fast32_t move_weight                = 11;
 constexpr uint_fast32_t state_weight               = 4;
-constexpr uint_fast32_t heuristic_weight           = 3.5;
-constexpr uint_fast32_t value_weight               = 6;
-constexpr uint_fast32_t is_on_decided_route_weight = 10;
+constexpr uint_fast32_t heuristic_weight           = 3.6;
+constexpr uint_fast32_t value_weight               = 7;
+constexpr uint_fast32_t is_on_decided_route_weight = 12;
 
 class Node{
 private:
@@ -190,6 +190,7 @@ private:
 	//探索関連
 	void initNode(const Field& field);
 	static const bool comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs);
+
 	
 	const double searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 	void setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start);
@@ -211,6 +212,14 @@ private:
 	const void printGoal(Field& field, const uint_fast32_t attr) const;
 	const void printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route);
 
+	
+	//アルゴリズムの選択
+	void chooseAlgorithm(Field& field, const uint_fast32_t agent);
+
+	//着手
+	void singleMove(Field& field, const uint_fast32_t agent);
+	
+	
 public:
 	
 	Astar();

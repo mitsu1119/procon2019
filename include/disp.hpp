@@ -126,8 +126,9 @@ private:
 
 	//agent_flag == 0:mineの入力 agent_flag == 1:enemyの入力
 	//bool agent_flag;
-	uint_fast32_t mine_flag;
 	//uint_fast32_t enemy_flag;
+	
+	uint_fast32_t mine_flag;
 
 	/*
 	void setPossible();
