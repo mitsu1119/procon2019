@@ -50,11 +50,11 @@ uint_fast32_t Panel::getAttr() const {
 }
 
 void Panel::setMine() {
-	this->attr |= MINE_ATTR;
+	this->attr = MINE_ATTR;
 }
 
 void Panel::setEnemy() {
-	this->attr |= ENEMY_ATTR;
+	this->attr = ENEMY_ATTR;
 }
 
 void Panel::setPure() {
@@ -220,9 +220,6 @@ bool Field::canMove(Agent &agent, Direction direction) {
 	int_fast32_t nextX = agent.getX() + direction2x(direction), nextY = agent.getY() + direction2y(direction);
 	
 	if(nextX < 0 || nextX > this->width - 1 || nextY < 0 || nextY > this->height - 1) return false;
-	for(auto &i: this->agents) {
-		if(i.getX() == nextX && i.getY() == nextY) return false;
-	}
 
 	return true;
 }
