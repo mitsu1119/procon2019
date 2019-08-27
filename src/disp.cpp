@@ -383,6 +383,8 @@ bool Display::selectAgent(uint_fast32_t x, uint_fast32_t y){
 		if(this->field->agents.at(i).getAttr() == MINE_ATTR){
 			if(this->field->agents.at(i).getX() == x && this->field->agents.at(i).getY() == y){
 				this->mine_flag = i;
+				this->next.at(this->mine_flag) = STOP;
+				glutPostRedisplay();
 				return true;
 			}
 		}
