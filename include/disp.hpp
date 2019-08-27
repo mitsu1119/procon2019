@@ -125,14 +125,23 @@ private:
 	std::vector<Direction> next;
 
 	//agent_flag == 0:mineの入力 agent_flag == 1:enemyの入力
-	bool agent_flag;
+	//bool agent_flag;
 	uint_fast32_t mine_flag;
-	uint_fast32_t enemy_flag;
+	//uint_fast32_t enemy_flag;
 
+	/*
 	void setPossible();
 	void moveNext();
 	void selectAgent(uint_fast32_t x, uint_fast32_t y);
 	void selectDirection(uint_fast32_t x, uint_fast32_t y);
+	*/
+
+	void setPossible();
+	void moveNext();
+	bool selectAgent(uint_fast32_t x, uint_fast32_t y);
+	void selectDirection(uint_fast32_t x, uint_fast32_t y);
+	const Direction changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
+	
 	void init();
 	const bool isOutOfRange(int button, int state, int x, int y) const;
 	
@@ -150,6 +159,12 @@ public:
  	void motion(int x, int y) override;
 	
 };
+
+inline const Direction Display::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
+	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
+		if(next.first == now.first + vec_x.at(i) && next.second == now.second + vec_y.at(i))
+			return (Direction)i;
+}
 
 class selfDirectedGame : public DisplayWrapper {
 private:

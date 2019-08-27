@@ -43,6 +43,7 @@ private:
 
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 	XorOshiro128p random;
+	uint_fast32_t current_score;
 	
 public:
 	
@@ -50,18 +51,43 @@ public:
 	~Greedy();
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
-	
 	void singleMove(Field& field, const uint_fast32_t agent);
-	
-	void randomMove(Field& field, const uint_fast32_t agent);
+	void randomMove(Field& field, const uint_fast32_t agent, const uint_fast32_t x, const uint_fast32_t y);
 	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
 	void move(Field *field, const uint_fast32_t attr) override;
 	
 };
 
-constexpr uint_fast32_t move_weight      = 15;
-constexpr uint_fast32_t state_weight     = 4;
-constexpr uint_fast32_t heuristic_weight = 4;
+class BeamSearch : public AI{
+private:
+	
+public:
+	
+	BeamSearch();
+	~BeamSearch();
+	void mineMove(Field& field);
+	void enemyMove(Field& field);
+	void move(Field *field, const uint_fast32_t attr) override;
+	
+};
+
+class BreadthForceSearch : public AI{
+private:
+	
+public:
+
+	BreadthForceSearch();
+	~BreadthForceSearch();
+	void mineMove(Field& field);
+	void enemyMove(Field& field);
+	void move(Field *field, const uint_fast32_t attr) override;
+	
+};
+
+constexpr uint_fast32_t move_weight                = 10;
+constexpr uint_fast32_t state_weight               = 4;
+constexpr uint_fast32_t heuristic_weight           = 3.5;
+constexpr uint_fast32_t value_weight               = 6;
 constexpr uint_fast32_t is_on_decided_route_weight = 10;
 
 class Node{
@@ -85,8 +111,12 @@ public:
 	double state_cost;
 	//ヒューリスティックコスト（推定コスト）
 	uint_fast32_t heuristic;
+	//その地点での点数
+	int_fast32_t  value;
 	//確定ルートにかぶっているか？
   uint_fast32_t is_on_decided_route;
+	//何回移動したか
+	uint_fast32_t move_num;
   //親のノード
 	Node* parent;	
 	//座標
@@ -103,7 +133,7 @@ inline const double Node::getHeuristic() const{
 }
 
 inline const double Node::getScore() const{
-	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight));
+	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) + (this->value * value_weight));
 }
 
 constexpr uint_fast16_t search_depth = 5;
@@ -126,7 +156,7 @@ private:
 private:
 
 	//貪欲での移動
-	void greedyMove(Field& field, const uint_fast32_t agent);
+	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
 
 	
 	//探索内での確定移動
@@ -164,6 +194,7 @@ private:
 	const double searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 	void setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start);
 	void setNextNode(Field& next_field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next);
+
 	
 	const bool branchingCondition(Node* current) const;
 	const bool endCondition(Node* current) const;
@@ -190,4 +221,10 @@ public:
 	void move(Field *field, const uint_fast32_t attr) override;
 	
 };
+
+inline const Direction Astar::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
+	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
+		if(next.first == now.first + this->vec_x.at(i) && next.second == now.second + this->vec_y.at(i))
+			return (Direction)i;
+}
 
