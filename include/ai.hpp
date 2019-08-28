@@ -20,6 +20,9 @@ public:
 	AI();
 	~AI();
 	virtual void move(Field *field, const uint_fast32_t attr) = 0;
+	virtual	void init(const Field* field) = 0;
+	virtual	void init(const Field& field) = 0;
+
 	
 };
 
@@ -32,6 +35,10 @@ public:
 	
 	Random();
 	~Random();
+
+	void init(const Field* field) override;
+	void init(const Field& field) override;
+	
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
@@ -49,6 +56,10 @@ public:
 	
 	Greedy();
 	~Greedy();
+
+	void init(const Field* field) override;
+	void init(const Field& field) override;
+	
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
 	void singleMove(Field& field, const uint_fast32_t agent);
@@ -65,6 +76,10 @@ public:
 	
 	BeamSearch();
 	~BeamSearch();
+
+	void init(const Field* field) override;
+	void init(const Field& field) override;
+	
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
@@ -78,6 +93,10 @@ public:
 
 	BreadthForceSearch();
 	~BreadthForceSearch();
+
+	void init(const Field* field) override;
+	void init(const Field& field) override;
+	
 	void mineMove(Field& field);
 	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
@@ -136,7 +155,7 @@ inline const double Node::getScore() const{
 	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) + (this->value * value_weight));
 }
 
-constexpr uint_fast16_t search_depth = 5;
+constexpr uint_fast16_t search_depth = 4;
 
 class Astar : public AI{
 private:
@@ -153,6 +172,8 @@ private:
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
+	
 private:
 
 	//貪欲での移動
@@ -203,8 +224,6 @@ private:
 	
 	void searchBestRoute(Field& field, const uint_fast32_t agent);
 	void search(Field& field, const uint_fast32_t attr);
-
-	
 	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 
 	
@@ -224,6 +243,9 @@ public:
 	
 	Astar();
 	~Astar();
+
+	void init(const Field* field) override;
+	void init(const Field& field) override;
 	
 	void mineMove(Field& field);
 	void enemyMove(Field& field);

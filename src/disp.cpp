@@ -197,7 +197,8 @@ DisplayWrapper::~DisplayWrapper(){
 DisplayWrapper* DisplayWrapper::instance = 0;
 
 void DisplayWrapper::init(){
-	instance->initInstance();
+	this->instance->initInstance();
+	this->astar->init(this->field);
 	gluOrtho2D(0, 100, 100, 0);
 	glutInitDisplayMode(GLUT_SINGLE|GLUT_RGBA|GLUT_DOUBLE);
 	glutInitWindowPosition(window_width_position, window_height_position);
@@ -454,8 +455,9 @@ void Display::keyboard(unsigned char key, int x, int y){
 		
 	case 'w':
 	case 'W':
-		
-		this->field->testMoveAgent();
+
+		this->greedy->move(this->field, MINE_ATTR);
+		this->greedy->move(this->field, ENEMY_ATTR);
 		this->setPossible();
 		this->field->print();
 		glutPostRedisplay();
@@ -486,16 +488,15 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 't':
 	case 'T':
 
-		//this->greedy->move(this->field, MINE_ATTR);
-		//this->random->move(this->field, ENEMY_ATTR);
-		//this->greedy->move(this->field, ENEMY_ATTR);
 		this->astar->move(this->field, MINE_ATTR);
-		//this->astar->move(this->field, MINE_ATTR);
+		//this->astar->move(this->field, ENEMY_ATTR);
+		this->random->move(this->field, ENEMY_ATTR);
 		
 		this->field->applyNextAgents();
+
 		this->setPossible();
-		//this->field->print();
-		//glutPostRedisplay();
+		this->field->print();
+		glutPostRedisplay();
 		break;
 		
 	case 'd':
