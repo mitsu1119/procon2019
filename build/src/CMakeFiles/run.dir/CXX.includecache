@@ -84,7 +84,7 @@ vector
 algorithm
 -
 
-/home/mitsu/projects/procon2019/src/main.cpp
+/home/kaito/program/procon2019/src/main.cpp
 iostream
 -
 random
@@ -92,9 +92,9 @@ random
 chrono
 -
 field.hpp
-/home/mitsu/projects/procon2019/src/field.hpp
+/home/kaito/program/procon2019/src/field.hpp
 useful.hpp
-/home/mitsu/projects/procon2019/src/useful.hpp
+/home/kaito/program/procon2019/src/useful.hpp
 disp.hpp
-/home/mitsu/projects/procon2019/src/disp.hpp
+/home/kaito/program/procon2019/src/disp.hpp
 

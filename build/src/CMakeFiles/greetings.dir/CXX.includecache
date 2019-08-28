@@ -88,27 +88,27 @@ vector
 algorithm
 -
 
-/home/mitsu/projects/procon2019/src/agent.cpp
+/home/kaito/program/procon2019/src/agent.cpp
 agent.hpp
-/home/mitsu/projects/procon2019/src/agent.hpp
+/home/kaito/program/procon2019/src/agent.hpp
 
-/home/mitsu/projects/procon2019/src/ai.cpp
+/home/kaito/program/procon2019/src/ai.cpp
 ai.hpp
-/home/mitsu/projects/procon2019/src/ai.hpp
+/home/kaito/program/procon2019/src/ai.hpp
 
-/home/mitsu/projects/procon2019/src/disp.cpp
+/home/kaito/program/procon2019/src/disp.cpp
 disp.hpp
-/home/mitsu/projects/procon2019/src/disp.hpp
+/home/kaito/program/procon2019/src/disp.hpp
 
-/home/mitsu/projects/procon2019/src/evaluator.cpp
+/home/kaito/program/procon2019/src/evaluator.cpp
 evaluator.hpp
-/home/mitsu/projects/procon2019/src/evaluator.hpp
+/home/kaito/program/procon2019/src/evaluator.hpp
 
-/home/mitsu/projects/procon2019/src/field.cpp
+/home/kaito/program/procon2019/src/field.cpp
 field.hpp
-/home/mitsu/projects/procon2019/src/field.hpp
+/home/kaito/program/procon2019/src/field.hpp
 
-/home/mitsu/projects/procon2019/src/useful.cpp
+/home/kaito/program/procon2019/src/useful.cpp
 useful.hpp
-/home/mitsu/projects/procon2019/src/useful.hpp
+/home/kaito/program/procon2019/src/useful.hpp
 
