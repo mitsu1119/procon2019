@@ -28,7 +28,6 @@ class MoveLog {
 private:
 	
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> coord_log;
-	//確定ルート所得で使う
 	std::vector<std::vector<Direction>> direction_log;
 	
 public:

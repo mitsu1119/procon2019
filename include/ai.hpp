@@ -103,11 +103,12 @@ public:
 	
 };
 
-constexpr uint_fast32_t move_weight                = 11;
+constexpr uint_fast32_t move_weight                = 9;
 constexpr uint_fast32_t state_weight               = 4;
 constexpr uint_fast32_t heuristic_weight           = 3.6;
 constexpr uint_fast32_t value_weight               = 7;
 constexpr uint_fast32_t is_on_decided_route_weight = 12;
+constexpr uint_fast32_t is_on_mine_panel_weight    = 4;
 
 class Node{
 private:
@@ -134,6 +135,12 @@ public:
 	int_fast32_t  value;
 	//確定ルートにかぶっているか？
   uint_fast32_t is_on_decided_route;
+
+	
+	//自陣を何回移動したか
+	uint_fast32_t is_on_mine_panel;
+
+	
 	//何回移動したか
 	uint_fast32_t move_num;
   //親のノード
@@ -143,25 +150,30 @@ public:
 	
 	//スコア所得
 	const double getScore() const;
-	const double getHeuristic() const;
+	//const double getHeuristic() const;
 	
 };
 
+/*
 inline const double Node::getHeuristic() const{
 	return this->heuristic * heuristic_weight;
 }
+*/
 
 inline const double Node::getScore() const{
-	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) + (this->value * value_weight));
+	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) + (this->value * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight);
 }
 
-constexpr uint_fast16_t search_depth = 4;
+constexpr uint_fast32_t occpancy_weight = 2;
+
+constexpr uint_fast16_t search_depth = 5;
 
 class Astar : public AI{
 private:
 
 	int_fast32_t average_score;
 	Greedy greedy;
+	BeamSearch beam_search;
 	
 private:
 
