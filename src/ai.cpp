@@ -1,6 +1,7 @@
 #include "ai.hpp"
 
 //----------------AI--------------
+
 AI::AI(){
 }
 
@@ -8,6 +9,7 @@ AI::~AI(){
 }
 
 //----------------Random--------------
+
 Random::Random(){
 	this->random = XorOshiro128p(time(NULL));
 }
@@ -169,6 +171,7 @@ void Greedy::move(Field *field, const uint_fast32_t attr){
 }
 
 //----------------BeamSearch--------------
+
 BeamSearch::BeamSearch(){
 }
 
@@ -194,6 +197,7 @@ void BeamSearch::move(Field *field, const uint_fast32_t attr){
 }
 
 //----------------BreadthForceSearch--------------
+
 BreadthForceSearch::BreadthForceSearch(){	
 }
 
@@ -217,6 +221,7 @@ void BreadthForceSearch::move(Field *field, const uint_fast32_t attr){
 }
 
 //----------------Node--------------
+
 Node::Node(){
 	this->status = NONE;
 	this->parent = nullptr;
@@ -226,6 +231,7 @@ Node::~Node(){
 }
 
 //----------------A*algorithm--------------
+
 Astar::Astar(){
 }
 
@@ -233,7 +239,7 @@ Astar::~Astar(){
 }
 
 void Astar::greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num){
-	if(move_num > 4)
+	if(move_num > greedy_count)
 		return;
 	this->greedy.enemyMove(field);
 	
@@ -292,8 +298,10 @@ void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
 				condidate.push_back(std::make_pair(value, std::make_pair(j, i)));
 		}
 	}
+	
 	if(condidate.empty())
 		return;
+	
 	std::sort(condidate.rbegin(), condidate.rend());
 	for(size_t i = 0; i < search_depth; i++){
 		if(i >= condidate.size())
@@ -358,7 +366,7 @@ const bool Astar::anotherAgentDistance(Field& field, const uint_fast32_t agent, 
 	x = field.agents.at(agent).getX();
 	y = field.agents.at(agent).getY();
 	mine_distance = this->heuristic(std::make_pair(x, y), coord);
-	if(mine_distance < 3/* || mine_distance > 10*/)
+	if(mine_distance <= min_mine_distance/* || mine_distance >= max_mine_distance*/)
 		return true;
 	for(size_t i = 0; i < field.agents.size(); i++){
 		if(agent == i)
@@ -366,7 +374,7 @@ const bool Astar::anotherAgentDistance(Field& field, const uint_fast32_t agent, 
 		if(field.agents.at(agent).getAttr() != field.agents.at(i).getAttr())
 			continue;
 		another_distance = this->heuristic(std::make_pair(x, y), coord);
-		if(another_distance < mine_distance && another_distance <= 3)
+		if(another_distance < mine_distance && another_distance <= min_agent_distance)
 			return true;
 	}
 	return false;
@@ -377,7 +385,7 @@ const bool Astar::anotherGoalDistance(Field& field, const uint_fast32_t agent, c
 	for(size_t i = 0; i < agent; i++){
 		if(field.agents.at(agent).getAttr() == field.agents.at(i).getAttr()){
 			distance = this->heuristic(coord, this->decided_goal.at(i));
-			if(distance <= 3)
+			if(distance <= min_goal_distance)
 				return true;
 		}
 	}
@@ -516,16 +524,16 @@ void Astar::setNextNode(Field& next_field, const uint_fast32_t agent, const std:
 }
 
 const bool Astar::branchingCondition(Node* current) const{
-	if(current->move_cost > 23)
+	if(current->move_cost > max_move_cost)
 		return true;
-	if(current->value < -6)
+	if(current->value < min_value)
 		return true;
 	
 	return false;
 }
 
 const bool Astar::endCondition(Node* current) const{
-	return (current->move_cost <= 3);
+	return (current->move_cost <= min_move_cost);
 }
 
 void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){

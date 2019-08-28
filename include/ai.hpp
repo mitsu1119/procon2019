@@ -164,9 +164,27 @@ inline const double Node::getScore() const{
 	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) + (this->value * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight);
 }
 
-constexpr uint_fast32_t occpancy_weight = 2;
 
-constexpr uint_fast16_t search_depth = 5;
+constexpr uint_fast32_t greedy_count       = 4;
+constexpr uint_fast32_t occpancy_weight    = 2;
+
+//ゴールの除外条件
+constexpr uint_fast32_t max_mine_distance  = 10;
+constexpr uint_fast32_t min_mine_distance  = 2;
+//Agent同士の距離
+constexpr uint_fast32_t min_agent_distance = 3;
+//ゴール候補同士の距離
+constexpr uint_fast32_t min_goal_distance  = 3;
+
+//枝きり条件
+constexpr uint_fast32_t max_move_cost      = 23;
+constexpr uint_fast32_t min_value          = -6;
+
+//終了条件
+constexpr uint_fast32_t min_move_cost      = 3;
+
+constexpr uint_fast16_t search_depth       = 5;
+
 
 class Astar : public AI{
 private:
