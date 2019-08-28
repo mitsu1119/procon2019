@@ -428,11 +428,13 @@ const bool Astar::comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rh
 const double Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
 	std::vector<std::pair<Node*, Field>> open;
 	Node *start , *current , *next;
+	
 	this->initNode(field);
 	start =& this->node.at(field.agents.at(agent).getY() * field.getHeight() + field.agents.at(agent).getX());
 	this->setStartNode(field, agent, goal, start);
 	field.decided_route = this->decided_route;
 	open.push_back(std::make_pair(start, field));
+	
 	while(!open.empty()){
 		std::sort(open.begin(), open.end(), comp);
 		current = open.at(0).first;
@@ -479,10 +481,12 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 				}
 			}
 		}
+		
 	SKIP_NODE:
 		current->status = Node::CLOSED;
 		open.erase(open.begin());
 	}
+	
 	return - INT_MAX;
 }
 
@@ -541,6 +545,7 @@ void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	std::pair<uint_fast32_t, uint_fast32_t> goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	this->setSearchTarget(field, agent);
+	
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
 			value = this->searchRoute(field, agent, coord);
 			if(value > max){
@@ -557,7 +562,6 @@ void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 
 void 	Astar::search(Field& field, const uint_fast32_t attr){
 	this->init(field);
-	
 	for(size_t i = 0; i < field.agents.size(); i++)
 		if(field.agents.at(i).getAttr() == attr)
 			this->searchBestRoute(field, i);
@@ -570,6 +574,7 @@ const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Fiel
 	this->decided_coord.push_back(goal);
 	from = this->node.at(goal.second * field.getHeight() + goal.first).parent->coord;
 	route.push_back(from);
+	
 	while(true){
 		if(this->node.at(from.second * field.getHeight() + from.first).parent == nullptr)
 			break;
@@ -579,6 +584,7 @@ const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Fiel
 		if(result == this->decided_coord.end())
 			this->decided_coord.push_back(from);
 	}
+	
 	std::reverse(route.begin(), route.end());
 	return route;
 }

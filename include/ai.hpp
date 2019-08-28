@@ -134,13 +134,9 @@ public:
 	//その地点での点数
 	int_fast32_t  value;
 	//確定ルートにかぶっているか？
-  uint_fast32_t is_on_decided_route;
-
-	
+  uint_fast32_t is_on_decided_route;	
 	//自陣を何回移動したか
 	uint_fast32_t is_on_mine_panel;
-
-	
 	//何回移動したか
 	uint_fast32_t move_num;
   //親のノード
@@ -183,6 +179,7 @@ constexpr uint_fast32_t min_value          = -6;
 //終了条件
 constexpr uint_fast32_t min_move_cost      = 3;
 
+//探索の深さ
 constexpr uint_fast16_t search_depth       = 5;
 
 
