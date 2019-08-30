@@ -284,10 +284,10 @@ void PrintSelfDirectedGame::print(Field& field){
 // ---------------------------------------- DisplayWrapper ----------------------------------------
 
 DisplayWrapper::DisplayWrapper(){
-	this->random = new Random();
-	this->astar = new Astar();
-	this->greedy = new Greedy();
-	this->beam_search = new BeamSearch();
+	this->random               = new Random();
+	this->astar                = new Astar();
+	this->greedy               = new Greedy();
+	this->beam_search          = new BeamSearch();
 	this->breadth_force_search = new BreadthForceSearch();
 }
 
@@ -624,6 +624,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 	if(field->checkEnd()){
 		field->judgeWinner();
 		std::this_thread::sleep_for(std::chrono::minutes(1));
+		std::exit(0);
 	}
 	
 }

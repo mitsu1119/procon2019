@@ -582,6 +582,10 @@ const uint_fast32_t Field::getTurn() const{
 	return this->turn;
 }
 
+const uint_fast32_t Field::getMaxTurn() const{
+	return this->max_turn;
+}
+
 const bool Field::checkEnd() const{
 	return (this->turn == this->max_turn);
 }

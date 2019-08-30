@@ -19,6 +19,7 @@ public:
 	
 	AI();
 	~AI();
+	
 	virtual void move(Field* field, const uint_fast32_t attr) = 0;
 	virtual void move(Field& field, const uint_fast32_t attr) = 0;
 	
@@ -82,7 +83,8 @@ public:
 	
 };
 
-constexpr uint_fast32_t beam_width = 4;
+constexpr uint_fast32_t beam_depth = 3;
+constexpr uint_fast32_t beam_width = 3;
 
 class BeamSearch : public AI{
 
@@ -101,13 +103,15 @@ public:
 	void init(const Field& field) override;
 
 	
-	void singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth);
+	void singleMove(Field& field, const uint_fast32_t agent);
 
 	
 	void move(Field* field, const uint_fast32_t attr) override;
 	void move(Field& field, const uint_fast32_t attr) override;
 
 };
+
+constexpr uint_fast32_t bfs_depth = 3;
 
 class BreadthForceSearch : public AI{
 private:
@@ -116,7 +120,7 @@ private:
 	
 
 	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
-	void singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth);
+	void singleMove(Field& field, const uint_fast32_t agent);
 	
 public:
 
@@ -132,12 +136,12 @@ public:
 	
 };
 
-constexpr uint_fast32_t move_weight                = 9;
-constexpr uint_fast32_t state_weight               = 4;
-constexpr uint_fast32_t heuristic_weight           = 3.6;
-constexpr uint_fast32_t value_weight               = 7;
-constexpr uint_fast32_t is_on_decided_route_weight = 12;
-constexpr uint_fast32_t is_on_mine_panel_weight    = 4;
+constexpr double move_weight                = 9;
+constexpr double state_weight               = 4;
+constexpr double heuristic_weight           = 3.6;
+constexpr double value_weight               = 7;
+constexpr double is_on_decided_route_weight = 12;
+constexpr double is_on_mine_panel_weight    = 4;
 
 class Node{
 private:
@@ -205,13 +209,14 @@ constexpr uint_fast32_t min_value          = -6;
 //終了条件
 constexpr uint_fast32_t min_move_cost      = 3;
 //探索の深さ
-constexpr uint_fast16_t search_depth       = 5;
+constexpr uint_fast16_t astar_depth        = 5;
 
 
 class Astar : public AI{
 private:
 
 	int_fast32_t average_score;
+	
 	Greedy greedy;
 	BeamSearch beam_search;
 	BreadthForceSearch breadth_force_search;
@@ -220,11 +225,12 @@ private:
 
 	//探索かけるたびにクリアする
 	std::vector<Node> node;
+	
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> search_target;
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> decided_route;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
-
+	
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
 	
 private:

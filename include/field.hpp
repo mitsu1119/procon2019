@@ -188,6 +188,9 @@ public:
 	//turnを外部から所得
 	const uint_fast32_t getTurn() const;
 
+	//max_turnを外部から所得
+	const uint_fast32_t getMaxTurn() const;
+
 	//終了条件
 	const bool checkEnd() const;
 	

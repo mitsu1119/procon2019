@@ -208,10 +208,8 @@ void BeamSearch::init(const Field& field){
 }
 
 Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t depth){
-	if(depth == 0 || field->checkEnd()){
-		std::cout << field->getTurn() << std::endl;
+	if(depth == 0 || field->checkEnd())
 		return *field;
-	}
 	
 	std::vector<std::pair<Field, Field>> fields;
 	
@@ -246,9 +244,9 @@ Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t 
 	return fields.at(0).first;
 }
 	
-void BeamSearch::singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth){
+void BeamSearch::singleMove(Field& field, const uint_fast32_t agent){
 	Field current_field = field;
-	Field next_field    = this->search(&field, agent, depth);
+	Field next_field    = this->search(&field, agent, beam_depth);
 	
 	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
 	std::pair<uint_fast32_t, uint_fast32_t> next_coord    = std::make_pair(next_field.agents.at(agent).getX(), next_field.agents.at(agent).getY()); 
@@ -263,7 +261,7 @@ void BeamSearch::move(Field* field, const uint_fast32_t attr){
 
 	for(size_t i =0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
-			this->singleMove(tmp, i, 3);
+			this->singleMove(tmp, i);
 	
 	*field = tmp;
 }
@@ -271,7 +269,7 @@ void BeamSearch::move(Field* field, const uint_fast32_t attr){
 void BeamSearch::move(Field& field, const uint_fast32_t attr){
 	for(size_t i =0; i < field.agents.size(); i++)
 		if(field.agents.at(i).getAttr() == attr)
-			this->singleMove(field, i, 4);
+			this->singleMove(field, i);
 }
 
 //----------------BreadthForceSearch--------------
@@ -291,10 +289,8 @@ void BreadthForceSearch::init(const Field& field){
 }
 
 Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_fast32_t depth){
-	if(depth == 0 || field->checkEnd()){
-		std::cout << field->getTurn() << std::endl;
+	if(depth == 0 || field->checkEnd())
 		return *field;
-	}
 	
 	std::vector<std::pair<Field, Field>> fields;
 	
@@ -302,7 +298,7 @@ Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);
-
+			
 			/*
 			if(field->agents.at(agent).getAttr() == MINE_ATTR)
 				greedy.move(fbuf, ENEMY_ATTR);
@@ -327,9 +323,9 @@ Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_
 	return fields.at(0).first;
 }
 
-void BreadthForceSearch::singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth){
+void BreadthForceSearch::singleMove(Field& field, const uint_fast32_t agent){
 	Field current_field = field;
-	Field next_field    = this->search(&field, agent, depth);
+	Field next_field    = this->search(&field, agent, bfs_depth);
 	
 	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
 	std::pair<uint_fast32_t, uint_fast32_t> next_coord    = std::make_pair(next_field.agents.at(agent).getX(), next_field.agents.at(agent).getY()); 
@@ -344,7 +340,7 @@ void BreadthForceSearch::move(Field *field, const uint_fast32_t attr){
 	
 	for(size_t i =0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
-			this->singleMove(tmp, i, 3);
+			this->singleMove(tmp, i);
 	
 	*field = tmp;
 }
@@ -352,7 +348,7 @@ void BreadthForceSearch::move(Field *field, const uint_fast32_t attr){
 void BreadthForceSearch::move(Field &field, const uint_fast32_t attr){
 	for(size_t i =0; i < field.agents.size(); i++)
 		if(field.agents.at(i).getAttr() == attr)
-			this->singleMove(field, i, 3);
+			this->singleMove(field, i);
 }
 
 //----------------Node--------------
@@ -438,7 +434,7 @@ void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
 		return;
 	
 	std::sort(condidate.rbegin(), condidate.rend());
-	for(size_t i = 0; i < search_depth; i++){
+	for(size_t i = 0; i < astar_depth; i++){
 		if(i >= condidate.size())
 			break;
 		this->search_target.push_back(condidate.at(i).second);
@@ -692,7 +688,9 @@ void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	
 	this->decided_route.at(agent) = route;
 	this->decided_goal.at(agent)  = goal;
+	
 	this->printRoute(route);
+	
 }
 
 void 	Astar::search(Field& field, const uint_fast32_t attr){
@@ -739,7 +737,7 @@ const void Astar::printGoal(Field& field, const uint_fast32_t attr) const{
 	/*
 	glPointSize(point_size);
 	glColor3f(0.0f, 0.0f, 0.0f);
-	glBegin(GL_POINTS);
+	glBein(GL_POINTS);
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
 			glVertex2i(half + cell_size * coord.first, half + cell_size * coord.second);
 			std::cout<< "(" << coord.first << "," << coord.second << ")" << std::endl;
@@ -761,6 +759,18 @@ const void Astar::printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>
 	glFlush();
 }
 
+void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
+	if(field.getTurn() >= field.getMaxTurn() - beam_depth){
+		this->beam_search.singleMove(field, agent);
+		//this->breadth_force_search.singleMove(field, agent);
+		
+		this->decided_route.at(agent).clear();
+		return;
+	}
+	
+	this->singleMove(field, agent);
+}
+
 void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	Direction direction;
 	const uint_fast32_t agentX = field.agents.at(agent).getX();
@@ -771,7 +781,7 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 
 	if(this->decided_route.at(agent).empty()){
 		//this->greedy.singleMove(field, agent);
-		this->beam_search.singleMove(field, agent, 4);
+		this->beam_search.singleMove(field, agent);
 		return;
 	}
 	
@@ -814,12 +824,13 @@ void Astar::init(const Field& field){
 
 void Astar::move(Field* field, const uint_fast32_t attr){
 
+	/*
 	Field obj = static_cast<Field> (*field);
 	this->setAverageScore(obj);
 	this->search(obj, attr);
 	this->printGoal(obj, attr);
+	*/
 
-	/*
 	Field tmp = static_cast<Field> (*field);
 
 	this->decided_coord.clear();
@@ -827,10 +838,10 @@ void Astar::move(Field* field, const uint_fast32_t attr){
 	
 	for(size_t i = 0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
-			this->singleMove(tmp, i);
+			this->chooseAlgorithm(tmp, i);
+			//this->singleMove(tmp, i);
 
 	*field = tmp;
-	*/
 }
 
 void Astar::move(Field& field, const uint_fast32_t attr){
@@ -839,6 +850,7 @@ void Astar::move(Field& field, const uint_fast32_t attr){
 	
 	for(size_t i = 0; i < field.agents.size(); i++)
 		if(field.agents.at(i).getAttr() == attr)
-			this->singleMove(field, i);
+			this->chooseAlgorithm(field, i);
+	//this->singleMove(field, i);
 	
 }
