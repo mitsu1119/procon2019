@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <random>
 #include <vector>
+#include <algorithm>
 #include "useful.hpp"
 
 class Swarm;
@@ -9,13 +10,36 @@ friend Swarm;
 private:
 	XorOshiro128p rand;
 	double rate;
+	size_t dim;
 	std::vector<double> params;
+
+	Individual(std::vector<double> parameters): rate(0.0) {
+		std::random_device seed;
+		rand = XorOshiro128p(seed());
+		params = parameters;
+		dim = params.size();
+	}
 
 public:
 	Individual(): rate(0.0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
 		for(size_t i = 0; i < 10; i++) params.emplace_back(rand.gend());
+		dim = params.size();
+	}
+
+	Individual *makeNewIndividual(const Individual *p) {
+		std::vector<double> genParam;
+		double dist, max, min;
+		for(size_t i = 0; i < dim; i++) {
+			dist = std::abs(p->params[i] - params[i]);
+			max = std::max(p->params[i], params[i]) + 0.3 * dist;
+			min = std::min(p->params[i], params[i]) - 0.3 * dist;
+			dist = std::abs(max - min);
+			genParam.emplace_back((dist + min) * rand.gend());
+		}
+		Individual *indiv = new Individual(genParam);
+		return indiv;
 	}
 
 	void eval() {
@@ -90,7 +114,8 @@ public:
 
 	void print() {
 		for(const auto i: swarm) i->print();
-		chooseFromSwarm(2);
+		std::vector<Individual *> indivs = chooseFromSwarm(2);
+		indivs[0]->makeNewIndividual(indivs[1])->print();
 	}
 };
 
