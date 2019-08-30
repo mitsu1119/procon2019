@@ -116,7 +116,7 @@ void Greedy::singleMove(Field& field, const uint_fast32_t agent){
 		
 		if(field.canMove(field.agents.at(agent), (Direction)i)){
 			next_score = this->nextScore(field, agent, (Direction)i);
-			if(next_score <= this->current_score)
+			if(next_score <= this->current_score - 5)
 				continue;
 			if(next_score > max_score){
 				max_score = next_score;
@@ -142,17 +142,21 @@ void Greedy::randomMove(Field& field, const uint_fast32_t agent, const uint_fast
 		if(count++ > 10)
 			break;
 		direction = (Direction)(this->random(DIRECTION_SIZE - 3));
+		
 		/*
 		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
 		if(result != this->decided_coord.end())
 			continue;
 		*/
+		
 		if(field.at(x + this->vec_x.at(direction), y + this->vec_y.at(direction))->getValue() < -10)
 			continue;
 		if(field.canMove(field.agents.at(agent), direction)){
 			field.agents.at(agent).move(direction);
+			
 			//this->decided_coord.push_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
-			return;
+			
+			break;
 		}
 	}
 }
@@ -204,8 +208,10 @@ void BeamSearch::init(const Field& field){
 }
 
 Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t depth){
-	if(depth == 0)
+	if(depth == 0 || field->checkEnd()){
+		std::cout << field->getTurn() << std::endl;
 		return *field;
+	}
 	
 	std::vector<std::pair<Field, Field>> fields;
 	
@@ -213,7 +219,7 @@ Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t 
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);
-
+			
 			/*
 			if(field->agents.at(agent).getAttr() == MINE_ATTR)
 				greedy.move(fbuf, ENEMY_ATTR);
@@ -226,9 +232,8 @@ Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t 
 		}
 	}
 	
-	for(size_t i = 0; i < fields.size(); i++) {
+	for(size_t i = 0; i < fields.size(); i++)
 		fields.at(i).second = this->search(&fields.at(i).first, agent, depth - 1);
-	}
 
 	if(field->agents.at(agent).getAttr() == MINE_ATTR)
 		std::sort(fields.begin(), fields.end(), MineComp);
@@ -255,7 +260,7 @@ void BeamSearch::singleMove(Field& field, const uint_fast32_t agent, const uint_
 
 void BeamSearch::move(Field* field, const uint_fast32_t attr){
 	Field tmp = static_cast<Field> (*field);
-	
+
 	for(size_t i =0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
 			this->singleMove(tmp, i, 3);
@@ -286,8 +291,10 @@ void BreadthForceSearch::init(const Field& field){
 }
 
 Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_fast32_t depth){
-	if(depth == 0)
+	if(depth == 0 || field->checkEnd()){
+		std::cout << field->getTurn() << std::endl;
 		return *field;
+	}
 	
 	std::vector<std::pair<Field, Field>> fields;
 	
@@ -763,7 +770,8 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 		this->searchBestRoute(field, agent);
 
 	if(this->decided_route.at(agent).empty()){
-		this->greedy.singleMove(field, agent);
+		//this->greedy.singleMove(field, agent);
+		this->beam_search.singleMove(field, agent, 4);
 		return;
 	}
 	

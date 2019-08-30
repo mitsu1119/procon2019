@@ -583,9 +583,7 @@ const uint_fast32_t Field::getTurn() const{
 }
 
 const bool Field::checkEnd() const{
-	if(this->turn == this->max_turn)
-		return true;
-	return false;
+	return (this->turn == this->max_turn);
 }
 	
 void Field::judgeWinner(){

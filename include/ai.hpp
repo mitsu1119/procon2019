@@ -91,7 +91,6 @@ private:
 	Greedy greedy;
 	
 	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
-	void singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth);
 	
 public:
 
@@ -100,6 +99,9 @@ public:
 
 	void init(const Field* field) override;
 	void init(const Field& field) override;
+
+	
+	void singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth);
 
 	
 	void move(Field* field, const uint_fast32_t attr) override;
@@ -111,6 +113,7 @@ class BreadthForceSearch : public AI{
 private:
 
 	Greedy greedy;
+	
 
 	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
 	void singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth);
@@ -211,6 +214,7 @@ private:
 	int_fast32_t average_score;
 	Greedy greedy;
 	BeamSearch beam_search;
+	BreadthForceSearch breadth_force_search;
 	
 private:
 
