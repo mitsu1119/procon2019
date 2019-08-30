@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <numeric>
 #include <climits>
+#include <thread>
 #include "agent.hpp"
 #include "useful.hpp"
 #include "disp.hpp"
@@ -92,6 +93,12 @@ class Field {
 	
 private:
 
+	//ターン数
+	uint_fast32_t turn;
+
+	//最終ターン
+	uint_fast32_t max_turn;
+	
 	// フィールドの実幅、実高さ
 	uint_fast32_t width, height;
 
@@ -177,6 +184,15 @@ public:
   //width、heightを外部から所得
 	const uint_fast32_t getWidth() const;
 	const uint_fast32_t getHeight() const;
+
+	//turnを外部から所得
+	const uint_fast32_t getTurn() const;
+
+	//終了条件
+	const bool checkEnd() const;
+	
+	//照射判定
+	void judgeWinner();
 	
 };
 

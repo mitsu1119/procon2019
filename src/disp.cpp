@@ -71,7 +71,7 @@ void Print::agent(Field* field) const{
 				glColor3f(0.0f, 0.0f, 0.8f);
 			if(flag == ENEMY_ATTR)
 				glColor3f(0.8f, 0.0f, 0.0f);
-			glVertex2i(half+cell_size * a.getX(), half + cell_size * a.getY());
+			glVertex2i(half + cell_size * a.getX(), half + cell_size * a.getY());
 		});
 	glEnd();
 }
@@ -135,7 +135,99 @@ void Print::candidate(Field* field, const std::vector<Direction>& next) const{
 	}
 	glEnd();
 	*/
+	
 }
+
+
+
+void Print::line(const Field& field) const{
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glLineWidth(line_size);
+	glBegin(GL_LINES);
+	for(size_t i = 0; i <= field.getWidth(); i++){
+		glVertex2i(cell_size * i, 0);
+		glVertex2i(cell_size * i, cell_size * field.getHeight());
+	}
+	for(size_t j = 0; j <= field.getHeight(); j++){
+		glVertex2i(0, cell_size * j);
+		glVertex2i(cell_size * field.getWidth(), cell_size * j);
+	}
+	glEnd();
+}
+
+void Print::score(const Field& field) const{
+	int_fast32_t value = 0;
+	glColor3f(0.0f, 0.0f, 0.0f);
+	for(size_t j = 0; j < field.getHeight(); j++){
+			for(size_t i = 0; i < field.getWidth(); i++){
+			value = field.at(i, j)->getValue();
+			std::string str = std::to_string(value);
+			this->renderString(i * cell_size + 5, (j + 1) * cell_size - 5, str);
+		}
+	}
+}
+
+void Print::panel(const Field& field) const{
+	const int_fast32_t half = cell_size / 2;
+	glPointSize(agent_size);
+	glBegin(GL_POINTS);
+	for(size_t j = 0; j < field.getHeight(); j++){
+		for(size_t i = 0; i < field.getWidth(); i++){
+			if(field.at(i, j)->isPurePanel())
+				continue;
+			if(field.at(i, j)->isMyPanel())
+				glColor3f(0.6f, 0.6f, 1.0f);
+			if(field.at(i, j)->isEnemyPanel())
+				glColor3f(1.0f, 0.6f, 0.6f);
+			glVertex2i(half + cell_size * i, half + cell_size * j);
+		}
+	}
+	glEnd();
+}
+
+void Print::agent(Field& field) const{
+	const uint_fast32_t half = cell_size / 2;
+	uint_fast32_t flag;
+	glPointSize(agent_size);
+	glBegin(GL_POINTS);
+	std::for_each(field.agents.begin(), field.agents.end(), [&, this](auto& a){
+			flag = a.getAttr();
+			if(flag == MINE_ATTR)
+				glColor3f(0.0f, 0.0f, 0.8f);
+			if(flag == ENEMY_ATTR)
+				glColor3f(0.8f, 0.0f, 0.0f);
+			glVertex2i(half + cell_size * a.getX(), half + cell_size * a.getY());
+		});
+	glEnd();
+}
+
+void Print::agentNum(Field& field) const{
+	const uint_fast32_t half = cell_size / 2;
+	uint_fast32_t flag, mine = 0, enemy = 0;
+	std::string value, str;
+	glColor3f(0.0f, 0.0f, 0.0f);
+	std::for_each(field.agents.begin(), field.agents.end(), [&, this](auto& a){
+			flag = a.getAttr();
+			if(flag == MINE_ATTR){
+				mine++;
+				value = std::to_string(mine);
+				str = "M" + value;
+				this->renderString(half + cell_size * a.getX() - 2, half + cell_size * a.getY(), str);
+			}
+			if(flag == ENEMY_ATTR){
+				enemy++;
+				value = std::to_string(enemy);
+				str = "E" + value;
+				this->renderString(half + cell_size * a.getX() - 2, half+cell_size * a.getY(), str);
+			}
+		});
+}
+
+void Print::point(const Field& field) const{
+	;
+}
+
+// ---------------------------------------- PrintDisplay ----------------------------------------
 
 PrintDisplay::PrintDisplay(){
 }
@@ -154,6 +246,10 @@ void PrintDisplay::print(Field* field, const std::vector<Direction> next){
 }
 
 void PrintDisplay::print(Field* field){
+	;
+}
+
+void PrintDisplay::print(Field& field){
 	;
 }
 
@@ -176,12 +272,22 @@ void PrintSelfDirectedGame::print(Field* field){
 	this->point(field);
 }
 
+void PrintSelfDirectedGame::print(Field& field){
+	this->line(field);
+	this->panel(field);
+	this->agent(field);
+	this->agentNum(field);
+	this->score(field);
+	this->point(field);
+}
+
 // ---------------------------------------- DisplayWrapper ----------------------------------------
 
 DisplayWrapper::DisplayWrapper(){
 	this->random = new Random();
 	this->astar = new Astar();
 	this->greedy = new Greedy();
+	this->breadth_force_search = new BreadthForceSearch();
 }
 
 DisplayWrapper::~DisplayWrapper(){
@@ -451,6 +557,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case '\033':
 
 		std::exit(0);
+		
 		break;
 		
 	case 'w':
@@ -458,9 +565,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->greedy->move(this->field, MINE_ATTR);
 		this->greedy->move(this->field, ENEMY_ATTR);
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
+		
 		break;
 		
 	case 'm':
@@ -468,10 +573,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->random->move(this->field, MINE_ATTR);
 		this->random->move(this->field, ENEMY_ATTR);
-		field->applyNextAgents();
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
+		
 		break;
 		
 	case 'g':
@@ -479,10 +581,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 		
 		this->moveNext();
 		this->random->move(this->field, ENEMY_ATTR);
-		field->applyNextAgents();
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
+
 		break;
 
 	case 't':
@@ -491,13 +590,14 @@ void Display::keyboard(unsigned char key, int x, int y){
 		this->astar->move(this->field, MINE_ATTR);
 		//this->astar->move(this->field, ENEMY_ATTR);
 		this->random->move(this->field, ENEMY_ATTR);
-		this->field->applyNextAgents();
+		
+		break;
 
-		/*
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
-		*/
+	case 'b':
+	case 'B':
+
+		this->breadth_force_search->move(this->field, MINE_ATTR);
+		//this->breadth_force_search.move(this->field, ENEMY_ATTR);
 		break;
 		
 	case 'd':
@@ -507,15 +607,22 @@ void Display::keyboard(unsigned char key, int x, int y){
 		//this->random->move(this->field, ENEMY_ATTR);
 		//this->greedy->move(this->field, ENEMY_ATTR);
 		
-		this->field->applyNextAgents();
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
 		break;
 		
 	default:
 		break;
-	}	
+	}
+	
+	this->field->applyNextAgents();
+	this->setPossible();
+	this->field->print();
+	glutPostRedisplay();
+
+	if(field->checkEnd()){
+		field->judgeWinner();
+		std::this_thread::sleep_for(std::chrono::minutes(1));
+	}
+	
 }
 
 void Display::specialKeyboard(int key, int x, int y){
@@ -536,6 +643,7 @@ void Display::motion(int x, int y){
 	;
 }
 
+/*
 selfDirectedGame::selfDirectedGame(){
 	this->print = new PrintSelfDirectedGame();
 }
@@ -566,4 +674,4 @@ void selfDirectedGame::mouse(int button, int state, int x, int y){
 void selfDirectedGame::motion(int x, int y){
 	;
 }
-
+*/

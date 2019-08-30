@@ -19,12 +19,21 @@ public:
 	
 	AI();
 	~AI();
-	virtual void move(Field *field, const uint_fast32_t attr) = 0;
+	virtual void move(Field* field, const uint_fast32_t attr) = 0;
+	virtual void move(Field& field, const uint_fast32_t attr) = 0;
+	
 	virtual	void init(const Field* field) = 0;
 	virtual	void init(const Field& field) = 0;
 
-	
+	const Direction changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
+
 };
+
+inline const Direction AI::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
+	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
+		if(next.first == now.first + this->vec_x.at(i) && next.second == now.second + this->vec_y.at(i))
+			return (Direction)i;
+}
 
 class Random : public AI{
 private:
@@ -39,9 +48,8 @@ public:
 	void init(const Field* field) override;
 	void init(const Field& field) override;
 	
-	void mineMove(Field& field);
-	void enemyMove(Field& field);
 	void move(Field *field, const uint_fast32_t attr) override;
+	void move(Field& field, const uint_fast32_t attr) override;
 	
 };
 
@@ -59,13 +67,15 @@ public:
 
 	void init(const Field* field) override;
 	void init(const Field& field) override;
+
 	
-	void mineMove(Field& field);
-	void enemyMove(Field& field);
 	void singleMove(Field& field, const uint_fast32_t agent);
 	void randomMove(Field& field, const uint_fast32_t agent, const uint_fast32_t x, const uint_fast32_t y);
 	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
-	void move(Field *field, const uint_fast32_t attr) override;
+
+	
+	void move(Field* field, const uint_fast32_t attr) override;
+	void move(Field& field, const uint_fast32_t attr) override;
 	
 };
 
@@ -80,9 +90,9 @@ public:
 	void init(const Field* field) override;
 	void init(const Field& field) override;
 	
-	void mineMove(Field& field);
-	void enemyMove(Field& field);
-	void move(Field *field, const uint_fast32_t attr) override;
+	
+	void move(Field* field, const uint_fast32_t attr) override;
+	void move(Field& field, const uint_fast32_t attr) override;
 	
 };
 
@@ -96,10 +106,18 @@ public:
 
 	void init(const Field* field) override;
 	void init(const Field& field) override;
+
+	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
 	
-	void mineMove(Field& field);
-	void enemyMove(Field& field);
-	void move(Field *field, const uint_fast32_t attr) override;
+	static const bool MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
+	static const bool EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
+
+	
+	void singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth);
+
+	
+	void move(Field* field, const uint_fast32_t attr) override;
+	void move(Field& field, const uint_fast32_t attr) override;
 	
 };
 
@@ -163,7 +181,6 @@ inline const double Node::getScore() const{
 
 constexpr uint_fast32_t greedy_count       = 4;
 constexpr uint_fast32_t occpancy_weight    = 2;
-
 //ゴールの除外条件
 constexpr uint_fast32_t max_mine_distance  = 10;
 constexpr uint_fast32_t min_mine_distance  = 2;
@@ -171,14 +188,11 @@ constexpr uint_fast32_t min_mine_distance  = 2;
 constexpr uint_fast32_t min_agent_distance = 3;
 //ゴール候補同士の距離
 constexpr uint_fast32_t min_goal_distance  = 3;
-
 //枝きり条件
 constexpr uint_fast32_t max_move_cost      = 23;
 constexpr uint_fast32_t min_value          = -6;
-
 //終了条件
 constexpr uint_fast32_t min_move_cost      = 3;
-
 //探索の深さ
 constexpr uint_fast16_t search_depth       = 5;
 
@@ -209,7 +223,6 @@ private:
 	
 	//探索内での確定移動
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
-	const Direction changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
 
 private:
 
@@ -273,16 +286,9 @@ public:
 
 	void init(const Field* field) override;
 	void init(const Field& field) override;
+
 	
-	void mineMove(Field& field);
-	void enemyMove(Field& field);
-	void move(Field *field, const uint_fast32_t attr) override;
+	void move(Field* field, const uint_fast32_t attr) override;
+	void move(Field& field, const uint_fast32_t attr) override;
 	
 };
-
-inline const Direction Astar::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
-	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
-		if(next.first == now.first + this->vec_x.at(i) && next.second == now.second + this->vec_y.at(i))
-			return (Direction)i;
-}
-

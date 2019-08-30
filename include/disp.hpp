@@ -41,8 +41,17 @@ public:
 	void point(const Field* field) const;
 	void candidate(Field* field, const std::vector<Direction>& next) const;
 
+	void line(const Field& field) const;
+	void score(const Field& field) const;
+	void panel(const Field& field) const;
+	void agent(Field& field) const;
+	void agentNum(Field& field) const;
+	void point(const Field& field) const;
+	void candidate(Field& field, const std::vector<Direction>& next) const;
+
 	virtual void print(Field* field, const std::vector<Direction> next) = 0;
 	virtual void print(Field* field) = 0;
+	virtual void print(Field& field) = 0;
 	
 };
 
@@ -55,6 +64,8 @@ public:
 	
 	void print(Field* field, const std::vector<Direction> next) override;
 	void print(Field* field) override;
+	void print(Field& field) override;
+	
 };
 
 class PrintSelfDirectedGame : public Print{
@@ -66,6 +77,7 @@ public:
 	
 	void print(Field* field, const std::vector<Direction> next) override;
 	void print(Field* field) override;
+	void print(Field& field) override;
 	
 };
 
@@ -92,6 +104,11 @@ public:
 	AI* random;
 	AI* astar;
 	AI* greedy;
+
+	
+	AI* breadth_force_search;
+
+	
 
 	DisplayWrapper();
 	virtual ~DisplayWrapper();
@@ -167,6 +184,7 @@ inline const Direction Display::changeDirection(const std::pair<uint_fast32_t, u
 			return (Direction)i;
 }
 
+/*
 class selfDirectedGame : public DisplayWrapper {
 private:
 	
@@ -183,3 +201,4 @@ public:
 	void motion(int x, int y) override;
 	
 };
+*/
