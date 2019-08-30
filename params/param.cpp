@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <random>
+#include <vector>
 #include "useful.hpp"
 
 class Swarm;
@@ -39,7 +40,7 @@ private:
 	bool freeFlag;
 	XorOshiro128p rand;
 
-	Individual *chooseFromSwarm() {
+	std::vector<Individual *> chooseFromSwarm(size_t N) {
 		std::vector<double> cum(size, 0.0);
 		printf("cum = ");
 		for(size_t i = 0; i < size; i++) cum[i] = swarm[i]->rate + ((i == 0) ? 0 : cum[i - 1]);
@@ -48,13 +49,23 @@ private:
 			printf("%lf ", cum[i]);
 		}
 		printf("\n");
-		double choose = rand.gend();
-		printf("choose = %lf\n", choose);
-		size_t chooseInd;
-		for(chooseInd = 0; chooseInd < size; chooseInd++) if(choose < cum[chooseInd]) break;
-		printf("chooseInd = %ld\n", chooseInd);
 
-		return swarm[chooseInd];
+		size_t chooseInd;
+		double choose;
+		std::vector<bool> choosed(size, false);
+		std::vector<Individual *> retn;
+		for(size_t i = 0; i < N; i++) {
+reChoose:
+			choose = rand.gend();
+			printf("choose = %lf\n", choose);
+			for(chooseInd = 0; chooseInd < size; chooseInd++) if(choose < cum[chooseInd]) break;
+			if(choosed[chooseInd]) goto reChoose;
+			else choosed[chooseInd] = true;
+			retn.emplace_back(swarm[chooseInd]);
+			printf("chooseInd = %ld\n", chooseInd);
+		}
+
+		return retn;
 	}
 
 public:
@@ -79,7 +90,7 @@ public:
 
 	void print() {
 		for(const auto i: swarm) i->print();
-		chooseFromSwarm();
+		chooseFromSwarm(2);
 	}
 };
 
