@@ -8,6 +8,22 @@ AI::AI(){
 AI::~AI(){
 }
 
+const bool AI::MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs){
+	uint_fast32_t left_score  = lhs.second.calcScore(MINE_ATTR) - lhs.second.calcScore(ENEMY_ATTR);
+	uint_fast32_t right_score = rhs.second.calcScore(MINE_ATTR) - rhs.second.calcScore(ENEMY_ATTR);
+	
+	bool result = left_score != right_score;
+	return (result ? left_score > right_score : left_score > right_score);
+}
+
+const bool AI::EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs){
+	uint_fast32_t left_score  = lhs.second.calcScore(ENEMY_ATTR) - lhs.second.calcScore(MINE_ATTR);
+	uint_fast32_t right_score = rhs.second.calcScore(ENEMY_ATTR) - rhs.second.calcScore(MINE_ATTR);
+	
+	bool result = left_score != right_score;
+	return (result ? left_score > right_score : left_score > right_score);
+}
+
 //----------------Random--------------
 
 Random::Random(){
@@ -187,12 +203,70 @@ void BeamSearch::init(const Field& field){
 	;
 }
 
+Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t depth){
+	if(depth == 0)
+		return *field;
+	
+	std::vector<std::pair<Field, Field>> fields;
+	
+	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++) {
+		if(field->canMove(field->agents.at(agent), (Direction)i)){
+			Field fbuf = *field;
+			fbuf.agents.at(agent).move((Direction)i);
+
+			/*
+			if(field->agents.at(agent).getAttr() == MINE_ATTR)
+				greedy.move(fbuf, ENEMY_ATTR);
+			else
+				greedy.move(fbuf, MINE_ATTR);
+			*/
+			
+			fbuf.applyNextAgents();
+			fields.emplace_back(fbuf, fbuf);
+		}
+	}
+	
+	for(size_t i = 0; i < fields.size(); i++) {
+		fields.at(i).second = this->search(&fields.at(i).first, agent, depth - 1);
+	}
+
+	if(field->agents.at(agent).getAttr() == MINE_ATTR)
+		std::sort(fields.begin(), fields.end(), MineComp);
+	else
+		std::sort(fields.begin(), fields.end(), EnemyComp);
+
+	if(fields.size() > beam_width)
+		fields.erase(fields.begin() + beam_width, fields.end());
+	
+	return fields.at(0).first;
+}
+	
+void BeamSearch::singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth){
+	Field current_field = field;
+	Field next_field    = this->search(&field, agent, depth);
+	
+	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
+	std::pair<uint_fast32_t, uint_fast32_t> next_coord    = std::make_pair(next_field.agents.at(agent).getX(), next_field.agents.at(agent).getY()); 
+
+	Direction direction = this->changeDirection(current_coord, next_coord);
+	if(field.canMove(field.agents.at(agent), direction))
+		field.agents.at(agent).move(direction);
+}
+
 void BeamSearch::move(Field* field, const uint_fast32_t attr){
-	;
+	Field tmp = static_cast<Field> (*field);
+	
+	for(size_t i =0; i < tmp.agents.size(); i++)
+		if(tmp.agents.at(i).getAttr() == attr)
+			this->singleMove(tmp, i, 3);
+	
+	*field = tmp;
 }
 
 void BeamSearch::move(Field& field, const uint_fast32_t attr){
-	;
+	for(size_t i =0; i < field.agents.size(); i++)
+		if(field.agents.at(i).getAttr() == attr)
+			this->singleMove(field, i, 4);
 }
 
 //----------------BreadthForceSearch--------------
@@ -221,6 +295,14 @@ Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);
+
+			/*
+			if(field->agents.at(agent).getAttr() == MINE_ATTR)
+				greedy.move(fbuf, ENEMY_ATTR);
+			else
+				greedy.move(fbuf, MINE_ATTR);
+			*/
+			
 			fbuf.applyNextAgents();
 			fields.emplace_back(fbuf, fbuf);
 		}
@@ -236,22 +318,6 @@ Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_
 		std::sort(fields.begin(), fields.end(), EnemyComp);
 	
 	return fields.at(0).first;
-}
-
-const bool BreadthForceSearch::MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs){
-	uint_fast32_t left_score  = lhs.second.calcScore(MINE_ATTR) - lhs.second.calcScore(ENEMY_ATTR);
-	uint_fast32_t right_score = rhs.second.calcScore(MINE_ATTR) - rhs.second.calcScore(ENEMY_ATTR);
-	
-	bool result = left_score != right_score;
-	return (result ? left_score > right_score : left_score > right_score);
-}
-
-const bool BreadthForceSearch::EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs){
-	uint_fast32_t left_score  = lhs.second.calcScore(ENEMY_ATTR) - lhs.second.calcScore(MINE_ATTR);
-	uint_fast32_t right_score = rhs.second.calcScore(ENEMY_ATTR) - rhs.second.calcScore(MINE_ATTR);
-	
-	bool result = left_score != right_score;
-	return (result ? left_score > right_score : left_score > right_score);
 }
 
 void BreadthForceSearch::singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth){

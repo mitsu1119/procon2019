@@ -105,7 +105,7 @@ public:
 	AI* astar;
 	AI* greedy;
 
-	
+	AI* beam_search;
 	AI* breadth_force_search;
 
 	

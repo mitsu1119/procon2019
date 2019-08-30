@@ -27,6 +27,9 @@ public:
 
 	const Direction changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
 
+	static const bool MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
+	static const bool EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
+
 };
 
 inline const Direction AI::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
@@ -79,25 +82,38 @@ public:
 	
 };
 
+constexpr uint_fast32_t beam_width = 4;
+
 class BeamSearch : public AI{
+
 private:
+
+	Greedy greedy;
+	
+	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
+	void singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth);
 	
 public:
-	
+
 	BeamSearch();
 	~BeamSearch();
 
 	void init(const Field* field) override;
 	void init(const Field& field) override;
-	
+
 	
 	void move(Field* field, const uint_fast32_t attr) override;
 	void move(Field& field, const uint_fast32_t attr) override;
-	
+
 };
 
 class BreadthForceSearch : public AI{
 private:
+
+	Greedy greedy;
+
+	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
+	void singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth);
 	
 public:
 
@@ -106,14 +122,6 @@ public:
 
 	void init(const Field* field) override;
 	void init(const Field& field) override;
-
-	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
-	
-	static const bool MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
-	static const bool EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
-
-	
-	void singleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t depth);
 
 	
 	void move(Field* field, const uint_fast32_t attr) override;

@@ -287,6 +287,7 @@ DisplayWrapper::DisplayWrapper(){
 	this->random = new Random();
 	this->astar = new Astar();
 	this->greedy = new Greedy();
+	this->beam_search = new BeamSearch();
 	this->breadth_force_search = new BreadthForceSearch();
 }
 
@@ -596,7 +597,9 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'b':
 	case 'B':
 
-		this->breadth_force_search->move(this->field, MINE_ATTR);
+		this->beam_search->move(this->field, MINE_ATTR);
+		//this->beam_search->move(this->field, ENEMY_ATTR);
+		//this->breadth_force_search->move(this->field, MINE_ATTR);
 		//this->breadth_force_search.move(this->field, ENEMY_ATTR);
 		break;
 		
