@@ -824,13 +824,13 @@ void Astar::init(const Field& field){
 
 void Astar::move(Field* field, const uint_fast32_t attr){
 
-	/*
 	Field obj = static_cast<Field> (*field);
+	this->init(obj);
 	this->setAverageScore(obj);
 	this->search(obj, attr);
 	this->printGoal(obj, attr);
-	*/
 
+	/*
 	Field tmp = static_cast<Field> (*field);
 
 	this->decided_coord.clear();
@@ -842,6 +842,7 @@ void Astar::move(Field* field, const uint_fast32_t attr){
 			//this->singleMove(tmp, i);
 
 	*field = tmp;
+	*/
 }
 
 void Astar::move(Field& field, const uint_fast32_t attr){

@@ -590,6 +590,8 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->astar->move(this->field, MINE_ATTR);
 		//this->astar->move(this->field, ENEMY_ATTR);
+
+		
 		this->random->move(this->field, ENEMY_ATTR);
 		
 		break;
@@ -599,16 +601,22 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->beam_search->move(this->field, MINE_ATTR);
 		//this->beam_search->move(this->field, ENEMY_ATTR);
+		this->random->move(this->field, ENEMY_ATTR);
+
+		
 		//this->breadth_force_search->move(this->field, MINE_ATTR);
 		//this->breadth_force_search.move(this->field, ENEMY_ATTR);
+
 		break;
 		
 	case 'd':
 	case 'D':
 		
 		this->greedy->move(this->field, MINE_ATTR);
-		//this->random->move(this->field, ENEMY_ATTR);
 		//this->greedy->move(this->field, ENEMY_ATTR);
+
+		
+		//this->random->move(this->field, ENEMY_ATTR);
 		
 		break;
 		
