@@ -67,7 +67,7 @@ int_fast32_t Panel::getValue() const {
 
 // ---------------------------------------- Field ---------------------------------------------
 
-Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(height) {
+Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(height),turn(0) {
 	double buf;
 	uint_fast32_t size;
 
@@ -103,6 +103,8 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
 			a.move(STOP);
 		});
+
+	this->max_turn = 70;
 }
 
 uint_fast32_t Field::xyIndex(uint_fast32_t x, uint_fast32_t y) {
@@ -252,6 +254,9 @@ void Field::applyNextAgents() {
 	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
 			a.move(STOP);
 		});
+	
+	//ターンを刻む
+	this->turn++;
 }
 
 UF Field::makePureTreeMine() {
@@ -557,6 +562,8 @@ void Field::print() {
 	printf("mineScore:  %d\n", this->calcScore(MINE_ATTR));
 	
 	printf("enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
+
+	printf("turn      : %d\n", this->turn + 1);
 	
 	printf("%s", strip);
 }
@@ -567,4 +574,28 @@ const uint_fast32_t Field::getWidth() const{
 
 const uint_fast32_t Field::getHeight() const{
 	return this->height;
+}
+
+const uint_fast32_t Field::getTurn() const{
+	return this->turn;
+}
+
+const uint_fast32_t Field::getMaxTurn() const{
+	return this->max_turn;
+}
+
+const bool Field::checkEnd() const{
+	return (this->turn == this->max_turn);
+}
+	
+void Field::judgeWinner(){
+	printf("\n---------------- finish ----------------\n");
+	printf("winner: ");
+	
+	if(this->calcScore(MINE_ATTR) > this->calcScore(ENEMY_ATTR))
+		printf("MINE\n");
+	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR))
+		printf("DRAW\n");
+	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR))
+		printf("ENEMY\n");
 }

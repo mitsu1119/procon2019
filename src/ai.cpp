@@ -8,6 +8,23 @@ AI::AI(){
 AI::~AI(){
 }
 
+const bool AI::MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs){
+	int_fast32_t left_score  = lhs.second.calcScore(MINE_ATTR) - lhs.second.calcScore(ENEMY_ATTR);
+	int_fast32_t right_score = rhs.second.calcScore(MINE_ATTR) - rhs.second.calcScore(ENEMY_ATTR);	
+	
+	bool result = left_score != right_score;
+	return (result ? left_score > right_score : left_score > right_score);
+}
+
+const bool AI::EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs){
+	int_fast32_t left_score  = lhs.second.calcScore(ENEMY_ATTR) - lhs.second.calcScore(MINE_ATTR);
+	int_fast32_t right_score = rhs.second.calcScore(ENEMY_ATTR) - rhs.second.calcScore(MINE_ATTR);
+	
+	bool result = left_score != right_score;
+	return (result ? left_score > right_score : left_score > right_score);
+}
+
+
 //----------------Random--------------
 
 Random::Random(){
@@ -23,47 +40,25 @@ void Random::init(const Field* field){
 void Random::init(const Field& field){
 }
 
-void Random::mineMove(Field& field){
-	uint_fast32_t count = 0;
-	Direction direction;
-	for(auto &i: field.agents) {
-		if(i.getAttr() == MINE_ATTR){
-RE_CONSIDER:
-			if(count++ > 10)
-				break;
-			direction = (Direction)(this->random(DIRECTION_SIZE - 3));
-			if(field.canMove(i, direction))
-				i.move(direction);
-			else
-				goto RE_CONSIDER;
-		}
-	}
-}
-
-void Random::enemyMove(Field& field){
-	uint_fast32_t count = 0;
-	Direction direction;
-	for(auto &i: field.agents) {
-		if(i.getAttr() == ENEMY_ATTR){
-RE_CONSIDER:
-			if(count++ > 10)
-				break;
-			direction = (Direction)(this->random(DIRECTION_SIZE - 3));
-			if(field.canMove(i, direction))
-				i.move(direction);
-			else
-				goto RE_CONSIDER;
-		}
-	}
-}
-
 void Random::move(Field *field, const uint_fast32_t attr){
-	Field obj = static_cast<Field> (*field);
-	if(attr == MINE_ATTR)
-		this->mineMove(obj);
-	else
-		this->enemyMove(obj);
-	*field = obj;
+	Field tmp = static_cast<Field> (*field);
+	uint_fast32_t count = 0;
+	Direction direction;
+	
+	for(auto &i: tmp.agents) {
+		if(i.getAttr() == attr){
+RE_CONSIDER:
+			if(count++ > 10)
+				break;
+			direction = (Direction)(this->random(DIRECTION_SIZE - 3));
+			if(tmp.canMove(i, direction))
+				i.move(direction);
+			else
+				goto RE_CONSIDER;
+		}
+	}
+	
+	*field = tmp;	
 }
 
 //----------------Greedy--------------
@@ -79,22 +74,6 @@ void Greedy::init(const Field* field){
 }
 
 void Greedy::init(const Field& field){
-}
-
-void Greedy::mineMove(Field& field){
-	current_score = field.calcScore(MINE_ATTR)  - field.calcScore(ENEMY_ATTR);
-	this->decided_coord.clear();
-	for(size_t i =0; i < field.agents.size(); i++)
-		if(field.agents.at(i).getAttr() == MINE_ATTR)
-			this->singleMove(field, i);
-}
-
-void Greedy::enemyMove(Field& field){
-	current_score = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
-	this->decided_coord.clear();
-	for(size_t i =0; i < field.agents.size(); i++)
-		if(field.agents.at(i).getAttr() == ENEMY_ATTR)
-			this->singleMove(field, i);
 }
 
 void Greedy::singleMove(Field& field, const uint_fast32_t agent){
@@ -162,12 +141,13 @@ int_fast32_t Greedy::nextScore(Field field, const uint_fast32_t agent, const Dir
 }
 
 void Greedy::move(Field *field, const uint_fast32_t attr){
-	Field obj = static_cast<Field> (*field);
-	if(attr == MINE_ATTR)
-		this->mineMove(obj);
-	else
-		this->enemyMove(obj);
-	*field = obj;
+	Field tmp = static_cast<Field> (*field);
+
+	for(size_t i =0; i < tmp.agents.size(); i++)
+		if(tmp.agents.at(i).getAttr() == attr)
+			this->singleMove(tmp, i);
+	
+	*field = tmp;
 }
 
 //----------------BeamSearch--------------
@@ -179,45 +159,143 @@ BeamSearch::~BeamSearch(){
 }
 
 void BeamSearch::init(const Field* field){
+	;
 }
 
 void BeamSearch::init(const Field& field){
+	;
 }
 
-void BeamSearch::mineMove(Field& field){
+Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t depth){
+	if(depth == 0 || field->checkEnd())
+		return *field;
 	
+	std::vector<std::pair<Field, Field>> fields;
+	
+	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++) {
+		if(field->canMove(field->agents.at(agent), (Direction)i)){
+			Field fbuf = *field;
+			fbuf.agents.at(agent).move((Direction)i);
+			
+			/*
+			if(field->agents.at(agent).getAttr() == MINE_ATTR)
+				greedy.move(fbuf, ENEMY_ATTR);
+			else
+				greedy.move(fbuf, MINE_ATTR);
+			*/
+			
+			fbuf.applyNextAgents();
+			fields.emplace_back(fbuf, fbuf);
+		}
+	}
+	
+	for(size_t i = 0; i < fields.size(); i++)
+		fields.at(i).second = this->search(&fields.at(i).first, agent, depth - 1);
+
+	if(field->agents.at(agent).getAttr() == MINE_ATTR)
+		std::sort(fields.begin(), fields.end(), MineComp);
+	else
+		std::sort(fields.begin(), fields.end(), EnemyComp);
+
+	if(fields.size() > beam_width)
+		fields.erase(fields.begin() + beam_width, fields.end());
+	
+	return fields.at(0).first;
+}
+	
+void BeamSearch::singleMove(Field& field, const uint_fast32_t agent){
+	Field current_field = field;
+	Field next_field    = this->search(&field, agent, beam_depth);
+	
+	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
+	std::pair<uint_fast32_t, uint_fast32_t> next_coord    = std::make_pair(next_field.agents.at(agent).getX(), next_field.agents.at(agent).getY()); 
+
+	Direction direction = this->changeDirection(current_coord, next_coord);
+	if(field.canMove(field.agents.at(agent), direction))
+		field.agents.at(agent).move(direction);
 }
 
-void BeamSearch::enemyMove(Field& field){
-	
-}
+void BeamSearch::move(Field* field, const uint_fast32_t attr){
+	Field tmp = static_cast<Field> (*field);
 
-void BeamSearch::move(Field *field, const uint_fast32_t attr){
+	for(size_t i =0; i < tmp.agents.size(); i++)
+		if(tmp.agents.at(i).getAttr() == attr)
+			this->singleMove(tmp, i);
 	
+	*field = tmp;
 }
 
 //----------------BreadthForceSearch--------------
 
-BreadthForceSearch::BreadthForceSearch(){	
+BreadthForceSearch::BreadthForceSearch(){
 }
 
 BreadthForceSearch::~BreadthForceSearch(){
 }
 
 void BreadthForceSearch::init(const Field* field){
+	;
 }
 
 void BreadthForceSearch::init(const Field& field){
+	;
 }
 
-void BreadthForceSearch::mineMove(Field& field){
+Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_fast32_t depth){
+	if(depth == 0 || field->checkEnd())
+		return *field;
+	
+	std::vector<std::pair<Field, Field>> fields;
+	
+	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++) {
+		if(field->canMove(field->agents.at(agent), (Direction)i)){
+			Field fbuf = *field;
+			fbuf.agents.at(agent).move((Direction)i);
+			
+			/*
+			if(field->agents.at(agent).getAttr() == MINE_ATTR)
+				greedy.move(fbuf, ENEMY_ATTR);
+			else
+				greedy.move(fbuf, MINE_ATTR);
+			*/
+			
+			fbuf.applyNextAgents();
+			fields.emplace_back(fbuf, fbuf);
+		}
+	}
+	
+	for(size_t i = 0; i < fields.size(); i++) {
+		fields.at(i).second = this->search(&fields.at(i).first, agent, depth - 1);
+	}
+
+	if(field->agents.at(agent).getAttr() == MINE_ATTR)
+		std::sort(fields.begin(), fields.end(), MineComp);
+	else
+		std::sort(fields.begin(), fields.end(), EnemyComp);
+	
+	return fields.at(0).first;
 }
 
-void BreadthForceSearch::enemyMove(Field& field){
+void BreadthForceSearch::singleMove(Field& field, const uint_fast32_t agent){
+	Field current_field = field;
+	Field next_field    = this->search(&field, agent, bfs_depth);
+	
+	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
+	std::pair<uint_fast32_t, uint_fast32_t> next_coord    = std::make_pair(next_field.agents.at(agent).getX(), next_field.agents.at(agent).getY()); 
+
+	Direction direction = this->changeDirection(current_coord, next_coord);
+	if(field.canMove(field.agents.at(agent), direction))
+		field.agents.at(agent).move(direction);
 }
 
 void BreadthForceSearch::move(Field *field, const uint_fast32_t attr){
+	Field tmp = static_cast<Field> (*field);
 	
+	for(size_t i =0; i < tmp.agents.size(); i++)
+		if(tmp.agents.at(i).getAttr() == attr)
+			this->singleMove(tmp, i);
+	
+	*field = tmp;
 }
 
 //----------------Node--------------
@@ -241,7 +319,7 @@ Astar::~Astar(){
 void Astar::greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num){
 	if(move_num > greedy_count)
 		return;
-	this->greedy.enemyMove(field);
+	this->greedy.move(&field, field.agents.at(agent).getAttr());
 	
 	/*
 	for(size_t i = agent + 1; i < field.agents.size(); i++)
@@ -303,7 +381,7 @@ void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
 		return;
 	
 	std::sort(condidate.rbegin(), condidate.rend());
-	for(size_t i = 0; i < search_depth; i++){
+	for(size_t i = 0; i < astar_depth; i++){
 		if(i >= condidate.size())
 			break;
 		this->search_target.push_back(condidate.at(i).second);
@@ -634,7 +712,8 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 		this->searchBestRoute(field, agent);
 
 	if(this->decided_route.at(agent).empty()){
-		this->greedy.singleMove(field, agent);
+		//this->greedy.singleMove(field, agent);
+		this->beam_search.singleMove(field, agent);
 		return;
 	}
 	
@@ -646,7 +725,8 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 		this->searchBestRoute(field, agent);
 	
 	if(this->decided_route.at(agent).empty()){
-		this->greedy.singleMove(field, agent);
+		//this->greedy.singleMove(field, agent);
+		this->beam_search.singleMove(field, agent);
 		return;
 	}
 
@@ -675,44 +755,24 @@ void Astar::init(const Field& field){
 	this->decided_coord.clear();
 }
 
-void Astar::mineMove(Field& field){
-	this->decided_coord.clear();
-	this->next_coord.clear();
-	
-	for(size_t i = 0; i < field.agents.size(); i++)
-		if(field.agents.at(i).getAttr() == MINE_ATTR)
-			this->singleMove(field, i);
-
-	
-	for(size_t i = 0; i < this->decided_route.size(); i++){
-		std::cout << this->decided_route.at(i).size() << std::endl;
-	}
-	
-}
-
-void Astar::enemyMove(Field& field){
-	this->decided_coord.clear();
-	this->next_coord.clear();
-	
-	for(size_t i = 0; i < field.agents.size(); i++)
-		if(field.agents.at(i).getAttr() == ENEMY_ATTR)
-			this->singleMove(field, i);
-}
-
 void Astar::move(Field *field, const uint_fast32_t attr){
-	
+
 	Field obj = static_cast<Field> (*field);
+	this->init(obj);
 	this->setAverageScore(obj);
-	this->search(obj, MINE_ATTR);
-	this->printGoal(obj, MINE_ATTR);
+	this->search(obj, attr);
+	this->printGoal(obj, attr);
 
 	/*
-	Field obj = static_cast<Field> (*field);
-	if(attr == MINE_ATTR)
-		this->mineMove(obj);
-	else
-		this->enemyMove(obj);
-	*field = obj;
+	Field tmp = static_cast<Field> (*field);
+	this->decided_coord.clear();
+	this->next_coord.clear();
+	
+	for(size_t i = 0; i < tmp.agents.size(); i++)
+		if(tmp.agents.at(i).getAttr() == attr)
+			this->chooseAlgorithm(tmp, i);
+			//this->singleMove(tmp, i);
+	*field = tmp;
 	*/
 }
 

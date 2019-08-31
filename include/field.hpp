@@ -92,6 +92,12 @@ class Field {
 	
 private:
 
+  //ターン数
+	uint_fast32_t turn;
+
+	//最終ターン
+	uint_fast32_t max_turn;
+	
 	// フィールドの実幅、実高さ
 	uint_fast32_t width, height;
 

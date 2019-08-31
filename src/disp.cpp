@@ -451,6 +451,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case '\033':
 
 		std::exit(0);
+		
 		break;
 		
 	case 'w':
@@ -458,9 +459,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->greedy->move(this->field, MINE_ATTR);
 		this->greedy->move(this->field, ENEMY_ATTR);
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
+		
 		break;
 		
 	case 'm':
@@ -468,10 +467,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->random->move(this->field, MINE_ATTR);
 		this->random->move(this->field, ENEMY_ATTR);
-		field->applyNextAgents();
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
+		
 		break;
 		
 	case 'g':
@@ -479,10 +475,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 		
 		this->moveNext();
 		this->random->move(this->field, ENEMY_ATTR);
-		field->applyNextAgents();
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
+
 		break;
 
 	case 't':
@@ -490,32 +483,50 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->astar->move(this->field, MINE_ATTR);
 		//this->astar->move(this->field, ENEMY_ATTR);
-		this->random->move(this->field, ENEMY_ATTR);
-		this->field->applyNextAgents();
 
-		/*
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
-		*/
+		
+		this->random->move(this->field, ENEMY_ATTR);
+		
+		break;
+
+	case 'b':
+	case 'B':
+
+		this->beam_search->move(this->field, MINE_ATTR);
+		//this->beam_search->move(this->field, ENEMY_ATTR);
+		this->random->move(this->field, ENEMY_ATTR);
+
+		
+		//this->breadth_force_search->move(this->field, MINE_ATTR);
+		//this->breadth_force_search.move(this->field, ENEMY_ATTR);
+
 		break;
 		
 	case 'd':
 	case 'D':
 		
 		this->greedy->move(this->field, MINE_ATTR);
-		//this->random->move(this->field, ENEMY_ATTR);
 		//this->greedy->move(this->field, ENEMY_ATTR);
+
 		
-		this->field->applyNextAgents();
-		this->setPossible();
-		this->field->print();
-		glutPostRedisplay();
+		//this->random->move(this->field, ENEMY_ATTR);
+		
 		break;
 		
 	default:
 		break;
-	}	
+	}
+	
+	this->field->applyNextAgents();
+	this->setPossible();
+	this->field->print();
+	glutPostRedisplay();
+
+	if(field->checkEnd()){
+		field->judgeWinner();
+		std::this_thread::sleep_for(std::chrono::minutes(1));
+		std::exit(0);
+	}
 }
 
 void Display::specialKeyboard(int key, int x, int y){
