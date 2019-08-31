@@ -170,8 +170,8 @@ void Field::genRandMap(){
     field_rand_sum = 0; // <- Debug
     for(int i=0; i < buf_height; i++){
       for(int j=0; j < buf_width; j++){
-        r2 = rand() / 2147483647.1;
-        r1 = rand() / 2147483647.1;
+        r2 = this->random(INT_MAX) / 2147483647.1;
+        r1 =this->random(INT_MAX)  / 2147483647.1;
         x = s * sqrt(-2 * log(r1)) * cos(2 * pi * r2)+m-slide;
 				if((int)x > 16)
 					x = 16;

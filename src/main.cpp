@@ -31,8 +31,8 @@ void selfDirectedGame(){
 	
 	while(true){
 		
-		greedy.move(field, MINE_ATTR);
-		greedy.move(field, ENEMY_ATTR);
+		greedy.move(&field, MINE_ATTR);
+		greedy.move(&field, ENEMY_ATTR);
 		
 		field.applyNextAgents();
 		field.print();
