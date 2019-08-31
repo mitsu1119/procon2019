@@ -9,16 +9,16 @@ AI::~AI(){
 }
 
 const bool AI::MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs){
-	uint_fast32_t left_score  = lhs.second.calcScore(MINE_ATTR) - lhs.second.calcScore(ENEMY_ATTR);
-	uint_fast32_t right_score = rhs.second.calcScore(MINE_ATTR) - rhs.second.calcScore(ENEMY_ATTR);
+	int_fast32_t left_score  = lhs.second.calcScore(MINE_ATTR) - lhs.second.calcScore(ENEMY_ATTR);
+	int_fast32_t right_score = rhs.second.calcScore(MINE_ATTR) - rhs.second.calcScore(ENEMY_ATTR);	
 	
 	bool result = left_score != right_score;
 	return (result ? left_score > right_score : left_score > right_score);
 }
 
 const bool AI::EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs){
-	uint_fast32_t left_score  = lhs.second.calcScore(ENEMY_ATTR) - lhs.second.calcScore(MINE_ATTR);
-	uint_fast32_t right_score = rhs.second.calcScore(ENEMY_ATTR) - rhs.second.calcScore(MINE_ATTR);
+	int_fast32_t left_score  = lhs.second.calcScore(ENEMY_ATTR) - lhs.second.calcScore(MINE_ATTR);
+	int_fast32_t right_score = rhs.second.calcScore(ENEMY_ATTR) - rhs.second.calcScore(MINE_ATTR);
 	
 	bool result = left_score != right_score;
 	return (result ? left_score > right_score : left_score > right_score);
