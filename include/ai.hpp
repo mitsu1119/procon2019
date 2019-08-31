@@ -132,7 +132,7 @@ public:
 
 constexpr uint_fast32_t move_weight                = 9;
 constexpr uint_fast32_t state_weight               = 6;
-constexpr uint_fast32_t heuristic_weight           = 3.6;
+constexpr uint_fast32_t heuristic_weight           = 5;
 constexpr uint_fast32_t value_weight               = 7;
 constexpr uint_fast32_t is_on_decided_route_weight = 12;
 constexpr uint_fast32_t is_on_mine_panel_weight    = 4;
