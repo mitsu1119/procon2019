@@ -177,6 +177,18 @@ public:
   //width、heightを外部から所得
 	const uint_fast32_t getWidth() const;
 	const uint_fast32_t getHeight() const;
+
+	//turnを外部から所得
+	const uint_fast32_t getTurn() const;
+
+	//max_turnを外部から所得
+	const uint_fast32_t getMaxTurn() const;
+
+	//終了条件
+	const bool checkEnd() const;
+	
+	//照射判定
+	void judgeWinner();
 	
 };
 
