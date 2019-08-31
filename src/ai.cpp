@@ -703,6 +703,18 @@ const void Astar::printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>
 	glFlush();
 }
 
+void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
+	if(field.getTurn() >= field.getMaxTurn() - beam_depth){
+		this->beam_search.singleMove(field, agent);
+		//this->breadth_force_search.singleMove(field, agent);
+		
+		this->decided_route.at(agent).clear();
+		return;
+	}
+	
+	this->singleMove(field, agent);
+}
+
 void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	Direction direction;
 	const uint_fast32_t agentX = field.agents.at(agent).getX();

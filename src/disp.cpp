@@ -481,6 +481,7 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 't':
 	case 'T':
 
+		//なんかだめ
 		this->astar->move(this->field, MINE_ATTR);
 		//this->astar->move(this->field, ENEMY_ATTR);
 

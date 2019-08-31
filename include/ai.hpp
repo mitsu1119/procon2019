@@ -131,7 +131,7 @@ public:
 };
 
 constexpr uint_fast32_t move_weight                = 9;
-constexpr uint_fast32_t state_weight               = 4;
+constexpr uint_fast32_t state_weight               = 6;
 constexpr uint_fast32_t heuristic_weight           = 3.6;
 constexpr uint_fast32_t value_weight               = 7;
 constexpr uint_fast32_t is_on_decided_route_weight = 12;
@@ -200,8 +200,8 @@ constexpr uint_fast32_t min_agent_distance = 3;
 constexpr uint_fast32_t min_goal_distance  = 3;
 
 //枝きり条件
-constexpr uint_fast32_t max_move_cost      = 23;
-constexpr uint_fast32_t min_value          = -6;
+constexpr uint_fast32_t max_move_cost      = 35;
+constexpr uint_fast32_t min_value          = -7;
 
 //終了条件
 constexpr uint_fast32_t min_move_cost      = 3;
