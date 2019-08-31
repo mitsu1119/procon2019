@@ -62,17 +62,34 @@ public:
 class Family {
 private:
 	std::vector<Individual *> family;
+	XorOshiro128p rand;
 
 public:
 	Family(Individual *p1, Individual *p2) {
+		std::random_device seed;
+		rand = XorOshiro128p(seed());
 		family.emplace_back(p1);
 		family.emplace_back(p2);
 		family.emplace_back(p1->makeNewIndividual(p2));
 		family.emplace_back(p1->makeNewIndividual(p2));
+		for(auto i: family) i->eval();
 	}
 
 	Individual *chooseAndPop() {
-		return family[0];
+		std::vector<double> cum(family.size(), 0.0);
+		for(size_t i = 0; i < family.size(); i++) cum[i] = family[i]->rate + ((i == 0) ? 0 : cum[i - 1]);
+		for(size_t i = 0; i < family.size(); i++) {
+			if(cum[family.size() - 1] == 0) cum[i] = 1.0 / family.size();
+			else cum[i] /= cum[family.size() - 1];
+		}
+		double choose = rand.gend();
+		size_t chooseInd;
+		for(chooseInd = 0; chooseInd < family.size(); chooseInd++) if(choose < cum[chooseInd]) break;
+		
+		Individual *retn = family[chooseInd];		// vec.erase(n) だと遅い
+		family[chooseInd] = family.back();
+		family.pop_back();
+		return retn;
 	}
 
 	void print() const {
@@ -93,6 +110,11 @@ private:
 	bool freeFlag;
 	XorOshiro128p rand;
 
+	Swarm(std::vector<Individual *> swarm): swarm(swarm), freeFlag(true) {
+		std::random_device seed;
+		rand = XorOshiro128p(seed());
+	}
+
 	void shuffleSwarm() {
 		for(size_t i = 0; i < swarm.size(); i++) {
 			size_t j = rand(swarm.size() - 1);
@@ -101,27 +123,6 @@ private:
 			swarm[j] = work;
 		}
 	}
-
-/*
-	std::vector<Individual *> chooseFromSwarm(size_t N) {
-		if(N != 0) std::vector<Individual *> retn = chooseFromSwarm(N - 1);
-		std::vector<double> cum(size, 0.0);
-		for(size_t i = 0; i < size; i++) cum[i] = swarm[i]->rate + ((i == 0) ? 0 : cum[i - 1]);
-		for(size_t i = 0; i < size; i++) {
-			cum[i] /= cum[size - 1];
-		}
-
-		size_t chooseInd;
-		double choose = rand.gend();
-		std::vector<bool> choosed(size, false);
-			for(chooseInd = 0; chooseInd < size; chooseInd++) if(choose < cum[chooseInd]) break;
-			if(choosed[chooseInd]) goto reChoose;
-			else choosed[chooseInd] = true;
-			retn.emplace_back(swarm[chooseInd]);
-			printf("chooseInd = %ld\n", chooseInd);	
-
-		return retn;	
-*/
 
 public:
 	Swarm(size_t size): freeFlag(true) {
@@ -143,7 +144,7 @@ public:
 		for(auto i: swarm) i->eval();
 	}
 
-	std::vector<Individual *> makeNextSwarm() {
+	Swarm *makeNextSwarm() {
 		std::vector<Individual *> nextSwarm(2 * (swarm.size() / 2), nullptr);
 		shuffleSwarm();
 		printf("------ Swarm --------------------------\n");
@@ -164,7 +165,7 @@ public:
 			i->print();
 			printf("addr = %p\n", i);
 		}
-		return nextSwarm;
+		return new Swarm(nextSwarm);
 	}
 
 	void print() {
@@ -174,9 +175,17 @@ public:
 
 int main() {
 	int n = 4;
-	Swarm swarm(n);
+	size_t depth = 1;
+	Swarm *swarm, *nextSwarm;
+	swarm = new Swarm(4);
 
-	swarm.makeNextSwarm();
+	for(size_t i = 0; i < depth; i++) {
+		nextSwarm = swarm->makeNextSwarm();
+		delete swarm;
+		swarm = nextSwarm;
+	}
+	printf("---- Final Swarm -------------------------\n");
+	swarm->print();
 
 	return 0;
 }
