@@ -5,7 +5,7 @@
 #include "useful.hpp"
 #include "disp.hpp"
 
-Field field(16, 16);
+//Field field(16, 16);
 
 //Random random;
 Greedy greedy;
@@ -16,9 +16,8 @@ void selfDirectedGame();
 
 int main(int argc, char *argv[]) {
 	
-	selfDirectedGame();
+	//selfDirectedGame();
 
-	/*
 	Field field(16, 16);
 
 	DisplayWrapper* framework = new Display();
@@ -27,11 +26,11 @@ int main(int argc, char *argv[]) {
 	framework->setInstance(framework);
 	framework->start(argc, argv);
 	delete framework;
-	*/
 
 	return 0;
 }
 
+/*
 void selfDirectedGame(){
 	
 	astar.init(&field);
@@ -52,3 +51,4 @@ void selfDirectedGame(){
 		}
 	}
 }
+*/

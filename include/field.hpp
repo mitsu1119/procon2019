@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <numeric>
 #include <climits>
+#include <mutex>
 #include "agent.hpp"
 #include "useful.hpp"
 #include "disp.hpp"

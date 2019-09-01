@@ -505,6 +505,7 @@ const uint_fast32_t Astar::heuristic(const std::pair<uint_fast32_t, uint_fast32_
 	return distance;
 }
 
+/*
 void Astar::initNode(const Field& field){
 	this->node.clear();
 	this->node.resize(field.getWidth() * field.getHeight());
@@ -512,16 +513,25 @@ void Astar::initNode(const Field& field){
 		for(size_t j = 0; j < field.getHeight(); j++)
 			this->node.at(j * field.getHeight() + i).coord = std::make_pair(i, j);
 }
+*/
+
+void Astar::initNode(const Field& field, std::vector<Node>& node){
+	node.clear();
+	node.resize(field.getWidth() * field.getHeight());
+	for(size_t i = 0; i < field.getWidth(); i++)
+		for(size_t j = 0; j < field.getHeight(); j++)
+			node.at(j * field.getHeight() + i).coord = std::make_pair(i, j);
+}
 
 const bool Astar::comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs){
 	bool result = lhs.first->getScore() != rhs.first->getScore();
 	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->state_cost < rhs.first->state_cost);
 }
 
-const double Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
+/*
+const int_fast32_t Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
 	std::vector<std::pair<Node*, Field>> open;
 	Node *start , *current , *next;
-	
 	this->initNode(field);
 	start =& this->node.at(field.agents.at(agent).getY() * field.getHeight() + field.agents.at(agent).getX());
 	this->setStartNode(field, agent, goal, start);
@@ -595,7 +605,90 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 	
 	return - INT_MAX;
 }
+*/
 
+std::pair<double, std::vector<Node>> Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
+	std::vector<std::pair<Node*, Field>> open;
+	Node *start , *current , *next;
+	uint_fast32_t score;
+	
+	std::vector<Node> node;
+	
+	this->initNode(field, node);
+	
+	start =& node.at(field.agents.at(agent).getY() * field.getHeight() + field.agents.at(agent).getX());
+	this->setStartNode(field, agent, goal, start);
+	field.decided_route = this->decided_route;
+	open.push_back(std::make_pair(start, field));
+	
+	while(!open.empty()){
+		std::sort(open.begin(), open.end(), comp);
+		current = open.at(0).first;
+		Field current_field = open.at(0).second;
+		
+		
+		if(this->branchingCondition(current))
+			goto SKIP_NODE;
+
+		
+		if(current->coord == goal){
+			if(this->endCondition(current))
+				goto SKIP_NODE;
+			if(current_field.agents.at(agent).getAttr() == MINE_ATTR)
+				score = current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
+			else
+				score = current_field.calcScore(ENEMY_ATTR) - current_field.calcScore(MINE_ATTR);
+			return std::make_pair(score, node);
+		}
+
+		
+		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
+			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
+				Field next_field = current_field;
+				next_field.agents.at(agent).move((Direction)i);
+				
+				this->greedyMove(next_field, agent, current->move_num);
+				
+				this->decidedMove(next_field, agent,  next_field.decided_route);
+				next_field.applyNextAgents();
+				next =& node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
+				if(current->coord == next->coord){
+					next_field.agents.at(agent).move((Direction)i);
+					
+					this->greedyMove(next_field, agent, current->move_num + 1);
+					
+					this->decidedMove(next_field, agent,  next_field.decided_route);
+					next_field.applyNextAgents();
+					next =& node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
+
+					
+					if(current->coord == next->coord)
+						continue;
+
+					
+					if(next->status == Node::NONE && next->coord != current->coord){
+						this->setNextNode(next_field, agent, goal, current, next);
+						next->move_cost = current->move_cost + 2;
+						open.push_back(std::make_pair(next, next_field));
+					}
+				}
+				else{
+					if(next->status == Node::NONE){
+						this->setNextNode(next_field, agent, goal, current, next);
+						next->move_cost = current->move_cost + 1;
+						open.push_back(std::make_pair(next, next_field));
+					}
+				}
+			}
+		}
+		
+	SKIP_NODE:
+		current->status = Node::CLOSED;
+		open.erase(open.begin());
+	}
+
+	return std::make_pair(- INT_MAX, node);
+}
 
 void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start){
 	start->status              = Node::OPEN;
@@ -620,30 +713,30 @@ void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pai
 		start->value = -1;
 }
 
-void Astar::setNextNode(Field& next_field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next){
+void Astar::setNextNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next){
 	next->status               = Node::OPEN;
 
 	
-	if(next_field.agents.at(agent).getAttr() == MINE_ATTR)
-		next->state_cost          = next_field.calcScore(ENEMY_ATTR) - next_field.calcScore(MINE_ATTR);
+	if(field.agents.at(agent).getAttr() == MINE_ATTR)
+		next->state_cost          = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
 	else
-		next->state_cost          = next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR);
+		next->state_cost          = field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
 
 	
 	next->heuristic            = this->heuristic(next->coord, goal);
-	next->is_on_decided_route  = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
+	next->is_on_decided_route  = current->is_on_decided_route + this->isOnDecidedRoute(field, agent, next->coord);
 	next->move_num             = current->move_num + 1;
 	next->parent               = current;
 
 	
-	if(next_field.agents.at(agent).getAttr() == MINE_ATTR && next_field.at(next->coord.first, next->coord.second)->isMyPanel())
+	if(field.agents.at(agent).getAttr() == MINE_ATTR && field.at(next->coord.first, next->coord.second)->isMyPanel())
 		next->is_on_mine_panel   = current->is_on_mine_panel + 1;
-	if(next_field.agents.at(agent).getAttr() == ENEMY_ATTR && next_field.at(next->coord.first, next->coord.second)->isEnemyPanel())
+	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(next->coord.first, next->coord.second)->isEnemyPanel())
 		next->is_on_mine_panel   = current->is_on_mine_panel + 1;
 
 
-	if(next_field.agents.at(agent).getAttr() != next_field.at(next->coord.first, next->coord.second)->getAttr())
-		next->value = next_field.at(next->coord.first, next->coord.second)->getValue();
+	if(field.agents.at(agent).getAttr() != field.at(next->coord.first, next->coord.second)->getAttr())
+		next->value = field.at(next->coord.first, next->coord.second)->getValue();
 	else
 		next->value = -1;
 }
@@ -661,6 +754,7 @@ const bool Astar::endCondition(Node* current) const{
 	return (current->move_cost <= min_move_cost);
 }
 
+/*
 void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	int_fast32_t value, max = - INT_MAX;
 	std::pair<uint_fast32_t, uint_fast32_t> goal;
@@ -682,6 +776,45 @@ void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	
 	//this->printRoute(route);
 }
+*/
+
+/*
+void Astar::multiThread(){
+	std::pair<double, std::vector<Node>> condidate = this->searchRoute(field, agent, coord);
+	mtx.lock();
+	this->condidate_route.push_back(condidate);
+	mtx.unlock();
+}
+*/
+
+void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
+	int_fast32_t value, max = - INT_MAX;
+	std::pair<uint_fast32_t, uint_fast32_t> goal;
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
+	std::pair<double, std::vector<Node>> condidate;
+
+	/*
+	this->setSearchTarget(field, agent);
+	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
+			
+		});
+	*/
+
+	this->setSearchTarget(field, agent);
+	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
+			condidate = this->searchRoute(field, agent, coord);
+			if(condidate.first > max){
+				max = value;
+				goal = coord;
+				route = this->makeRoute(field, condidate.second, agent, coord);
+			}
+		});
+	
+	this->decided_route.at(agent) = route;
+	this->decided_goal.at(agent)  = goal;
+	
+	this->printRoute(route);
+}
 
 void 	Astar::search(Field& field, const uint_fast32_t attr){
 	this->init(field);
@@ -690,6 +823,7 @@ void 	Astar::search(Field& field, const uint_fast32_t attr){
 			this->searchBestRoute(field, i);
 }
 
+/*
 const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	std::pair<uint_fast32_t, uint_fast32_t> from;
@@ -702,6 +836,30 @@ const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Fiel
 		if(this->node.at(from.second * field.getHeight() + from.first).parent == nullptr)
 			break;
 		from = this->node.at(from.second * field.getHeight() + from.first).parent->coord;
+	  route.push_back(from);
+		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), from);
+		if(result == this->decided_coord.end())
+			this->decided_coord.push_back(from);
+	}
+	
+	std::reverse(route.begin(), route.end());
+	return route;
+}
+*/
+
+const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Field& field, std::vector<Node>& node, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
+	std::pair<uint_fast32_t, uint_fast32_t> from;
+	
+	route.push_back(goal);
+	this->decided_coord.push_back(goal);
+	from = node.at(goal.second * field.getHeight() + goal.first).parent->coord;
+	route.push_back(from);
+	
+	while(true){
+		if(node.at(from.second * field.getHeight() + from.first).parent == nullptr)
+			break;
+		from = node.at(from.second * field.getHeight() + from.first).parent->coord;
 	  route.push_back(from);
 		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), from);
 		if(result == this->decided_coord.end())
@@ -816,14 +974,13 @@ void Astar::init(const Field& field){
 
 void Astar::move(Field *field, const uint_fast32_t attr){
 
-	/*
 	Field obj = static_cast<Field> (*field);
 	this->init(obj);
 	this->setAverageScore(obj);
 	this->search(obj, attr);
 	this->printGoal(obj, attr);
-	*/
 
+	/*
 	Field tmp = static_cast<Field> (*field);
 	this->decided_coord.clear();
 	this->next_coord.clear();
@@ -833,5 +990,6 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 			this->singleMove(tmp, i);
 			//this->chooseAlgorithm(tmp, i);
 	*field = tmp;
+	*/
 }
 
