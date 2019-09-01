@@ -2,6 +2,11 @@
 #include <random>
 #include <vector>
 #include <algorithm>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <err.h>
+#include <errno.h>
 #include "useful.hpp"
 
 class Swarm;
@@ -174,6 +179,7 @@ public:
 };
 
 int main() {
+	/*
 	int n = 4;
 	size_t depth = 1;
 	Swarm *swarm, *nextSwarm;
@@ -186,6 +192,29 @@ int main() {
 	}
 	printf("---- Final Swarm -------------------------\n");
 	swarm->print();
+	*/
+
+	pid_t pid = fork();
+	switch(pid) {
+	case -1:
+		err(EXIT_FAILURE, "Could not fork.");
+		break;
+	case 0:
+		puts("child process... start");
+		sleep(3);
+		puts("child process... end");
+		exit(EXIT_SUCCESS);
+		break;
+	}
+
+	// parents
+	int childStatus;
+	printf("parent process. child process number is %d\n", pid);
+	pid_t wait_pid = wait(&childStatus);
+	if(wait_pid == -1) err(EXIT_FAILURE, "wait err");
+	printf("child = %d,status = %d\n", wait_pid, childStatus);
+
+	exit(EXIT_SUCCESS);
 
 	return 0;
 }
