@@ -5,10 +5,20 @@
 #include "useful.hpp"
 #include "disp.hpp"
 
+Field field(16, 16);
+
+//Random random;
+Greedy greedy;
+BeamSearch beam_search;
+Astar astar;
+
 void selfDirectedGame();
 
 int main(int argc, char *argv[]) {
 	
+	selfDirectedGame();
+
+	/*
 	Field field(16, 16);
 
 	DisplayWrapper* framework = new Display();
@@ -17,22 +27,20 @@ int main(int argc, char *argv[]) {
 	framework->setInstance(framework);
 	framework->start(argc, argv);
 	delete framework;
-	
+	*/
+
 	return 0;
 }
 
 void selfDirectedGame(){
-	//Random random;
-	Greedy greedy;
-	BeamSearch breem_search;
-	Astar astar;
 	
-	Field field(16, 16);
+	astar.init(&field);
 	
 	while(true){
-		
-		greedy.move(&field, MINE_ATTR);
-		greedy.move(&field, ENEMY_ATTR);
+
+		astar.move(&field, MINE_ATTR);
+		//greedy.move(&field, MINE_ATTR);
+	  greedy.move(&field, ENEMY_ATTR);
 		
 		field.applyNextAgents();
 		field.print();

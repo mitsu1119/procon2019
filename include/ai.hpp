@@ -130,10 +130,10 @@ public:
 
 //締め付けを厳しくすると見つからない
 
-constexpr double_t move_weight                = 9;
-constexpr double_t state_weight               = 9;
-constexpr double_t heuristic_weight           = 9;
-constexpr double_t value_weight               = 5;
+constexpr double_t move_weight                = 5;
+constexpr double_t state_weight               = 20;
+constexpr double_t heuristic_weight           = 5;
+constexpr double_t value_weight               = 8;
 constexpr double_t is_on_decided_route_weight = 10;
 constexpr double_t is_on_mine_panel_weight    = 4;
 
@@ -190,7 +190,7 @@ inline const double Node::getScore() const{
 
 //締め付けを厳しくすると見つからない
 
-constexpr uint_fast32_t greedy_count       = 4;
+constexpr uint_fast32_t greedy_count       = 6;
 constexpr uint_fast32_t occpancy_weight    = 2;
 //ゴールの除外条件
 constexpr uint_fast32_t max_mine_distance  = 20;
@@ -200,8 +200,8 @@ constexpr uint_fast32_t min_agent_distance = 2;
 //ゴール候補同士の距離
 constexpr uint_fast32_t min_goal_distance  = 2;
 //枝きり条件
-constexpr uint_fast32_t max_move_cost      = 30;
-constexpr uint_fast32_t min_value          = -6;
+constexpr uint_fast32_t max_move_cost      = 28;
+constexpr uint_fast32_t min_value          = -5;
 //終了条件
 constexpr uint_fast32_t min_move_cost      = 2;
 //探索の深さ
@@ -211,6 +211,8 @@ class Astar : public AI{
 private:
 
 	int_fast32_t average_score;
+
+	Random random;
 	Greedy greedy;
 	BeamSearch beam_search;
 	
