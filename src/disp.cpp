@@ -179,9 +179,12 @@ void PrintSelfDirectedGame::print(Field* field){
 // ---------------------------------------- DisplayWrapper ----------------------------------------
 
 DisplayWrapper::DisplayWrapper(){
-	this->random = new Random();
-	this->astar = new Astar();
-	this->greedy = new Greedy();
+	this->random               = new Random();
+	this->astar                = new Astar();
+	this->greedy               = new Greedy();
+	
+	this->beam_search          = new BeamSearch();
+	this->breadth_force_search = new BreadthForceSearch();
 }
 
 DisplayWrapper::~DisplayWrapper(){
@@ -192,6 +195,9 @@ DisplayWrapper::~DisplayWrapper(){
 	delete this->random;
 	delete this->astar;
 	delete this->greedy;
+
+	delete this->beam_search;
+	delete this->breadth_force_search;
 }
 
 DisplayWrapper* DisplayWrapper::instance = 0;
@@ -481,15 +487,16 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 't':
 	case 'T':
 
-		//なんかだめ
-		this->astar->move(this->field, MINE_ATTR);
-		//this->astar->move(this->field, ENEMY_ATTR);
+		//this->astar->move(this->field, MINE_ATTR);
+		this->astar->move(this->field, ENEMY_ATTR);
 
 		
-		this->random->move(this->field, ENEMY_ATTR);
+		//this->random->move(this->field, ENEMY_ATTR);
+		//this->random->move(this->field, MINE_ATTR);
 
+		
 		return;
-		
+
 		break;
 
 	case 'b':
@@ -497,7 +504,10 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->beam_search->move(this->field, MINE_ATTR);
 		//this->beam_search->move(this->field, ENEMY_ATTR);
+
+		
 		this->random->move(this->field, ENEMY_ATTR);
+		//this->random->move(this->field, MINE_ATTR);
 
 		
 		//this->breadth_force_search->move(this->field, MINE_ATTR);

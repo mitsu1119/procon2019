@@ -526,7 +526,10 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 		if(current->coord == goal){
 			if(this->endCondition(current))
 				goto SKIP_NODE;
-			return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
+			if(current_field.agents.at(agent).getAttr() == MINE_ATTR)
+				return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
+			else
+				return current_field.calcScore(ENEMY_ATTR) - current_field.calcScore(MINE_ATTR);
 		}
 
 		
@@ -572,11 +575,19 @@ const double Astar::searchRoute(Field field, const uint_fast32_t agent, const st
 void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start){
 	start->status              = Node::OPEN;
 	start->move_cost           = 0;
-	start->state_cost          = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
+
+	
+	if(field.agents.at(agent).getAttr() == MINE_ATTR)
+		start->state_cost          = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
+	else
+		start->state_cost          = field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
+
+	
 	start->heuristic           = this->heuristic(start->coord, goal);
 	start->is_on_decided_route = 0;
 	start->is_on_mine_panel    = 0;
 	start->move_num            = 0;
+
 	
 	if(field.agents.at(agent).getAttr() != field.at(start->coord.first, start->coord.second)->getAttr())
 		start->value = field.at(start->coord.first, start->coord.second)->getValue();
@@ -586,7 +597,14 @@ void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pai
 
 void Astar::setNextNode(Field& next_field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next){
 	next->status               = Node::OPEN;
-	next->state_cost           = current->state_cost + next_field.calcScore(ENEMY_ATTR) - next_field.calcScore(MINE_ATTR);
+
+	
+	if(next_field.agents.at(agent).getAttr() == MINE_ATTR)
+		next->state_cost          = next_field.calcScore(ENEMY_ATTR) - next_field.calcScore(MINE_ATTR);
+	else
+		next->state_cost          = next_field.calcScore(MINE_ATTR) - next_field.calcScore(ENEMY_ATTR);
+
+	
 	next->heuristic            = this->heuristic(next->coord, goal);
 	next->is_on_decided_route  = current->is_on_decided_route + this->isOnDecidedRoute(next_field, agent, next->coord);
 	next->move_num             = current->move_num + 1;
@@ -598,7 +616,7 @@ void Astar::setNextNode(Field& next_field, const uint_fast32_t agent, const std:
 	if(next_field.agents.at(agent).getAttr() == ENEMY_ATTR && next_field.at(next->coord.first, next->coord.second)->isEnemyPanel())
 		next->is_on_mine_panel   = current->is_on_mine_panel + 1;
 
-	
+
 	if(next_field.agents.at(agent).getAttr() != next_field.at(next->coord.first, next->coord.second)->getAttr())
 		next->value = next_field.at(next->coord.first, next->coord.second)->getValue();
 	else
@@ -622,6 +640,7 @@ void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	int_fast32_t value, max = - INT_MAX;
 	std::pair<uint_fast32_t, uint_fast32_t> goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
+	
 	this->setSearchTarget(field, agent);
 	
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){

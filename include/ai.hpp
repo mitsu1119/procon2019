@@ -62,6 +62,8 @@ private:
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 	XorOshiro128p random;
 	uint_fast32_t current_score;
+
+	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
 	
 public:
 	
@@ -73,7 +75,6 @@ public:
 	
 	void singleMove(Field& field, const uint_fast32_t agent);
 	void randomMove(Field& field, const uint_fast32_t agent, const uint_fast32_t x, const uint_fast32_t y);
-	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
 	
 	void move(Field *field, const uint_fast32_t attr) override;
 	
@@ -100,8 +101,6 @@ public:
 
 	
 	void singleMove(Field& field, const uint_fast32_t agent);
-
-	
 	void move(Field* field, const uint_fast32_t attr) override;
 
 };
@@ -112,10 +111,8 @@ class BreadthForceSearch : public AI{
 private:
 
 	Greedy greedy;
-	
 
 	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
-	void singleMove(Field& field, const uint_fast32_t agent);
 	
 public:
 
@@ -126,16 +123,19 @@ public:
 	void init(const Field& field) override;
 
 	
+	void singleMove(Field& field, const uint_fast32_t agent);	
 	void move(Field* field, const uint_fast32_t attr) override;
 	
 };
 
-constexpr uint_fast32_t move_weight                = 9;
-constexpr uint_fast32_t state_weight               = 6;
-constexpr uint_fast32_t heuristic_weight           = 5;
-constexpr uint_fast32_t value_weight               = 7;
-constexpr uint_fast32_t is_on_decided_route_weight = 12;
-constexpr uint_fast32_t is_on_mine_panel_weight    = 4;
+//締め付けを厳しくすると見つからない
+
+constexpr double_t move_weight                = 9;
+constexpr double_t state_weight               = 9;
+constexpr double_t heuristic_weight           = 9;
+constexpr double_t value_weight               = 5;
+constexpr double_t is_on_decided_route_weight = 10;
+constexpr double_t is_on_mine_panel_weight    = 4;
 
 class Node{
 private:
@@ -188,26 +188,24 @@ inline const double Node::getScore() const{
 }
 
 
+//締め付けを厳しくすると見つからない
+
 constexpr uint_fast32_t greedy_count       = 4;
 constexpr uint_fast32_t occpancy_weight    = 2;
-
 //ゴールの除外条件
-constexpr uint_fast32_t max_mine_distance  = 10;
+constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
 //Agent同士の距離
-constexpr uint_fast32_t min_agent_distance = 3;
+constexpr uint_fast32_t min_agent_distance = 2;
 //ゴール候補同士の距離
-constexpr uint_fast32_t min_goal_distance  = 3;
-
+constexpr uint_fast32_t min_goal_distance  = 2;
 //枝きり条件
-constexpr uint_fast32_t max_move_cost      = 35;
-constexpr uint_fast32_t min_value          = -7;
-
+constexpr uint_fast32_t max_move_cost      = 30;
+constexpr uint_fast32_t min_value          = -6;
 //終了条件
-constexpr uint_fast32_t min_move_cost      = 3;
-
+constexpr uint_fast32_t min_move_cost      = 2;
 //探索の深さ
-constexpr uint_fast16_t astar_depth        = 5;
+constexpr uint_fast16_t astar_depth        = 15;
 
 class Astar : public AI{
 private:
