@@ -212,8 +212,8 @@ int main() {
 		break;
 	case 0: {
 		// child process.
-		dup2(stderrfd[0], 1);
-		dup2(stderrfd[1], 2);
+		dup2(stderrfd[0], 0);
+		dup2(stderrfd[1], 1);
 		close(stderrfd[0]);
 		close(stderrfd[1]);
 		char *const args[] = {"../build/src/run", NULL};
