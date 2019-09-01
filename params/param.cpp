@@ -195,11 +195,11 @@ int main() {
 	swarm->print();
 	*/
 
-	int stderrfd[2];
-	char buf[0x100];
+	int fd[2];
+	char buf[10];
 	memset(buf, 0, sizeof(buf));	// buf clear.
 
-	if(pipe(stderrfd) < 0) {
+	if(pipe(fd) < 0) {
 		perror("PIPE ERROR");
 		exit(EXIT_FAILURE);
 	}
@@ -212,10 +212,10 @@ int main() {
 		break;
 	case 0: {
 		// child process.
-		dup2(stderrfd[0], 0);
-		dup2(stderrfd[1], 1);
-		close(stderrfd[0]);
-		close(stderrfd[1]);
+		dup2(fd[0], 0);
+		dup2(fd[1], 1);
+		close(fd[0]);
+		close(fd[1]);
 		char *const args[] = {"../build/src/run", NULL};
 		execv(args[0], args);
 		break;
@@ -226,10 +226,11 @@ int main() {
 		printf("This is parent process. child process number is %d\n", pid);
 
 		pid_t wait_pid = wait(&childStatus);
-		read(stderrfd[0], buf, sizeof(buf));
+		
+		read(fd[0], buf, sizeof(buf));
 		printf("Child stderr '%s'\n", buf);
-		close(stderrfd[0]);
-		close(stderrfd[1]);
+		close(fd[0]);
+		close(fd[1]);
 		if(WIFEXITED(childStatus)) {
 			printf("Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
 		} else if(WIFSIGNALED(childStatus)) {
