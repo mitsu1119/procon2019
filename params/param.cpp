@@ -2,6 +2,12 @@
 #include <random>
 #include <vector>
 #include <algorithm>
+#include <cstring>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <err.h>
+#include <errno.h>
 #include "useful.hpp"
 
 class Swarm;
@@ -174,6 +180,7 @@ public:
 };
 
 int main() {
+	/*
 	int n = 4;
 	size_t depth = 1;
 	Swarm *swarm, *nextSwarm;
@@ -186,7 +193,53 @@ int main() {
 	}
 	printf("---- Final Swarm -------------------------\n");
 	swarm->print();
+	*/
 
+	int fd[2];
+	char buf[10];
+	memset(buf, 0, sizeof(buf));	// buf clear.
+
+	if(pipe(fd) < 0) {
+		perror("PIPE ERROR");
+		exit(EXIT_FAILURE);
+	}
+
+	pid_t pid = fork();
+	switch(pid) {
+	case -1:
+		// fork error.
+		err(EXIT_FAILURE, "Could not fork.");
+		break;
+	case 0: {
+		// child process.
+		dup2(fd[0], 0);
+		dup2(fd[1], 1);
+		close(fd[0]);
+		close(fd[1]);
+		char *const args[] = {"../build/src/run", NULL};
+		execv(args[0], args);
+		break;
+			}
+	default:
+		// parents
+		int childStatus;
+		printf("This is parent process. child process number is %d\n", pid);
+
+		pid_t wait_pid = wait(&childStatus);
+		
+		read(fd[0], buf, sizeof(buf));
+		printf("Child stderr '%s'\n", buf);
+		close(fd[0]);
+		close(fd[1]);
+		if(WIFEXITED(childStatus)) {
+			printf("Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
+		} else if(WIFSIGNALED(childStatus)) {
+			printf("Child process %d ended by signale %d\n", wait_pid, WTERMSIG(childStatus));
+		} else {
+			err(EXIT_FAILURE, "wait err");
+			exit(EXIT_FAILURE);
+		}
+	}
 	return 0;
 }
 
