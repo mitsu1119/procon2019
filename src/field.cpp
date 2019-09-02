@@ -590,8 +590,8 @@ const bool Field::checkEnd() const{
 	
 void Field::judgeWinner(){
 	printf("\n---------------- finish ----------------\n");
-	printf("winner: ");
 	
+	printf("winner: ");
 	if(this->calcScore(MINE_ATTR) > this->calcScore(ENEMY_ATTR))
 		printf("MINE\n");
 	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR))

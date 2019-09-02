@@ -128,14 +128,12 @@ public:
 	
 };
 
-//締め付けを厳しくすると見つからない
-//特に４番目の候補がなくなる
 
 constexpr double_t move_weight                = 3;
 constexpr double_t state_weight               = 40;
-constexpr double_t heuristic_weight           = 5;
-constexpr double_t value_weight               = 20;
-constexpr double_t is_on_decided_route_weight = 10;
+constexpr double_t heuristic_weight           = 4;
+constexpr double_t value_weight               = 15;
+constexpr double_t is_on_decided_route_weight = 15;
 constexpr double_t is_on_mine_panel_weight    = 4;
 
 class Node{
@@ -174,22 +172,13 @@ public:
 	
 	//スコア所得
 	const double getScore() const;
-	//const double getHeuristic() const;
 	
 };
 
-/*
-inline const double Node::getHeuristic() const{
-	return this->heuristic * heuristic_weight;
-}
-*/
-
 inline const double Node::getScore() const{
-	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight);
+	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * this->move_num * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight);
 }
 
-
-//締め付けを厳しくすると見つからない
 
 constexpr double greedy_count              = 3;
 constexpr double occpancy_weight           = 2;
@@ -203,12 +192,16 @@ constexpr uint_fast32_t min_agent_distance = 2;
 //ゴール候補同士の距離
 constexpr uint_fast32_t min_goal_distance  = 2;
 //枝きり条件
-constexpr uint_fast32_t max_move_cost      = 26;
+constexpr uint_fast32_t max_move_cost      = 35;
 constexpr uint_fast32_t min_value          = -5;
 //終了条件
 constexpr uint_fast32_t min_move_cost      = 2;
-//探索の深さ
-constexpr uint_fast16_t astar_depth        = 20;
+
+/*
+探索の深さ
+処理系のthread数の２倍に変更
+constexpr uint_fast16_t astar_depth = 20;
+*/
 
 class Astar : public AI{
 private:
@@ -219,6 +212,7 @@ private:
 	Random random;
 	Greedy greedy;
 	BeamSearch beam_search;
+	BreadthForceSearch breadth_force_search;
 	
 private:
 
@@ -229,17 +223,17 @@ private:
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
 
+	
+	//マルチスレッド用
 	std::pair<uint_fast32_t, uint_fast32_t> tentative_goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> tentative_route;
 	int_fast32_t tentative_max_score;
 	
 private:
 
-	//貪欲での移動
-	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
 
-	
-	//探索内での確定移動
+	//移動
+	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
 	
 
@@ -255,30 +249,28 @@ private:
 	const uint_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord);
 
-	
+
+	//ゴール候補の選定
 	const bool expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord);
   const bool isOnDecidedRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherAgentDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherGoalDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t whosePanel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
-	
-	//評価値関連
-	const uint_fast32_t heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coord, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
+
+	//ヒューリスティックコスト（推定コスト）計算
+	const double heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coord, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
 
 	
 	//探索関連
 	void initNode(const Field& field, std::vector<Node>& node);
 	static const bool comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs);
-
-	
-	std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
-
-	
+	const std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 	void setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start);
 	void setNextNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next);
 
-	
+
+	//枝切り用
 	const bool branchingCondition(Node* current) const;
 	const bool endCondition(Node* current) const;
 	
@@ -292,7 +284,6 @@ private:
 	void search(Field& field, const uint_fast32_t attr);
 	
 
-	
 	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(Field& field, std::vector<Node>& node, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 
 	
@@ -303,9 +294,6 @@ private:
 	
 	//アルゴリズムの選択
 	void chooseAlgorithm(Field& field, const uint_fast32_t agent);
-
-	//着手
-	void singleMove(Field& field, const uint_fast32_t agent);
 	
 	
 public:
@@ -313,9 +301,10 @@ public:
 	Astar();
 	~Astar();
 
+	void singleMove(Field& field, const uint_fast32_t agent);
+	
 	void init(const Field* field) override;
 	void init(const Field& field) override;
-	
 	void move(Field *field, const uint_fast32_t attr) override;
 	
 };
