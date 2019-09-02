@@ -675,9 +675,9 @@ const bool Astar::endCondition(Node* current) const{
 
 
 void Astar::multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord){
-	int_fast32_t score = - INT_MAX;
-	std::vector<Node>* node;
 	std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>> condidate;
+	int_fast32_t score;
+	std::vector<Node>* node;
 	
 	condidate = this->searchRoute(field, agent, coord);
 	score     = std::get<0>(condidate);

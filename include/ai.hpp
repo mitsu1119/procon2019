@@ -214,7 +214,6 @@ class Astar : public AI{
 private:
 
 	std::mutex mtx;
-
 	int_fast32_t average_score;
 
 	Random random;
@@ -223,14 +222,16 @@ private:
 	
 private:
 
-
 	//探索かけるたびにクリアする
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> search_target;
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> decided_route;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
-
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
+
+	std::pair<uint_fast32_t, uint_fast32_t> tentative_goal;
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> tentative_route;
+	int_fast32_t tentative_max_score;
 	
 private:
 
@@ -280,12 +281,6 @@ private:
 	
 	const bool branchingCondition(Node* current) const;
 	const bool endCondition(Node* current) const;
-	
-
-	
-	std::pair<uint_fast32_t, uint_fast32_t> tentative_goal;
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> tentative_route;
-	int_fast32_t tentative_max_score;
 	
 	
 	void multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
