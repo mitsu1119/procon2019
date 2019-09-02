@@ -333,8 +333,11 @@ Astar::~Astar(){
 void Astar::greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num){
 	if(move_num > greedy_count)
 		return;
-	
-	this->greedy.move(&field, field.agents.at(agent).getAttr());
+
+	if(field.agents.at(agent).getAttr() == MINE_ATTR)
+		this->greedy.move(&field, ENEMY_ATTR);
+	else
+		this->greedy.move(&field, MINE_ATTR);
 	
 	/*
 	for(size_t i = agent + 1; i < field.agents.size(); i++)
@@ -462,7 +465,7 @@ const bool Astar::anotherAgentDistance(Field& field, const uint_fast32_t agent, 
 	x = field.agents.at(agent).getX();
 	y = field.agents.at(agent).getY();
 	mine_distance = this->heuristic(std::make_pair(x, y), coord);
-	if(mine_distance <= min_mine_distance/* || mine_distance >= max_mine_distance*/)
+	if(mine_distance <= min_mine_distance || mine_distance >= max_mine_distance)
 		return true;
 	for(size_t i = 0; i < field.agents.size(); i++){
 		if(agent == i)
@@ -563,7 +566,7 @@ std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32
 
 				
 				//なんか調子悪い
-				//this->greedyMove(next_field, agent, current->move_num);
+				this->greedyMove(next_field, agent, current->move_num);
 
 				
 				this->decidedMove(next_field, agent,  next_field.decided_route);
@@ -573,7 +576,7 @@ std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32
 					next_field.agents.at(agent).move((Direction)i);
 
 					
-					//this->greedyMove(next_field, agent, current->move_num + 1);
+					this->greedyMove(next_field, agent, current->move_num + 1);
 
 					
 				  this->decidedMove(next_field, agent,  next_field.decided_route);

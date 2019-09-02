@@ -131,10 +131,10 @@ public:
 //締め付けを厳しくすると見つからない
 //特に４番目の候補がなくなる
 
-constexpr double_t move_weight                = 5;
-constexpr double_t state_weight               = 30;
+constexpr double_t move_weight                = 3;
+constexpr double_t state_weight               = 40;
 constexpr double_t heuristic_weight           = 5;
-constexpr double_t value_weight               = 8;
+constexpr double_t value_weight               = 20;
 constexpr double_t is_on_decided_route_weight = 10;
 constexpr double_t is_on_mine_panel_weight    = 4;
 
@@ -191,7 +191,7 @@ inline const double Node::getScore() const{
 
 //締め付けを厳しくすると見つからない
 
-constexpr double greedy_count              = 6;
+constexpr double greedy_count              = 3;
 constexpr double occpancy_weight           = 2;
 constexpr double is_on_decided_weight      = 10;
 
@@ -282,8 +282,11 @@ private:
 	const bool branchingCondition(Node* current) const;
 	const bool endCondition(Node* current) const;
 	
-	
+
+	//マルチスレッド用
 	void multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
+
+	
 	void searchBestRoute(Field& field, const uint_fast32_t agent);
 	static const bool compTuple(std::tuple<int_fast32_t, std::vector<Node>,  std::pair<uint_fast32_t, uint_fast32_t>>& lhs, std::tuple<int_fast32_t, std::vector<Node>,  std::pair<uint_fast32_t, uint_fast32_t>>& rhs);	
 	void search(Field& field, const uint_fast32_t attr);
