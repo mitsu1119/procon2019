@@ -191,8 +191,10 @@ inline const double Node::getScore() const{
 
 //締め付けを厳しくすると見つからない
 
-constexpr uint_fast32_t greedy_count       = 6;
-constexpr uint_fast32_t occpancy_weight    = 2;
+constexpr double greedy_count              = 6;
+constexpr double occpancy_weight           = 2;
+constexpr double is_on_decided_weight      = 10;
+
 //ゴールの除外条件
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
@@ -201,12 +203,12 @@ constexpr uint_fast32_t min_agent_distance = 2;
 //ゴール候補同士の距離
 constexpr uint_fast32_t min_goal_distance  = 2;
 //枝きり条件
-constexpr uint_fast32_t max_move_cost      = 32;
+constexpr uint_fast32_t max_move_cost      = 26;
 constexpr uint_fast32_t min_value          = -5;
 //終了条件
 constexpr uint_fast32_t min_move_cost      = 2;
 //探索の深さ
-constexpr uint_fast16_t astar_depth        = 16;
+constexpr uint_fast16_t astar_depth        = 20;
 
 class Astar : public AI{
 private:
@@ -272,7 +274,10 @@ private:
 
 	
 	//const int_fast32_t searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
-	std::pair<double, std::vector<Node>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+	//std::pair<int_fast32_t, std::vector<Node>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+	std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+
+	
 	void setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start);
 	void setNextNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next);
 
@@ -280,13 +285,24 @@ private:
 	const bool branchingCondition(Node* current) const;
 	const bool endCondition(Node* current) const;
 	
+
 	
 	//void searchBestRoute(Field& field, const uint_fast32_t agent);
-	std::pair<double, std::vector<Node>> condidate_route;	
-	//void multiThread();
+	//std::vector<std::pair<int_fast32_t, std::vector<Node>>> condidate_route;
+	//std::vector<std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>>> condidate_route;
+	std::pair<uint_fast32_t, uint_fast32_t> goal;
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
+	int_fast32_t max;
+	
+	
+	void multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
 	void searchBestRoute(Field& field, const uint_fast32_t agent);
+	static const bool compTuple(std::tuple<int_fast32_t, std::vector<Node>,  std::pair<uint_fast32_t, uint_fast32_t>>& lhs, std::tuple<int_fast32_t, std::vector<Node>,  std::pair<uint_fast32_t, uint_fast32_t>>& rhs);
+	
+	
 	void search(Field& field, const uint_fast32_t attr);
 	
+
 	
 	//const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(Field& field, std::vector<Node>& node, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
