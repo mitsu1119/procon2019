@@ -508,16 +508,6 @@ const uint_fast32_t Astar::heuristic(const std::pair<uint_fast32_t, uint_fast32_
 	return distance;
 }
 
-/*
-void Astar::initNode(const Field& field){
-	this->node.clear();
-	this->node.resize(field.getWidth() * field.getHeight());
-	for(size_t i = 0; i < field.getWidth(); i++)
-		for(size_t j = 0; j < field.getHeight(); j++)
-			this->node.at(j * field.getHeight() + i).coord = std::make_pair(i, j);
-}
-*/
-
 void Astar::initNode(const Field& field, std::vector<Node>& node){
 	node.clear();
 	node.resize(field.getWidth() * field.getHeight());
@@ -530,170 +520,6 @@ const bool Astar::comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rh
 	bool result = lhs.first->getScore() != rhs.first->getScore();
 	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->state_cost < rhs.first->state_cost);
 }
-
-/*
-const int_fast32_t Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
-	std::vector<std::pair<Node*, Field>> open;
-	Node *start , *current , *next;
-	this->initNode(field);
-	start =& this->node.at(field.agents.at(agent).getY() * field.getHeight() + field.agents.at(agent).getX());
-	this->setStartNode(field, agent, goal, start);
-	field.decided_route = this->decided_route;
-	open.push_back(std::make_pair(start, field));
-	
-	while(!open.empty()){
-		std::sort(open.begin(), open.end(), comp);
-		current = open.at(0).first;
-		Field current_field = open.at(0).second;
-		
-		
-		if(this->branchingCondition(current))
-			goto SKIP_NODE;
-
-		
-		if(current->coord == goal){
-			if(this->endCondition(current))
-				goto SKIP_NODE;
-			if(current_field.agents.at(agent).getAttr() == MINE_ATTR)
-				return current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
-			else
-				return current_field.calcScore(ENEMY_ATTR) - current_field.calcScore(MINE_ATTR);
-		}
-
-		
-		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
-			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
-				Field next_field = current_field;
-				next_field.agents.at(agent).move((Direction)i);
-				
-				this->greedyMove(next_field, agent, current->move_num);
-				
-				this->decidedMove(next_field, agent,  next_field.decided_route);
-				next_field.applyNextAgents();
-				next =& this->node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
-				if(current->coord == next->coord){
-					next_field.agents.at(agent).move((Direction)i);
-					
-					this->greedyMove(next_field, agent, current->move_num + 1);
-					
-					this->decidedMove(next_field, agent,  next_field.decided_route);
-					next_field.applyNextAgents();
-					next =& this->node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
-
-					
-					if(current->coord == next->coord)
-						continue;
-
-					
-					if(next->status == Node::NONE && next->coord != current->coord){
-						this->setNextNode(next_field, agent, goal, current, next);
-						next->move_cost = current->move_cost + 2;
-						open.push_back(std::make_pair(next, next_field));
-					}
-				}
-				else{
-					if(next->status == Node::NONE){
-						this->setNextNode(next_field, agent, goal, current, next);
-						next->move_cost = current->move_cost + 1;
-						open.push_back(std::make_pair(next, next_field));
-					}
-				}
-			}
-		}
-		
-	SKIP_NODE:
-		current->status = Node::CLOSED;
-		open.erase(open.begin());
-	}
-	
-	return - INT_MAX;
-}
-*/
-
-/*
-std::pair<int_fast32_t, std::vector<Node>> Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
-	std::vector<std::pair<Node*, Field>> open;
-	Node *start , *current , *next;
-	int_fast32_t score;
-	
-	std::vector<Node> node;
-	
-	this->initNode(field, node);
-	
-	start =& node.at(field.agents.at(agent).getY() * field.getHeight() + field.agents.at(agent).getX());
-	this->setStartNode(field, agent, goal, start);
-	field.decided_route = this->decided_route;
-	open.push_back(std::make_pair(start, field));
-	
-	while(!open.empty()){
-		std::sort(open.begin(), open.end(), comp);
-		current = open.at(0).first;
-		Field current_field = open.at(0).second;
-		
-		
-		if(this->branchingCondition(current))
-			goto SKIP_NODE;
-
-		
-		if(current->coord == goal){
-			if(this->endCondition(current))
-				goto SKIP_NODE;
-			if(current_field.agents.at(agent).getAttr() == MINE_ATTR)
-				score = current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR);
-			else
-				score = current_field.calcScore(ENEMY_ATTR) - current_field.calcScore(MINE_ATTR);
-			return std::make_pair(score, node);
-		}
-
-		
-		for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
-			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
-				Field next_field = current_field;
-				next_field.agents.at(agent).move((Direction)i);
-				
-				this->greedyMove(next_field, agent, current->move_num);
-				
-				this->decidedMove(next_field, agent,  next_field.decided_route);
-				next_field.applyNextAgents();
-				next =& node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
-				if(current->coord == next->coord){
-					next_field.agents.at(agent).move((Direction)i);
-					
-					this->greedyMove(next_field, agent, current->move_num + 1);
-					
-					this->decidedMove(next_field, agent,  next_field.decided_route);
-					next_field.applyNextAgents();
-					next =& node.at(next_field.agents.at(agent).getY() * field.getHeight() + next_field.agents.at(agent).getX());
-
-					
-					if(current->coord == next->coord)
-						continue;
-
-					
-					if(next->status == Node::NONE && next->coord != current->coord){
-						this->setNextNode(next_field, agent, goal, current, next);
-						next->move_cost = current->move_cost + 2;
-						open.push_back(std::make_pair(next, next_field));
-					}
-				}
-				else{
-					if(next->status == Node::NONE){
-						this->setNextNode(next_field, agent, goal, current, next);
-						next->move_cost = current->move_cost + 1;
-						open.push_back(std::make_pair(next, next_field));
-					}
-				}
-			}
-		}
-		
-	SKIP_NODE:
-		current->status = Node::CLOSED;
-		open.erase(open.begin());
-	}
-
-	return std::make_pair(- INT_MAX, node);
-}
-*/
 
 std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>> Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
 	std::vector<std::pair<Node*, Field>> open;
@@ -847,29 +673,6 @@ const bool Astar::endCondition(Node* current) const{
 	return (current->move_cost <= min_move_cost);
 }
 
-/*
-void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
-	int_fast32_t value, max = - INT_MAX;
-	std::pair<uint_fast32_t, uint_fast32_t> goal;
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
-	
-	this->setSearchTarget(field, agent);
-	
-	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
-			value = this->searchRoute(field, agent, coord);
-			if(value > max){
-				max = value;
-				goal = coord;
-				route = this->makeRoute(field, agent, coord);
-			}
-		});
-	
-	this->decided_route.at(agent) = route;
-	this->decided_goal.at(agent)  = goal;
-	
-	//this->printRoute(route);
-}
-*/
 
 void Astar::multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord){
 	int_fast32_t score = - INT_MAX;
@@ -879,13 +682,13 @@ void Astar::multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_
 	condidate = this->searchRoute(field, agent, coord);
 	score     = std::get<0>(condidate);
 	
-	if(score > this->max){
+	if(score > this->tentative_max_score){
 		mtx.lock();
 		
-		this->max    =  score;
-		node         =& std::get<1>(condidate);		
-		this->goal   =  std::get<2>(condidate);
-		this->route  =  this->makeRoute(field, *node, agent, goal);
+		this->tentative_max_score  =  score;
+		node                       =& std::get<1>(condidate);		
+		this->tentative_goal       =  std::get<2>(condidate);
+		this->tentative_route      =  this->makeRoute(field, *node, agent, this->tentative_goal);
 
 		mtx.unlock();
 	}
@@ -894,7 +697,7 @@ void Astar::multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_
 void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::thread> threads;
 
-	this->max = - INT_MAX;	
+	this->tentative_max_score = - INT_MAX;	
 	this->setSearchTarget(field, agent);
 	
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
@@ -906,57 +709,9 @@ void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 		thread.join();
 
 	
-	this->decided_route.at(agent) = this->route;
-	this->decided_goal.at(agent)  = this->goal;
-	this->printRoute(this->route);
-	
-	/*
-	int_fast32_t value, max = - INT_MAX;
-	std::pair<uint_fast32_t, uint_fast32_t> goal;
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
-	std::pair<double, std::vector<Node>> condidate;
-	//std::tuple<uint_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>> condidate;
-	
-	this->setSearchTarget(field, agent);
-	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
-			condidate = this->searchRoute(field, agent, coord);
-			if(condidate.first > max){
-				max = condidate.first;
-				goal = coord;
-				route = this->makeRoute(field, condidate.second, agent, coord);
-				}
-		});
-	
-	this->decided_route.at(agent) = route;
-	this->decided_goal.at(agent)  = goal;
-	
-	this->printRoute(route);
-	*/
-
-	/*
-	int_fast32_t value = - INT_MAX, max = - INT_MAX;
-	std::pair<uint_fast32_t, uint_fast32_t> goal;
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
-	std::tuple<uint_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>> condidate;
-	std::vector<Node>* node;
-	
-	this->setSearchTarget(field, agent);
-	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
-			condidate = this->searchRoute(field, agent, coord);
-			value     = std::get<0>(condidate);
-			if(value > max){
-				max    = value;
-				goal   = std::get<2>(condidate);
-				node   =& std::get<1>(condidate);
-				route  = this->makeRoute(field, *node, agent, goal);
-				}
-		});
-	
-	this->decided_route.at(agent) = route;
-	this->decided_goal.at(agent)  = goal;
-	
-	this->printRoute(route);
-	*/
+	this->decided_route.at(agent) = this->tentative_route;
+	this->decided_goal.at(agent)  = this->tentative_goal;
+	this->printRoute(this->tentative_route);
 }
 
 const bool Astar::compTuple(std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>>& lhs, std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>>& rhs){
@@ -973,30 +728,6 @@ void 	Astar::search(Field& field, const uint_fast32_t attr){
 		if(field.agents.at(i).getAttr() == attr)
 			this->searchBestRoute(field, i);
 }
-
-/*
-const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
-	std::pair<uint_fast32_t, uint_fast32_t> from;
-	route.push_back(goal);
-	this->decided_coord.push_back(goal);
-	from = this->node.at(goal.second * field.getHeight() + goal.first).parent->coord;
-	route.push_back(from);
-	
-	while(true){
-		if(this->node.at(from.second * field.getHeight() + from.first).parent == nullptr)
-			break;
-		from = this->node.at(from.second * field.getHeight() + from.first).parent->coord;
-	  route.push_back(from);
-		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), from);
-		if(result == this->decided_coord.end())
-			this->decided_coord.push_back(from);
-	}
-	
-	std::reverse(route.begin(), route.end());
-	return route;
-}
-*/
 
 const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Field& field, std::vector<Node>& node, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
