@@ -34,6 +34,8 @@ public:
 	uint_fast32_t getnextY();
 	uint_fast32_t getAttr();
 
+	uint_fast32_t getID();
+
 	// (nextX, nextY)を(x, y)に適用する
 	void setNext();
 	void reverseAttr();

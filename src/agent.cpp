@@ -34,6 +34,10 @@ uint_fast32_t Agent::getAttr() {
 	return this->attr;
 }
 
+uint_fast32_t Agent::getID() {
+	return this->agent_id;
+}
+
 void Agent::setNext() {
 	this->x = this->nextX;
 	this->y = this->nextY;
