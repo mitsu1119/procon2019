@@ -27,19 +27,19 @@ class DisplayWrapper;
 
 class MoveLog {
 private:
-	
+
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> coord_log;
 	std::vector<std::vector<Direction>> direction_log;
-	
+
 public:
-	
+
 	MoveLog();
 	~MoveLog();
 	void init(const Field& field);
 	void set(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
 	void revert(Field& field);
 	bool repetitionOfMoves(const uint_fast32_t agent, const Direction direction) const;
-	
+
 };
 
 /*
@@ -60,7 +60,7 @@ private:
 	};
 
 	// パネルにスコアを代入
-	void setValue(int_fast32_t value);	
+	void setValue(int_fast32_t value);
 
 public:
 	Panel();
@@ -81,16 +81,16 @@ public:
 
 	// パネルのスコアを所得
 	int_fast32_t getValue() const;
-};	
+};
 
 /*
  * Field 一つ一つ
  */
 class Field {
-	
+
 	friend DisplayWrapper;
 	friend Display;
-	
+
 private:
 
   //ターン数
@@ -98,7 +98,7 @@ private:
 
 	//最終ターン
 	uint_fast32_t max_turn;
-	
+
 	// フィールドの実幅、実高さ
 	uint_fast32_t width, height;
 
@@ -109,7 +109,7 @@ private:
 	XorOshiro128p random;
 
 	std::vector<Panel> field;
-	//	std::vector<Agent> agents;	
+	//	std::vector<Agent> agents;
 
 	// agentの動作可能かベクター
 	std::vector<bool> canmoveAgents;
@@ -156,14 +156,15 @@ public:
 	void genRandMap();
 	std::vector<Agent> agents;
 	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> decided_route;
-	
+
 	// agentがdirectionの方向に動けるかどうか true:動ける false:動けない
 	bool canMove(Agent &agent, Direction direction);
 
 	// agentsの(nextX,nextY)を適用する
 	// 行きたい座標が重なるなどしたときその場に止まるように指示
 	void applyNextAgents();
-	
+
+	Field();
 	Field(uint_fast32_t width, uint_fast32_t height);
 	// MINE, ENEMY属性のパネルの置かれているところの合計点数を所得
 	int_fast32_t calcMinepanelScore();
@@ -193,9 +194,10 @@ public:
 
 	//終了条件
 	const bool checkEnd() const;
-	
+
 	//照射判定
 	void judgeWinner();
-	
-};
 
+  //fieldの初期化
+	void init();
+};
