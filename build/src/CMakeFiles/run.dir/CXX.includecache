@@ -89,10 +89,6 @@ algorithm
 /home/kaito/program/procon2019/src/main.cpp
 iostream
 -
-random
--
-chrono
--
 field.hpp
 /home/kaito/program/procon2019/src/field.hpp
 useful.hpp

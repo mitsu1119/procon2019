@@ -17,11 +17,14 @@ private:
 		// 次に移動する座標
 		uint_fast32_t nextX: 5;
 		uint_fast32_t nextY: 5;
+
+		uint_fast32_t agent_id;
 	};
 
 public:
 	Agent();
 	Agent(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr);
+	Agent(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr, uint_fast32_t id);
 
 	void move(Direction direction);
 

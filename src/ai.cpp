@@ -101,7 +101,7 @@ void Greedy::singleMove(Field& field, const uint_fast32_t agent){
 		
 		if(field.canMove(field.agents.at(agent), (Direction)i)){
 			next_score = this->nextScore(field, agent, (Direction)i);
-			if(next_score <= this->current_score)
+			if(next_score <= current_score)
 				continue;
 			if(next_score > max_score){
 				max_score = next_score;
@@ -110,14 +110,11 @@ void Greedy::singleMove(Field& field, const uint_fast32_t agent){
 		}
 	}
 	
-	//if(max_score == - INT_MAX)
-	
 	if(max_score <= current_score)
 		this->randomMove(field, agent, field.agents.at(agent).getX(), field.agents.at(agent).getY());
-	else{
+	else
 		field.agents.at(agent).move(direction);
 		//this->decided_coord.emplace_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
-	}
 }
 
 void Greedy::randomMove(Field& field, const uint_fast32_t agent, const uint_fast32_t x, const uint_fast32_t y){
@@ -157,6 +154,7 @@ int_fast32_t Greedy::nextScore(Field field, const uint_fast32_t agent, const Dir
 }
 
 void Greedy::move(Field *field, const uint_fast32_t attr){
+	std::vector<std::thread> threads;
 	Field tmp = static_cast<Field> (*field);
 
 	for(size_t i =0; i < tmp.agents.size(); i++)
@@ -686,30 +684,28 @@ void Astar::multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_
 
 void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::thread> threads;
+	std::chrono::system_clock::time_point  start, end;
+	double time;
 
 	this->tentative_max_score = - INT_MAX;	
 	this->setSearchTarget(field, agent);
+
+	start = std::chrono::system_clock::now();
 	
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
 			threads.emplace_back(std::thread(&Astar::multiThread, this, std::ref(field), agent, std::ref(coord)));
 		});
-
 	
 	for(auto& thread : threads)
 		thread.join();
 
+	end = std::chrono::system_clock::now();
+	time = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
+	std::cout << time << "milliseconds" << std::endl;
 	
 	this->decided_route.at(agent) = this->tentative_route;
 	this->decided_goal.at(agent)  = this->tentative_goal;
 	this->printRoute(this->tentative_route);
-}
-
-const bool Astar::compTuple(std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>>& lhs, std::tuple<int_fast32_t, std::vector<Node>, std::pair<uint_fast32_t, uint_fast32_t>>& rhs){
-	int_fast32_t left_score  = std::get<0>(lhs);
-	int_fast32_t right_score = std::get<0>(rhs);
-	
-	bool result = left_score != right_score;
-	return (result ? left_score > right_score : left_score > right_score);
 }
 
 void 	Astar::search(Field& field, const uint_fast32_t attr){
@@ -860,8 +856,8 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	
 	for(size_t i = 0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
-			this->singleMove(tmp, i);
-			//this->chooseAlgorithm(tmp, i);
+			this->chooseAlgorithm(tmp, i);
+			//this->singleMove(tmp, i);
 	*field = tmp;
 	*/
 }

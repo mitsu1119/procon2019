@@ -59,10 +59,12 @@ public:
 class Greedy : public AI{
 private:
 
+	std::mutex mtx;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 	XorOshiro128p random;
-	uint_fast32_t current_score;
 
+private:
+	
 	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
 	
 public:
@@ -197,11 +199,6 @@ constexpr uint_fast32_t min_value          = -5;
 //終了条件
 constexpr uint_fast32_t min_move_cost      = 2;
 
-/*
-探索の深さ
-処理系のthread数の２倍に変更
-constexpr uint_fast16_t astar_depth = 20;
-*/
 
 class Astar : public AI{
 private:
@@ -228,6 +225,8 @@ private:
 	std::pair<uint_fast32_t, uint_fast32_t> tentative_goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> tentative_route;
 	int_fast32_t tentative_max_score;
+
+	
 	
 private:
 
@@ -280,7 +279,6 @@ private:
 
 	
 	void searchBestRoute(Field& field, const uint_fast32_t agent);
-	static const bool compTuple(std::tuple<int_fast32_t, std::vector<Node>,  std::pair<uint_fast32_t, uint_fast32_t>>& lhs, std::tuple<int_fast32_t, std::vector<Node>,  std::pair<uint_fast32_t, uint_fast32_t>>& rhs);	
 	void search(Field& field, const uint_fast32_t attr);
 	
 

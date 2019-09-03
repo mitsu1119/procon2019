@@ -1,11 +1,11 @@
 #include <iostream>
-#include <random>
-#include <chrono>
+//#include <random>
+//#include <chrono>
 #include "field.hpp"
 #include "useful.hpp"
 #include "disp.hpp"
 
-//Field field(16, 16);
+Field field(16, 16);
 
 //Random random;
 Greedy greedy;
@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
 	
 	//selfDirectedGame();
 
-	Field field(16, 16);
+	//Field field(16, 16);
 
 	DisplayWrapper* framework = new Display();
 	
@@ -30,13 +30,12 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-/*
 void selfDirectedGame(){
 	
 	astar.init(&field);
 	
 	while(true){
-
+		
 		astar.move(&field, MINE_ATTR);
 		//greedy.move(&field, MINE_ATTR);
 	  greedy.move(&field, ENEMY_ATTR);
@@ -51,4 +50,3 @@ void selfDirectedGame(){
 		}
 	}
 }
-*/
