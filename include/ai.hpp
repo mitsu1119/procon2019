@@ -33,9 +33,9 @@ public:
 };
 
 inline const Direction AI::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
-	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
-		if(next.first == now.first + this->vec_x.at(i) && next.second == now.second + this->vec_y.at(i))
-			return (Direction)i;
+	int dx = next.first - now.first;
+	int dy = next.second - now.second;
+	return xyToDirection(next.first - now.first, next.second - now.second);
 }
 
 class Random : public AI{

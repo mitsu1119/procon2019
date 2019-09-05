@@ -118,6 +118,9 @@ DECLARE_ENUM(Direction, direction2name, UP, RUP, RIGHT, RDOWN, DOWN, LDOWN, LEFT
 int_fast32_t direction2x(Direction direction);
 int_fast32_t direction2y(Direction direction);
 
+// x, yの変化量から方向を所得
+Direction xyToDirection(int_fast32_t dx, int_fast32_t dy);
+
 // 乱数生成器
 // 高速で性質がいいため128bitのXoroshiro+法を選択
 // Xorshift に比べていい乱数がでるし高速

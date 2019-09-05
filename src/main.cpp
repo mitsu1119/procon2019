@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 
 		//astar.move(&field, MINE_ATTR);
 		greedy.move(&field, MINE_ATTR);
-	  greedy.move(&field, ENEMY_ATTR);
+		greedy.move(&field, ENEMY_ATTR);
 
 		field.applyNextAgents();
 		field.print();
