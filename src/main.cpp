@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
 */
 
 int main(int argc, char *argv[]) {
+	/*
 	astar.init(&field);
 
 	while(true){
@@ -42,7 +43,16 @@ int main(int argc, char *argv[]) {
 			//std::this_thread::sleep_for(std::chrono::minutes(1));
 			std::exit(0);
 		}
-	}
+	}*/
+	printf("yey\n");
+	printf("%d\n", xyToDirection(0, -1));
+	printf("%d\n", xyToDirection(1, -1));
+	printf("%d\n", xyToDirection(1, 0));
+	printf("%d\n", xyToDirection(1, 1));
+	printf("%d\n", xyToDirection(0, 1));
+	printf("%d\n", xyToDirection(-1, 1));
+	printf("%d\n", xyToDirection(-1, 0));
+	printf("%d\n", xyToDirection(-1, -1));
 
 	return 0;
 }
