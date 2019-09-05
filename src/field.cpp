@@ -441,17 +441,10 @@ bool Field::isPanelMineBetween(uint_fast32_t x, uint_fast32_t y) {
 
 bool Field::isPanelEnemyBetween(uint_fast32_t x, uint_fast32_t y) {
 	int_fast32_t buf = 0;
-<<<<<<< HEAD
-
-	// For over flow
-	if(x == 0 || y == 0 || x == width - 1 || y == height - 1) return false;
-
-=======
 	
 	// For over flow
 	if(x == 0 || y == 0 || x == width - 1 || y == height - 1) return false;
 	
->>>>>>> origin/master
 	// left
 	for(size_t i = x-1; i >= 0; i--) {
 		if(this->at(i, y)->isEnemyPanel()) {
