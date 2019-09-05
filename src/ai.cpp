@@ -241,7 +241,7 @@ Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_
 	
 	std::vector<std::pair<Field, Field>> fields;
 	
-	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++) {
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++) {
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);
@@ -258,9 +258,8 @@ Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_
 		}
 	}
 	
-	for(size_t i = 0; i < fields.size(); i++) {
+	for(size_t i = 0; i < fields.size(); i++)
 		fields.at(i).second = this->search(&fields.at(i).first, agent, depth - 1);
-	}
 
 	if(field->agents.at(agent).getAttr() == MINE_ATTR)
 		std::sort(fields.begin(), fields.end(), MineComp);

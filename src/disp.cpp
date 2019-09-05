@@ -499,17 +499,14 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case 'b':
 	case 'B':
 
+		//this->breadth_force_search->move(this->field, MINE_ATTR);
+		//this->breadth_force_search.move(this->field, ENEMY_ATTR);
 		
 		this->beam_search->move(this->field, MINE_ATTR);
 		//this->beam_search->move(this->field, ENEMY_ATTR);
-
 		
 		this->random->move(this->field, ENEMY_ATTR);
 		//this->random->move(this->field, MINE_ATTR);
-
-		
-		//this->breadth_force_search->move(this->field, MINE_ATTR);
-		//this->breadth_force_search.move(this->field, ENEMY_ATTR);
 
 		break;
 		
