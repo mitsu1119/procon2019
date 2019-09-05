@@ -14,15 +14,15 @@ public:
 
 	const std::vector<int> vec_x = { 0, 1, 1, 1, 0,-1,-1, -1, 0};
 	const std::vector<int> vec_y = {-1,-1, 0, 1, 1, 1, 0, -1, 0};
-	
+
 public:
-	
+
 	AI();
 	~AI();
 
 	virtual	void init(const Field* field) = 0;
 	virtual	void init(const Field& field) = 0;
-	
+
 	virtual void move(Field *field, const uint_fast32_t attr) = 0;
 
 	const Direction changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
@@ -30,7 +30,7 @@ public:
 	static const bool MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
 	static const bool EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
 
-	
+
 };
 
 inline const Direction AI::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
@@ -41,19 +41,19 @@ inline const Direction AI::changeDirection(const std::pair<uint_fast32_t, uint_f
 
 class Random : public AI{
 private:
-	
+
 	XorOshiro128p random;
-	
+
 public:
-	
+
 	Random();
 	~Random();
 
 	void init(const Field* field) override;
 	void init(const Field& field) override;
-	
+
 	void move(Field *field, const uint_fast32_t attr) override;
-	
+
 };
 
 class Greedy : public AI{
@@ -64,22 +64,22 @@ private:
 	XorOshiro128p random;
 
 private:
-	
+
 	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
-	
+
 public:
-	
+
 	Greedy();
 	~Greedy();
 
 	void init(const Field* field) override;
 	void init(const Field& field) override;
-	
+
 	void singleMove(Field& field, const uint_fast32_t agent);
 	void randomMove(Field& field, const uint_fast32_t agent, const uint_fast32_t x, const uint_fast32_t y);
-	
+
 	void move(Field *field, const uint_fast32_t attr) override;
-	
+
 };
 
 constexpr uint_fast32_t beam_depth = 3;
@@ -90,9 +90,9 @@ class BeamSearch : public AI{
 private:
 
 	Greedy greedy;
-	
+
 	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
-	
+
 public:
 
 	BeamSearch();
@@ -101,7 +101,7 @@ public:
 	void init(const Field* field) override;
 	void init(const Field& field) override;
 
-	
+
 	void singleMove(Field& field, const uint_fast32_t agent);
 	void move(Field* field, const uint_fast32_t attr) override;
 
@@ -115,7 +115,7 @@ private:
 	Greedy greedy;
 
 	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
-	
+
 public:
 
 	BreadthForceSearch();
@@ -124,10 +124,10 @@ public:
 	void init(const Field* field) override;
 	void init(const Field& field) override;
 
-	
-	void singleMove(Field& field, const uint_fast32_t agent);	
+
+	void singleMove(Field& field, const uint_fast32_t agent);
 	void move(Field* field, const uint_fast32_t attr) override;
-	
+
 };
 
 
@@ -148,7 +148,7 @@ public:
 		OPEN,
 		CLOSED
 	};
-	
+
 	Node();
 	~Node();
 	//ステータス
@@ -162,19 +162,19 @@ public:
 	//その地点での点数
 	int_fast32_t  value;
 	//確定ルートにかぶっているか？
-  uint_fast32_t is_on_decided_route;	
+  uint_fast32_t is_on_decided_route;
 	//自陣を何回移動したか
 	uint_fast32_t is_on_mine_panel;
 	//何回移動したか
 	uint_fast32_t move_num;
   //親のノード
-	Node* parent;	
+	Node* parent;
 	//座標
 	std::pair<uint_fast32_t, uint_fast32_t> coord;
-	
+
 	//スコア所得
 	const double getScore() const;
-	
+
 };
 
 inline const double Node::getScore() const{
@@ -182,7 +182,7 @@ inline const double Node::getScore() const{
 }
 
 
-constexpr double greedy_count              = 3;
+constexpr double greedy_count              = 0;
 constexpr double occpancy_weight           = 2;
 constexpr double is_on_decided_weight      = 10;
 
@@ -210,7 +210,7 @@ private:
 	Greedy greedy;
 	BeamSearch beam_search;
 	BreadthForceSearch breadth_force_search;
-	
+
 private:
 
 	//探索かけるたびにクリアする
@@ -220,21 +220,21 @@ private:
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
 
-	
+
 	//マルチスレッド用
 	std::pair<uint_fast32_t, uint_fast32_t> tentative_goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> tentative_route;
 	int_fast32_t tentative_max_score;
 
-	
-	
+
+
 private:
 
 
 	//移動
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
-	
+
 
 private:
 
@@ -243,7 +243,7 @@ private:
 	void setSearchTarget(Field& field, const uint_fast32_t agent);
 	const double goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 
-	
+
 	//ゴール選定用の評価関数関連
 	const uint_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord);
@@ -260,7 +260,7 @@ private:
 	//ヒューリスティックコスト（推定コスト）計算
 	const double heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coord, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
 
-	
+
 	//探索関連
 	void initNode(const Field& field, std::vector<Node>& node);
 	static const bool comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs);
@@ -272,38 +272,37 @@ private:
 	//枝切り用
 	const bool branchingCondition(Node* current) const;
 	const bool endCondition(Node* current) const;
-	
+
 
 	//マルチスレッド用
 	void multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
 
-	
+
 	void searchBestRoute(Field& field, const uint_fast32_t agent);
 	void search(Field& field, const uint_fast32_t attr);
-	
+
 
 	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(Field& field, std::vector<Node>& node, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 
-	
+
 	//描画関連
 	const void printGoal(Field& field, const uint_fast32_t attr) const;
 	const void printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route);
 
-	
+
 	//アルゴリズムの選択
 	void chooseAlgorithm(Field& field, const uint_fast32_t agent);
-	
-	
+
+
 public:
-	
+
 	Astar();
 	~Astar();
 
 	void singleMove(Field& field, const uint_fast32_t agent);
-	
+
 	void init(const Field* field) override;
 	void init(const Field& field) override;
 	void move(Field *field, const uint_fast32_t attr) override;
-	
-};
 
+};
