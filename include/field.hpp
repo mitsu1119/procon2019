@@ -12,6 +12,8 @@
 #include <numeric>
 #include <climits>
 #include <mutex>
+#include <thread>
+#include "picojson.h"
 #include "agent.hpp"
 #include "useful.hpp"
 #include "disp.hpp"

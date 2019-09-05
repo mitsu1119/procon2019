@@ -1,7 +1,6 @@
 #include "field.hpp"
 #include <fstream>
 #include <cassert>
-#include "picojson.h"
 
 using namespace picojson;
 
@@ -642,8 +641,6 @@ void Field::judgeWinner(){
 		printf("ENEMY\n");
 }
 
-//this->agents.emplace_back(1, 1, MINE_ATTR, agent_id);
-
 void Field::init(){
 	// agetn情報
 	int agent_data[17][2];
@@ -655,7 +652,7 @@ void Field::init(){
 	double buffer;
 	value maps;
 	{
-		std::fstream stream("./../../pub_field/E-1.json");
+		std::fstream stream("../pub_field/E-1.json");
 		if(!stream.is_open()) return 1;
 		stream >> maps;
 		assert(get_last_error().empty());

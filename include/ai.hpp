@@ -3,7 +3,6 @@
 #include "agent.hpp"
 #include "field.hpp"
 #include "useful.hpp"
-#include <thread>
 
 class Agent;
 class Field;
