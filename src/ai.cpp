@@ -202,9 +202,6 @@ void BeamSearch::singleMove(Field& field, const uint_fast32_t agent){
 	
 	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
 	std::pair<uint_fast32_t, uint_fast32_t> next_coord    = std::make_pair(next_field.agents.at(agent).getnextbufX(), next_field.agents.at(agent).getnextbufY()); 
-	printf("Agent %d next field\n", agent);
-	next_field.print();
-	printf("Agent %d next coord (%d %d)\n", agent, next_coord.first, next_coord.second);
 
 	Direction direction = this->changeDirection(current_coord, next_coord);
 	
