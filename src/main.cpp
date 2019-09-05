@@ -3,7 +3,8 @@
 #include "useful.hpp"
 #include "disp.hpp"
 
-Field field(16, 16);
+//Field field(16, 16);
+Field field;
 
 //Random random;
 Greedy greedy;
@@ -13,13 +14,13 @@ Astar astar;
 void selfDirectedGame();
 
 int main(int argc, char *argv[]) {
-	
+
 	//selfDirectedGame();
 
 	//Field field(16, 16);
 
 	DisplayWrapper* framework = new Display();
-	
+
 	framework->setField(&field);
 	framework->setInstance(framework);
 	framework->start(argc, argv);
@@ -29,18 +30,18 @@ int main(int argc, char *argv[]) {
 }
 
 void selfDirectedGame(){
-	
+
 	astar.init(&field);
-	
+
 	while(true){
-		
+
 		astar.move(&field, MINE_ATTR);
 		//greedy.move(&field, MINE_ATTR);
 	  greedy.move(&field, ENEMY_ATTR);
-		
+
 		field.applyNextAgents();
 		field.print();
-		
+
 		if(field.checkEnd()){
 			field.judgeWinner();
 			std::this_thread::sleep_for(std::chrono::minutes(1));
