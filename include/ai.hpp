@@ -59,8 +59,6 @@ public:
 class Greedy : public AI{
 private:
 
-	std::mutex mtx;
-	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 	XorOshiro128p random;
 
 private:
@@ -182,7 +180,7 @@ inline const double Node::getScore() const{
 }
 
 
-constexpr double greedy_count              = 3;
+constexpr double greedy_count              = 2;
 constexpr double occpancy_weight           = 2;
 constexpr double is_on_decided_weight      = 10;
 
@@ -198,6 +196,8 @@ constexpr uint_fast32_t max_move_cost      = 35;
 constexpr uint_fast32_t min_value          = -5;
 //終了条件
 constexpr uint_fast32_t min_move_cost      = 2;
+
+constexpr uint_fast32_t search_count       = 8;
 
 
 class Astar : public AI{
@@ -226,7 +226,7 @@ private:
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> tentative_route;
 	int_fast32_t tentative_max_score;
 
-	
+	std::vector<uint_fast32_t> counter;
 	
 private:
 

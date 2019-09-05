@@ -494,14 +494,10 @@ void Display::keyboard(unsigned char key, int x, int y){
 		//this->random->move(this->field, ENEMY_ATTR);
 		//this->random->move(this->field, MINE_ATTR);
 
-		return;
-
 		break;
 
 	case 'b':
 	case 'B':
-
-		//だめ
 
 		
 		this->beam_search->move(this->field, MINE_ATTR);

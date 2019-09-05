@@ -86,19 +86,9 @@ void Greedy::singleMove(Field& field, const uint_fast32_t agent){
 	else
 		current_score = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
 	
-	//uint_fast32_t x          = field.agents.at(agent).getX();
-	//uint_fast32_t y          = field.agents.at(agent).getY();
-	
 	Direction direction      = STOP;
 	
 	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++){
-		
-		/*
-		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), std::make_pair(x + this->vec_x.at(i), y + this->vec_y.at(i)));
-		if(result != this->decided_coord.end())
-			continue;
-		*/
-		
 		if(field.canMove(field.agents.at(agent), (Direction)i)){
 			next_score = this->nextScore(field, agent, (Direction)i);
 			if(next_score <= current_score)
@@ -114,7 +104,6 @@ void Greedy::singleMove(Field& field, const uint_fast32_t agent){
 		this->randomMove(field, agent, field.agents.at(agent).getX(), field.agents.at(agent).getY());
 	else
 		field.agents.at(agent).move(direction);
-		//this->decided_coord.emplace_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
 }
 
 void Greedy::randomMove(Field& field, const uint_fast32_t agent, const uint_fast32_t x, const uint_fast32_t y){
@@ -124,20 +113,10 @@ void Greedy::randomMove(Field& field, const uint_fast32_t agent, const uint_fast
 		if(count++ > 10)
 			break;
 		direction = (Direction)(this->random(DIRECTION_SIZE - 3));
-		
-		/*
-		auto result = std::find(this->decided_coord.begin(), this->decided_coord.end(), std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
-		if(result != this->decided_coord.end())
-			continue;
-		*/
-		
 		if(field.at(x + this->vec_x.at(direction), y + this->vec_y.at(direction))->getValue() < -5)
 			continue;
 		if(field.canMove(field.agents.at(agent), direction)){
 			field.agents.at(agent).move(direction);
-			
-			//this->decided_coord.emplace_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
-			
 			return;
 		}
 	}
@@ -706,6 +685,8 @@ void Astar::searchBestRoute(Field& field, const uint_fast32_t agent){
 	this->decided_route.at(agent) = this->tentative_route;
 	this->decided_goal.at(agent)  = this->tentative_goal;
 	this->printRoute(this->tentative_route);
+
+	this->counter.at(agent) = 0;
 }
 
 void 	Astar::search(Field& field, const uint_fast32_t attr){
@@ -794,7 +775,7 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 
 	this->decided_coord.clear();
 
-	if(this->decided_route.at(agent).size() <= 1)
+	if(this->decided_route.at(agent).size() <= 1 || this->counter.at(agent) == search_count)
 		this->searchBestRoute(field, agent);
 
 	if(this->decided_route.at(agent).empty()){
@@ -821,8 +802,10 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	
 	direction = this->changeDirection(std::make_pair(agentX, agentY), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	
-	if(field.canMove(field.agents.at(agent), direction))
-		field.agents.at(agent).move(direction);	
+	if(field.canMove(field.agents.at(agent), direction)){
+		field.agents.at(agent).move(direction);
+		this->counter.at(agent)++;
+	}
 }
 
 void Astar::init(const Field* field){
@@ -831,6 +814,9 @@ void Astar::init(const Field* field){
 	this->decided_goal.clear();
 	this->decided_goal.resize(field->agents.size());
 	this->decided_coord.clear();
+	
+	this->counter.clear();
+	this->counter.resize(field->agents.size());
 }
 
 void Astar::init(const Field& field){
@@ -839,17 +825,21 @@ void Astar::init(const Field& field){
 	this->decided_goal.clear();
 	this->decided_goal.resize(field.agents.size());
 	this->decided_coord.clear();
+
+	this->counter.clear();
+	this->counter.resize(field.agents.size());
 }
 
 void Astar::move(Field *field, const uint_fast32_t attr){
 
+	/*
 	Field obj = static_cast<Field> (*field);
 	this->init(obj);
 	this->setAverageScore(obj);
 	this->search(obj, attr);
 	this->printGoal(obj, attr);
+	*/
 
-	/*
 	Field tmp = static_cast<Field> (*field);
 	this->decided_coord.clear();
 	this->next_coord.clear();
@@ -857,8 +847,6 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	for(size_t i = 0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
 			this->chooseAlgorithm(tmp, i);
-			//this->singleMove(tmp, i);
 	*field = tmp;
-	*/
 }
 
