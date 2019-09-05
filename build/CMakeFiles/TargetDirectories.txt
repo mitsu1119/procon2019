@@ -1,6 +1,0 @@
-/home/mitsu/projects/procon2019/build/CMakeFiles/rebuild_cache.dir
-/home/mitsu/projects/procon2019/build/CMakeFiles/edit_cache.dir
-/home/mitsu/projects/procon2019/build/src/CMakeFiles/rebuild_cache.dir
-/home/mitsu/projects/procon2019/build/src/CMakeFiles/edit_cache.dir
-/home/mitsu/projects/procon2019/build/src/CMakeFiles/greetings.dir
-/home/mitsu/projects/procon2019/build/src/CMakeFiles/run.dir
