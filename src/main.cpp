@@ -16,9 +16,7 @@ void selfDirectedGame();
 int main(int argc, char *argv[]) {
 
 	//selfDirectedGame();
-
-	//Field field(16, 16);
-
+	
 	DisplayWrapper* framework = new Display();
 
 	framework->setField(&field);

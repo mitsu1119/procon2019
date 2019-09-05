@@ -398,7 +398,6 @@ int_fast32_t Field::calcEnemypanelScore() {
 
 bool Field::isPanelMineBetween(uint_fast32_t x, uint_fast32_t y) {
 	int_fast32_t buf = 0;
-
 	// For over flow
 	if(x == 0 || y == 0 || x == width - 1 || y == height - 1) return false;
 
@@ -442,10 +441,17 @@ bool Field::isPanelMineBetween(uint_fast32_t x, uint_fast32_t y) {
 
 bool Field::isPanelEnemyBetween(uint_fast32_t x, uint_fast32_t y) {
 	int_fast32_t buf = 0;
+<<<<<<< HEAD
 
 	// For over flow
 	if(x == 0 || y == 0 || x == width - 1 || y == height - 1) return false;
 
+=======
+	
+	// For over flow
+	if(x == 0 || y == 0 || x == width - 1 || y == height - 1) return false;
+	
+>>>>>>> origin/master
 	// left
 	for(size_t i = x-1; i >= 0; i--) {
 		if(this->at(i, y)->isEnemyPanel()) {
@@ -570,13 +576,12 @@ void Field::print() {
 	uint_fast32_t flag;
 	char strip[] = "----------------------------------------\n";
 
-	printf("%s", strip);
+	fprintf(stderr, "%s", strip);
 	for(size_t i = 0; i < this->height; i++) {
 		for(size_t j = 0; j < this->width; j++) {
 			// パネルの属性の表示処理
-			if(this->at(j, i)->isMyPanel()) printf("\x1b[34m");
-			if(this->at(j, i)->isEnemyPanel()) printf("\x1b[31m");
-
+			if(this->at(j, i)->isMyPanel()) fprintf(stderr, "\x1b[34m");
+			if(this->at(j, i)->isEnemyPanel()) fprintf(stderr, "\x1b[31m"); 
 			// エージェントの表示処理
 			// ||agents|| が十分に小さいため線形探索でも計算時間にそれほど影響がでない
 			flag = PURE_ATTR;
@@ -586,27 +591,23 @@ void Field::print() {
 					break;
 				}
 			}
-			if(flag == MINE_ATTR) printf("\x1b[34m");
-			if(flag == ENEMY_ATTR) printf("\x1b[31m");
-			printf("%3d ", this->at(j, i)->getValue());
-			if(flag != PURE_ATTR) printf("\x1b[39m");
-			if(!this->at(j, i)->isPurePanel()) printf("\x1b[39m");
+			if(flag == MINE_ATTR) fprintf(stderr, "\x1b[34m");
+			if(flag == ENEMY_ATTR) fprintf(stderr, "\x1b[31m");
+			fprintf(stderr, "%3d ", this->at(j, i)->getValue());
+			if(flag != PURE_ATTR) fprintf(stderr, "\x1b[39m");
+			if(!this->at(j, i)->isPurePanel()) fprintf(stderr, "\x1b[39m");
 		}
-		printf("\n");
+		fprintf(stderr, "\n");
 	}
-	printf("%s", strip);
+	fprintf(stderr, "%s", strip);
 	for(size_t i = 0; i < this->agents.size(); i++) {
-		if(this->agents[i].getAttr() == MINE_ATTR) printf("\x1b[34m");
-		else printf("\x1b[31m");
-		printf("agent[%u]: (%u, %u)\n\x1b[39m", i, this->agents[i].getX(), this->agents[i].getY());
+		if(this->agents[i].getAttr() == MINE_ATTR) fprintf(stderr, "\x1b[34m");
+		else fprintf(stderr, "\x1b[31m");
+		fprintf(stderr, "agent[%u]: (%u, %u)\n\x1b[39m", i, this->agents[i].getX(), this->agents[i].getY());
 	}
-	printf("mineScore:  %d\n", this->calcScore(MINE_ATTR));
-
-	printf("enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
-
-	printf("turn      : %d\n", this->turn + 1);
-
-	printf("%s", strip);
+	fprintf(stdout, "mineScore:  %d\n", this->calcScore(MINE_ATTR));
+	fprintf(stdout, "enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
+	fprintf(stderr, "%s", strip);
 }
 
 const uint_fast32_t Field::getWidth() const{
