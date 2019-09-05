@@ -252,6 +252,7 @@ void Field::applyNextAgents() {
 
 	//とりあえずSTOPにセット
 	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
+			a.setnextbufXY(a.getnextX(), a.getnextY());
 			a.move(STOP);
 		});
 	

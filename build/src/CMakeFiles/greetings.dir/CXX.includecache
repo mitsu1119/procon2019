@@ -90,27 +90,23 @@ vector
 algorithm
 -
 
-/home/kaito/program/procon2019/src/agent.cpp
+/home/mitsu/projects/procon2019/src/agent.cpp
 agent.hpp
-/home/kaito/program/procon2019/src/agent.hpp
+/home/mitsu/projects/procon2019/src/agent.hpp
 
-/home/kaito/program/procon2019/src/ai.cpp
+/home/mitsu/projects/procon2019/src/ai.cpp
 ai.hpp
-/home/kaito/program/procon2019/src/ai.hpp
+/home/mitsu/projects/procon2019/src/ai.hpp
 
-/home/kaito/program/procon2019/src/disp.cpp
+/home/mitsu/projects/procon2019/src/disp.cpp
 disp.hpp
-/home/kaito/program/procon2019/src/disp.hpp
+/home/mitsu/projects/procon2019/src/disp.hpp
 
-/home/kaito/program/procon2019/src/evaluator.cpp
+/home/mitsu/projects/procon2019/src/evaluator.cpp
 evaluator.hpp
-/home/kaito/program/procon2019/src/evaluator.hpp
+/home/mitsu/projects/procon2019/src/evaluator.hpp
 
-/home/kaito/program/procon2019/src/field.cpp
+/home/mitsu/projects/procon2019/src/field.cpp
 field.hpp
-/home/kaito/program/procon2019/src/field.hpp
-
-/home/kaito/program/procon2019/src/useful.cpp
-useful.hpp
-/home/kaito/program/procon2019/src/useful.hpp
+/home/mitsu/projects/procon2019/src/field.hpp
 

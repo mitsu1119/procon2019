@@ -186,7 +186,7 @@ Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t 
 	
 	std::vector<std::pair<Field, Field>> fields;
 	
-	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++) {
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++) {
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);
@@ -222,7 +222,10 @@ void BeamSearch::singleMove(Field& field, const uint_fast32_t agent){
 	Field next_field    = this->search(&field, agent, beam_depth);
 	
 	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
-	std::pair<uint_fast32_t, uint_fast32_t> next_coord    = std::make_pair(next_field.agents.at(agent).getX(), next_field.agents.at(agent).getY()); 
+	std::pair<uint_fast32_t, uint_fast32_t> next_coord    = std::make_pair(next_field.agents.at(agent).getnextbufX(), next_field.agents.at(agent).getnextbufY()); 
+	printf("Agent %d next field\n", agent);
+	next_field.print();
+	printf("Agent %d next coord (%d %d)\n", agent, next_coord.first, next_coord.second);
 
 	Direction direction = this->changeDirection(current_coord, next_coord);
 	if(field.canMove(field.agents.at(agent), direction))
