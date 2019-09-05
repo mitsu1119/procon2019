@@ -109,7 +109,7 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 			a.move(STOP);
 		});
 
-		this->max_turn = 70;
+	this->max_turn = 70;
 
 }
 
@@ -144,7 +144,8 @@ Field::Field() {
 			a.move(STOP);
 		});
 
-		this->max_turn = 70;
+	this->turn     = 0;
+	this->max_turn = 70;
 }
 
 uint_fast32_t Field::xyIndex(uint_fast32_t x, uint_fast32_t y) {
@@ -600,6 +601,7 @@ void Field::print() {
 	}
 	fprintf(stdout, "mineScore:  %d\n", this->calcScore(MINE_ATTR));
 	fprintf(stdout, "enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
+	fprintf(stdout, "turn:       %d\n", this->turn);
 	fprintf(stderr, "%s", strip);
 }
 
@@ -626,13 +628,17 @@ const bool Field::checkEnd() const{
 void Field::judgeWinner(){
 	printf("\n---------------- finish ----------------\n");
 
-	printf("winner: ");
-	if(this->calcScore(MINE_ATTR) > this->calcScore(ENEMY_ATTR))
-		printf("MINE\n");
-	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR))
+	if(this->calcScore(MINE_ATTR) > this->calcScore(ENEMY_ATTR)){
+		printf("Win  MINE\n");
+		printf("Lose ENEMY\n");
+	}
+	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR)){
 		printf("DRAW\n");
-	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR))
-		printf("ENEMY\n");
+	}
+	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR)){
+		printf("Lose ENEMY\n");
+		printf("Win  MINE\n");
+	}
 }
 
 void Field::init(){

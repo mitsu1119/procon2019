@@ -11,12 +11,9 @@ Greedy greedy;
 BeamSearch beam_search;
 Astar astar;
 
-void selfDirectedGame();
-
+/*
 int main(int argc, char *argv[]) {
 
-	//selfDirectedGame();
-	
 	DisplayWrapper* framework = new Display();
 
 	framework->setField(&field);
@@ -26,15 +23,15 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
+*/
 
-void selfDirectedGame(){
-
+int main(int argc, char *argv[]) {
 	astar.init(&field);
 
 	while(true){
 
-		astar.move(&field, MINE_ATTR);
-		//greedy.move(&field, MINE_ATTR);
+		//astar.move(&field, MINE_ATTR);
+		greedy.move(&field, MINE_ATTR);
 	  greedy.move(&field, ENEMY_ATTR);
 
 		field.applyNextAgents();
@@ -42,8 +39,10 @@ void selfDirectedGame(){
 
 		if(field.checkEnd()){
 			field.judgeWinner();
-			std::this_thread::sleep_for(std::chrono::minutes(1));
+			//std::this_thread::sleep_for(std::chrono::minutes(1));
 			std::exit(0);
 		}
 	}
+
+	return 0;
 }
