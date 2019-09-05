@@ -1,6 +1,4 @@
 #include <iostream>
-//#include <random>
-//#include <chrono>
 #include "field.hpp"
 #include "useful.hpp"
 #include "disp.hpp"

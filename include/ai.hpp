@@ -89,7 +89,7 @@ private:
 
 	Greedy greedy;
 	
-	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
+	Field search(Field *field, const uint_fast32_t agent, uint_fast32_t depth);
 	
 public:
 

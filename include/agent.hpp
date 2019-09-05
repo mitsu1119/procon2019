@@ -18,8 +18,13 @@ private:
 		uint_fast32_t nextX: 5;
 		uint_fast32_t nextY: 5;
 
-		uint_fast32_t agent_id;
+		// 次に移動する座標のバッファ(全探索用)
+		uint_fast32_t nextbufX: 5;
+		uint_fast32_t nextbufY: 5;
+		
 	};
+	
+	uint_fast32_t agent_id;
 
 public:
 	Agent();
@@ -32,6 +37,9 @@ public:
 	uint_fast32_t getY();
 	uint_fast32_t getnextX();
 	uint_fast32_t getnextY();
+	void setnextbufXY(uint_fast32_t nextbufX, uint_fast32_t nextbufY);
+	uint_fast32_t getnextbufX() const;
+	uint_fast32_t getnextbufY() const;
 	uint_fast32_t getAttr();
 
 	uint_fast32_t getID();

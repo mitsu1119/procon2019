@@ -30,6 +30,19 @@ uint_fast32_t Agent::getnextY() {
 	return this->nextY;
 }
 
+void Agent::setnextbufXY(uint_fast32_t nextbufX, uint_fast32_t nextbufY) {
+	this->nextbufX = nextbufX;
+	this->nextbufY = nextbufY;
+}
+
+uint_fast32_t Agent::getnextbufX() const {
+	return this->nextbufX;
+}
+
+uint_fast32_t Agent::getnextbufY() const {
+	return this->nextbufY;
+}
+
 uint_fast32_t Agent::getAttr() {
 	return this->attr;
 }
