@@ -33,7 +33,7 @@ int main(int parm1, int parm2, int parm3, int parm4, int parm5, int parm6, int p
 
 		//astar.move(&field, MINE_ATTR);
 		greedy.move(&field, MINE_ATTR);
-	  greedy.move(&field, ENEMY_ATTR);
+		greedy.move(&field, ENEMY_ATTR);
 
 		field.applyNextAgents();
 		field.print();
