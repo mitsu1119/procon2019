@@ -844,7 +844,8 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	
 	for(size_t i = 0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
-			this->chooseAlgorithm(tmp, i);
+			this->singleMove(tmp, i);
+			//this->chooseAlgorithm(tmp, i);
 	*field = tmp;
 }
 
