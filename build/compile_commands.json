@@ -1,0 +1,37 @@
+[
+{
+  "directory": "/home/kaito/program/procon2019/build/src",
+  "command": "/usr/bin/c++  -DMACRO1=bar -Dgreetings_EXPORTS -I/home/kaito/program/procon2019/include  -std=c++17 -g -fPIC   -I/foo/dir1 -fpermissive -o CMakeFiles/greetings.dir/agent.cpp.o -c /home/kaito/program/procon2019/src/agent.cpp",
+  "file": "/home/kaito/program/procon2019/src/agent.cpp"
+},
+{
+  "directory": "/home/kaito/program/procon2019/build/src",
+  "command": "/usr/bin/c++  -DMACRO1=bar -Dgreetings_EXPORTS -I/home/kaito/program/procon2019/include  -std=c++17 -g -fPIC   -I/foo/dir1 -fpermissive -o CMakeFiles/greetings.dir/field.cpp.o -c /home/kaito/program/procon2019/src/field.cpp",
+  "file": "/home/kaito/program/procon2019/src/field.cpp"
+},
+{
+  "directory": "/home/kaito/program/procon2019/build/src",
+  "command": "/usr/bin/c++  -DMACRO1=bar -Dgreetings_EXPORTS -I/home/kaito/program/procon2019/include  -std=c++17 -g -fPIC   -I/foo/dir1 -fpermissive -o CMakeFiles/greetings.dir/useful.cpp.o -c /home/kaito/program/procon2019/src/useful.cpp",
+  "file": "/home/kaito/program/procon2019/src/useful.cpp"
+},
+{
+  "directory": "/home/kaito/program/procon2019/build/src",
+  "command": "/usr/bin/c++  -DMACRO1=bar -Dgreetings_EXPORTS -I/home/kaito/program/procon2019/include  -std=c++17 -g -fPIC   -I/foo/dir1 -fpermissive -o CMakeFiles/greetings.dir/disp.cpp.o -c /home/kaito/program/procon2019/src/disp.cpp",
+  "file": "/home/kaito/program/procon2019/src/disp.cpp"
+},
+{
+  "directory": "/home/kaito/program/procon2019/build/src",
+  "command": "/usr/bin/c++  -DMACRO1=bar -Dgreetings_EXPORTS -I/home/kaito/program/procon2019/include  -std=c++17 -g -fPIC   -I/foo/dir1 -fpermissive -o CMakeFiles/greetings.dir/ai.cpp.o -c /home/kaito/program/procon2019/src/ai.cpp",
+  "file": "/home/kaito/program/procon2019/src/ai.cpp"
+},
+{
+  "directory": "/home/kaito/program/procon2019/build/src",
+  "command": "/usr/bin/c++  -DMACRO1=bar -Dgreetings_EXPORTS -I/home/kaito/program/procon2019/include  -std=c++17 -g -fPIC   -I/foo/dir1 -fpermissive -o CMakeFiles/greetings.dir/evaluator.cpp.o -c /home/kaito/program/procon2019/src/evaluator.cpp",
+  "file": "/home/kaito/program/procon2019/src/evaluator.cpp"
+},
+{
+  "directory": "/home/kaito/program/procon2019/build/src",
+  "command": "/usr/bin/c++  -DMACRO1=bar -I/home/kaito/program/procon2019/include  -std=c++17 -g   -I/foo/dir1 -fpermissive -o CMakeFiles/run.dir/main.cpp.o -c /home/kaito/program/procon2019/src/main.cpp",
+  "file": "/home/kaito/program/procon2019/src/main.cpp"
+}
+]
