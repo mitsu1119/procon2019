@@ -3,8 +3,8 @@
 #include "useful.hpp"
 #include "disp.hpp"
 
-//Field field(16, 16);
-Field field;
+Field field(16, 16);
+//Field field;
 
 Greedy greedy;
 BeamSearch beam_search;
