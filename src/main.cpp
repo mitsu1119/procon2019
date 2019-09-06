@@ -3,8 +3,8 @@
 #include "useful.hpp"
 #include "disp.hpp"
 
-//Field field(16, 16);
-Field field;
+Field field(12, 16);
+//Field field;
 
 //Random random;
 Greedy greedy;
