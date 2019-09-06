@@ -144,7 +144,6 @@ Field::Field() {
 			a.move(STOP);
 		});
 
-	this->turn     = 0;
 	this->max_turn = 70;
 }
 
@@ -679,7 +678,7 @@ void Field::init(){
 
 
 	// 現在ターン
-	//int turn   = (int)maps.get<object>()["turn"].get<double>();
+	int turn   = (int)maps.get<object>()["turn"].get<double>();
 
 
 	value::array points = maps.get<object>()["points"].get<value::array>();

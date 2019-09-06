@@ -12,7 +12,7 @@ BeamSearch beam_search;
 Astar astar;
 
 /*
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]){
 
 	DisplayWrapper* framework = new Display();
 
@@ -25,7 +25,8 @@ int main(int argc, char *argv[]) {
 }
 */
 
-int main(int argc, char *argv[]) {
+int main(int parm1, int parm2, int parm3, int parm4, int parm5, int parm6, int parm7, int parm8, int parm9, int parm10, int parm11, int parm12, int parm13, int parm14, int parm15, int parm16, int parm17){
+
 	astar.init(&field);
 
 	while(true){
