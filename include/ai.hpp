@@ -127,21 +127,21 @@ public:
 
 };
 
+/*
 constexpr double_t move_weight                = 3;
 constexpr double_t state_weight               = 40;
 constexpr double_t heuristic_weight           = 4;
 constexpr double_t value_weight               = 15;
 constexpr double_t is_on_decided_route_weight = 15;
 constexpr double_t is_on_mine_panel_weight    = 4;
+*/
 
-/*
 static double_t move_weight;
 static double_t state_weight;
 static double_t heuristic_weight;
 static double_t value_weight;
 static double_t is_on_decided_route_weight;
 static double_t is_on_mine_panel_weight;
-*/
 
 class Node{
 private:
@@ -186,26 +186,21 @@ inline const double Node::getScore() const{
 	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * this->move_num * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight);
 }
 
+/*
 constexpr double greedy_count              = 2;
 constexpr double occpancy_weight           = 2;
 constexpr double is_on_decided_weight      = 10;
 
-//ゴールの除外条件
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
-//Agent同士の距離
 constexpr uint_fast32_t min_agent_distance = 2;
-//ゴール候補同士の距離
 constexpr uint_fast32_t min_goal_distance  = 2;
-//枝きり条件
 constexpr uint_fast32_t max_move_cost      = 35;
 constexpr uint_fast32_t min_value          = -5;
-//終了条件
 constexpr uint_fast32_t min_move_cost      = 2;
-
 constexpr uint_fast32_t search_count       = 8;
+*/
 
-/*
 static double greedy_count;
 static double occpancy_weight;
 static double is_on_decided_weight;
@@ -218,7 +213,6 @@ static uint_fast32_t max_move_cost;
 static uint_fast32_t min_value;
 static uint_fast32_t min_move_cost;
 static uint_fast32_t search_count;
-*/
 
 
 class Astar : public AI{
