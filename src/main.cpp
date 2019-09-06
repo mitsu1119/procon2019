@@ -3,15 +3,14 @@
 #include "useful.hpp"
 #include "disp.hpp"
 
-//Field field(16, 16);
-Field field;
+Field field(15, 16);
+//Field field;
 
 //Random random;
 Greedy greedy;
 BeamSearch beam_search;
 Astar astar;
 
-/*
 int main(int argc, char *argv[]) {
 
 	DisplayWrapper* framework = new Display();
@@ -23,8 +22,8 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
-*/
 
+/*
 int main(int argc, char *argv[]) {
 	astar.init(&field);
 
@@ -46,3 +45,4 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
+*/
