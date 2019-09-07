@@ -59,6 +59,10 @@ class Greedy : public AI{
 private:
 
 	XorOshiro128p random;
+	uint_fast32_t counter;
+	
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
+	std::vector<Direction> next_direction;
 
 private:
 
@@ -72,8 +76,8 @@ public:
 	void init(const Field* field) override;
 	void init(const Field& field) override;
 
-	void singleMove(Field& field, const uint_fast32_t agent);
-	void randomMove(Field& field, const uint_fast32_t agent, const uint_fast32_t x, const uint_fast32_t y);
+	void singleMove(Field field, const uint_fast32_t agent);
+	void randomMove(Field field, const uint_fast32_t agent, const uint_fast32_t x, const uint_fast32_t y);
 
 	void move(Field *field, const uint_fast32_t attr) override;
 
