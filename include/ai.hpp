@@ -248,6 +248,8 @@ private:
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> tentative_route;
 	int_fast32_t tentative_max_score;
 
+	
+	//カウンター
 	std::vector<uint_fast32_t> counter;
 	
 private:
@@ -287,7 +289,7 @@ private:
 	void initNode(const Field& field, std::vector<Node>& node);
 	static const bool comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs);
 	
-	const std::pair<int_fast32_t, std::vector<Node>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);	
+  std::pair<int_fast32_t, std::vector<Node>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);	
 	void setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start);
 	void setNextNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next);
 
@@ -306,8 +308,9 @@ private:
 
 
 	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(Field& field, std::vector<Node>& node, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+	void setDecidedCoord(const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route);
 
-
+	
 	//描画関連
 	const void printGoal(Field& field, const uint_fast32_t attr) const;
 	const void printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route);
