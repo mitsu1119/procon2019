@@ -41,7 +41,7 @@ void Random::init(const Field& field){
 }
 
 void Random::move(Field *field, const uint_fast32_t attr){
-	Field tmp = static_cast<Field> (*field);
+	Field tmp = *field;
 	uint_fast32_t count = 0;
 	Direction direction;
 	
@@ -262,7 +262,7 @@ void BeamSearch::singleMove(Field& field, const uint_fast32_t agent){
 }
 
 void BeamSearch::move(Field* field, const uint_fast32_t attr){
-	Field tmp = static_cast<Field> (*field);
+	Field tmp = *field;
 
 	for(size_t i =0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
@@ -334,7 +334,7 @@ void BreadthForceSearch::singleMove(Field& field, const uint_fast32_t agent){
 }
 
 void BreadthForceSearch::move(Field *field, const uint_fast32_t attr){
-	Field tmp = static_cast<Field> (*field);
+	Field tmp = *field;
 	
 	for(size_t i =0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
@@ -450,7 +450,7 @@ void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
 const double Astar::goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
 	if(this->expectTarget(field, agent, goal))
 		return false;
-	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) * occpancy_weight - (this->isOnDecidedRoute(field, agent, goal) * is_on_decided_weight);
+	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) * occpancy_weight - (this->isOnDecidedRoute(field, agent, goal) * is_on_decided_weight) - (this->whosePanel(field, agent, goal) * is_my_pannel_weight);
 }
 
 const uint_fast32_t Astar::occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
@@ -919,7 +919,7 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	this->printGoal(obj, attr);
 	*/
 
-	Field tmp = static_cast<Field> (*field);
+	Field tmp = *field;
 	this->next_coord.clear();
 	
 	for(size_t i = 0; i < tmp.agents.size(); i++)

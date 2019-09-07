@@ -198,6 +198,7 @@ inline const double Node::getScore() const{
 constexpr double greedy_count              = 2;
 constexpr double occpancy_weight           = 2;
 constexpr double is_on_decided_weight      = 10;
+constexpr double is_my_pannel_weight       = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
@@ -213,6 +214,7 @@ constexpr uint_fast32_t search_count       = 8;
 static double greedy_count;
 static double occpancy_weight;
 static double is_on_decided_weight;
+static double is_my_pannel_weight;
 
 static uint_fast32_t max_mine_distance;
 static uint_fast32_t min_mine_distance;
