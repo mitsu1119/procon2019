@@ -133,7 +133,7 @@ constexpr double_t state_weight               = 40;
 constexpr double_t heuristic_weight           = 4;
 constexpr double_t value_weight               = 15;
 constexpr double_t is_on_decided_route_weight = 15;
-constexpr double_t is_on_mine_panel_weight    = 4;
+constexpr double_t is_on_mine_panel_weight    = 10;
 
 /*
 static double_t move_weight;
@@ -187,9 +187,23 @@ inline const double Node::getScore() const{
 	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * this->move_num * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight);
 }
 
+class SimpleMove {
+private:
 
-constexpr double greedy_count              = 2;
-constexpr double occpancy_weight           = 2;
+	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
+	
+public:
+
+	SimpleMove();
+	~SimpleMove();
+	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num, const std::vector<uint_fast32_t, uint_fast32_t>& decided_coord);
+	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr, const std::vector<uint_fast32_t, uint_fast32_t>& decided_coord);
+	
+};
+
+
+constexpr double greedy_count              = 10;
+constexpr double occpancy_weight           = 15;
 constexpr double is_on_decided_weight      = 10;
 constexpr double is_my_pannel_weight       = 10;
 
@@ -201,7 +215,7 @@ constexpr uint_fast32_t max_move_cost      = 35;
 constexpr uint_fast32_t min_value          = -5;
 constexpr uint_fast32_t min_move_cost      = 2;
 
-constexpr uint_fast32_t search_count       = 8;
+constexpr uint_fast32_t search_count       = 6;
 
 /*
 static double greedy_count;
@@ -219,7 +233,6 @@ static uint_fast32_t min_move_cost;
 static uint_fast32_t search_count;
 */
 
-
 class Astar : public AI{
 private:
 
@@ -227,7 +240,6 @@ private:
 	int_fast32_t average_score;
 
 	Random random;
-	Greedy greedy;
 	BeamSearch beam_search;
 	BreadthForceSearch breadth_force_search;
 
@@ -255,7 +267,8 @@ private:
 
 	//移動
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
-	Direction greedySingleMove(Field& field, const uint_fast32_t agent);
+	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
+	
 	
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
 
