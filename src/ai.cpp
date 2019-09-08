@@ -8,6 +8,16 @@ AI::AI(){
 AI::~AI(){
 }
 
+int_fast32_t AI::nextScore(Field field, const uint_fast32_t agent, const Direction direction) const{
+	field.agents.at(agent).move(direction);
+	field.applyNextAgents();
+	if(field.agents.at(agent).getAttr() == MINE_ATTR)
+		return field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
+	else
+		return field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
+	return false;
+}
+
 const bool AI::MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs){
 	int_fast32_t left_score  = lhs.second.calcScore(MINE_ATTR) - lhs.second.calcScore(ENEMY_ATTR);
 	int_fast32_t right_score = rhs.second.calcScore(MINE_ATTR) - rhs.second.calcScore(ENEMY_ATTR);	
@@ -50,7 +60,7 @@ void Random::move(Field *field, const uint_fast32_t attr){
 RE_CONSIDER:
 			if(count++ > 10)
 				break;
-			direction = (Direction)(this->random(DIRECTION_SIZE - 3));
+			direction = (Direction)(this->random(DIRECTION_SIZE - 2));
 			if(tmp.canMove(i, direction))
 				i.move(direction);
 			else
@@ -122,18 +132,7 @@ void Greedy::randomMove(Field& field, const uint_fast32_t agent, const uint_fast
 	}
 }
 
-int_fast32_t Greedy::nextScore(Field field, const uint_fast32_t agent, const Direction direction) const{
-	field.agents.at(agent).move(direction);
-	field.applyNextAgents();
-	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		return field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
-	else
-		return field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
-	return false;
-}
-
 void Greedy::move(Field *field, const uint_fast32_t attr){
-	std::vector<std::thread> threads;
 	Field tmp = static_cast<Field> (*field);
 
 	for(size_t i =0; i < tmp.agents.size(); i++)
@@ -165,7 +164,7 @@ Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t 
 	
 	std::vector<std::pair<Field, Field>> fields;
 	
-	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++) {
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++){
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);
@@ -313,10 +312,14 @@ void Astar::greedyMove(Field& field, const uint_fast32_t agent, const uint_fast3
 	if(move_num > greedy_count)
 		return;
 
-	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		this->greedy.move(&field, ENEMY_ATTR);
-	else
-		this->greedy.move(&field, MINE_ATTR);
+	Direction direction = STOP;
+	for(size_t i = 0; i < field.agents.size(); i++){
+		if(field.agents.at(i).getAttr() != field.agents.at(agent).getAttr()){
+				direction = this->greedySingleMove(field, i);
+				if(field.canMove(field.agents.at(i), direction))
+					field.agents.at(i).move(direction);
+		}
+	}
 	
 	/*
 	for(size_t i = agent + 1; i < field.agents.size(); i++)
@@ -325,6 +328,27 @@ void Astar::greedyMove(Field& field, const uint_fast32_t agent, const uint_fast3
 	*/
 }
 
+//---------------------------------------------------------------------------
+Direction Astar::greedySingleMove(Field& field, const uint_fast32_t agent){
+	Direction direction = STOP;
+	uint_fast32_t x, y;
+	int_fast32_t score = -INT_MAX, max_score = -INT_MAX;
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++){
+		if(field.canMove(field.agents.at(agent), i)){
+			x = field.agents.at(agent).getX();
+			y = field.agents.at(agent).getY();
+			score = field.at(x + this->vec_x.at(i), y + this->vec_y.at(i))->getValue();
+			if(field.at(x + this->vec_x.at(i), y + this->vec_y.at(i))->getAttr() == field.agents.at(agent).getAttr())
+				score -= 100;
+			if(score > max_score){
+				max_score = score;
+				direction = i;
+			}
+		}
+	}
+	return direction;
+}
+//---------------------------------------------------------------------------
 
 void Astar::decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route){
 	Direction direction;
@@ -389,7 +413,7 @@ void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
 const double Astar::goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
 	if(this->expectTarget(field, agent, goal))
 		return false;
-	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) * occpancy_weight - (this->isOnDecidedRoute(field, agent, goal) * is_on_decided_weight);
+	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) * occpancy_weight - (this->isOnDecidedRoute(field, agent, goal) * is_on_decided_weight) - (this->whosePanel(field, agent, goal) * is_my_pannel_weight);
 }
 
 const uint_fast32_t Astar::occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
@@ -419,9 +443,9 @@ const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const st
 	/*
 	if(this->isOnDecidedRoute(field, agent, coord))
 		return true;
-	*/
 	if(this->whosePanel(field, agent, coord) == MINE_ATTR)
 		return true;
+	*/
 	if(this->anotherAgentDistance(field, agent, coord))
 		return true;
 	if(this->anotherGoalDistance(field, agent, coord))
@@ -542,16 +566,18 @@ std::pair<int_fast32_t, std::vector<Node>> Astar::searchRoute(Field field, const
 			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
 				Field next_field = current_field;
 				next_field.agents.at(agent).move((Direction)i);
-				//this->greedyMove(next_field, agent, current->move_num);
+				
+				this->greedyMove(next_field, agent, current->move_num);
+				
 				this->decidedMove(next_field, agent,  next_field.decided_route);
-				next_field.applyNextAgents();
 				next =& node.at(next_field.agents.at(agent).getY() * field.getWidth() + next_field.agents.at(agent).getX());
 				
 				if(current->coord == next->coord){
 					next_field.agents.at(agent).move((Direction)i);
-					//this->greedyMove(next_field, agent, current->move_num + 1);
+					
+					this->greedyMove(next_field, agent, current->move_num + 1);
+					
 				  this->decidedMove(next_field, agent,  next_field.decided_route);
-					next_field.applyNextAgents();
 					next =& node.at(next_field.agents.at(agent).getY() * field.getWidth() + next_field.agents.at(agent).getX());
 
 					if(current->coord == next->coord)
@@ -578,7 +604,7 @@ std::pair<int_fast32_t, std::vector<Node>> Astar::searchRoute(Field field, const
 		open.erase(open.begin());
 	}
 
-	return std::make_pair(- INT_MAX, node);
+	return std::make_pair(-INT_MAX, node);
 }
 
 void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start){
@@ -653,6 +679,7 @@ void Astar::multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_
 }
 
 void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
+	/*
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	this->tentative_max_score = - INT_MAX;	
 	this->setSearchTarget(field, agent);
@@ -668,8 +695,8 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 	this->printRoute(this->tentative_route);
 
 	this->counter.at(agent) = 0;
+	*/
 
-	/*
 	std::vector<std::thread> threads;
 	std::chrono::system_clock::time_point  start, end;
 	double time;
@@ -692,10 +719,10 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 	
 	this->decided_route.at(agent) = this->tentative_route;
 	this->decided_goal.at(agent)  = this->tentative_goal;
+	
 	this->printRoute(this->tentative_route);
 
 	this->counter.at(agent) = 0;
-	*/
 }
 
 void 	Astar::search(Field& field, const uint_fast32_t attr){
@@ -773,7 +800,6 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 	if(field.getTurn() >= field.getMaxTurn() - beam_depth){
 		this->breadth_force_search.singleMove(field, agent);
 		//this->beam_search.singleMove(field, agent);
-		
 		this->decided_route.at(agent).clear();
 		return;
 	}
@@ -858,5 +884,6 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	for(size_t i = 0; i < tmp.agents.size(); i++)
 		if(tmp.agents.at(i).getAttr() == attr)
 			this->chooseAlgorithm(tmp, i);
+	
 	*field = tmp;
 }

@@ -25,6 +25,7 @@ public:
 	virtual void move(Field *field, const uint_fast32_t attr) = 0;
 
 	const Direction changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
+	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
 
 	static const bool MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
 	static const bool EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
@@ -59,10 +60,6 @@ class Greedy : public AI{
 private:
 
 	XorOshiro128p random;
-
-private:
-
-	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
 
 public:
 
@@ -194,6 +191,7 @@ inline const double Node::getScore() const{
 constexpr double greedy_count              = 2;
 constexpr double occpancy_weight           = 2;
 constexpr double is_on_decided_weight      = 10;
+constexpr double is_my_pannel_weight       = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
@@ -257,6 +255,8 @@ private:
 
 	//移動
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
+	Direction greedySingleMove(Field& field, const uint_fast32_t agent);
+	
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
 
 

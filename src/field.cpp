@@ -70,7 +70,6 @@ int_fast32_t Panel::getValue() const {
 }
 
 // ---------------------------------------- Field ---------------------------------------------
-
 Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(height),turn(0) {
 	double buf;
 	uint_fast32_t size;
