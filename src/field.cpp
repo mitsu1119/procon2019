@@ -108,42 +108,12 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 			a.move(STOP);
 		});
 
-		this->max_turn = 70;
+	this->max_turn = 70;
 
 }
 
 Field::Field() {
-	/*
-	double buf;
-	uint_fast32_t size;
-	*/
-
-	this->random = XorOshiro128p(time(NULL));
-
-  /*
-	buf = std::log2(this->width);
-	this->yShiftOffset = (uint_fast32_t)(buf + ((std::ceil(buf) == std::floor(buf)) ? 0 : 1));
-	size = this->height << this->yShiftOffset;
-
-	// マップ生成
-	this->field = std::vector<Panel>(size, Panel(0));
-	*/
-
-	this->init();
-
-	this->canmoveAgents = std::vector<bool>(this->agents.size(), true);
-
-	// エージェントの初期位置のパネルの属性を設定
-	for(auto &i: this->agents) {
-		setPanelAttr(i.getX(), i.getY(), i.getAttr());
-	}
-
-	//とりあえずSTOPにセット
-	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
-			a.move(STOP);
-		});
-
-		this->max_turn = 70;
+	//this->init();
 }
 
 uint_fast32_t Field::xyIndex(uint_fast32_t x, uint_fast32_t y) {
@@ -630,25 +600,33 @@ const bool Field::checkEnd() const{
 
 void Field::judgeWinner(){
 	printf("\n---------------- finish ----------------\n");
-
-	printf("winner: ");
-	if(this->calcScore(MINE_ATTR) > this->calcScore(ENEMY_ATTR))
-		printf("MINE\n");
+	if(this->calcScore(MINE_ATTR) > this->calcScore(ENEMY_ATTR)){
+		printf("win  MINE\n");
+		printf("lose ENEMY\n");
+	}
 	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR))
 		printf("DRAW\n");
-	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR))
-		printf("ENEMY\n");
+	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR)){
+		printf("win  ENEMY\n");
+		printf("lose MINE\n");
+	}
 }
 
 void Field::init(){
+	//ターン
+	this->turn = 0;
+	
+	//シード値設定
+	this->random = XorOshiro128p(time(NULL));
+	
 	// agetn情報
-	int agent_data[17][2];
-	int agentid, x, y;
-	int agent_num = 0;
+	int_fast32_t agent_data[17][2];
+	int_fast32_t agentid, x, y;
+	int_fast32_t agent_num = 0;
 
-	std::vector<int> map;
-	std::vector<int> tile;
-	double buffer;
+	std::vector<int_fast32_t> map;
+	std::vector<int_fast32_t> tile;
+	double_t buffer;
 	value maps;
 	{
 		std::fstream stream("./../../public_field/E-1.json");
@@ -658,67 +636,62 @@ void Field::init(){
 		stream.close();
 	}
 
-	//int height = (int)maps.get<object>()["height"].get<double>();
-	//int width  = (int)maps.get<object>()["width"].get<double>();
-	this->height = (int)maps.get<object>()["height"].get<double>();
-	this->width  = (int)maps.get<object>()["width"].get<double>();
+	//縦横の大きさ
+	this->height = (int_fast32_t)maps.get<object>()["height"].get<double_t>();
+	this->width  = (int_fast32_t)maps.get<object>()["width"].get<double_t>();
 
 
-	//------------------------------------------------------------------
-	double buff;
-	uint_fast32_t sizee;
-
-	buff = std::log2(this->width);
-	this->yShiftOffset = (uint_fast32_t)(buff + ((std::ceil(buff) == std::floor(buff)) ? 0 : 1));
-	sizee = this->height << this->yShiftOffset;
+	uint_fast32_t field_size;
+  buffer = std::log2(this->width);
+	this->yShiftOffset = (uint_fast32_t)(buffer + ((std::ceil(buffer) == std::floor(buffer)) ? 0 : 1));
+	field_size = this->height << this->yShiftOffset;
 
 	// マップ生成
-	this->field = std::vector<Panel>(sizee, Panel(0));
-  //------------------------------------------------------------------
+	this->field = std::vector<Panel>(field_size, Panel(0));
 
 
 	// 現在ターン
-	//int turn   = (int)maps.get<object>()["turn"].get<double>();
+	//this->turn = (int)maps.get<object>()["turn"].get<double>();
 
 
 	value::array points = maps.get<object>()["points"].get<value::array>();
-	for(int i = 0; i < height; i++){
+	for(int_fast32_t i = 0; i < height; i++){
 		value::array pt = points[i].get<value::array>();
 		for(value item : pt){
-			buffer = item.get<double>();
-			map.push_back((int)buffer);
+			buffer = item.get<double_t>();
+			map.push_back((int_fast32_t)buffer);
 		}
 	}
 
 	// agent array
-	value::array agents = maps.get<object>()["teams"].get<value::array>(); // all agent
+	value::array agents   = maps.get<object>()["teams"].get<value::array>(); // all agent
 	value::array myagents = agents[0].get<object>()["agents"].get<value::array>(); // my
 	value::array enagents = agents[1].get<object>()["agents"].get<value::array>(); // enemy
 
 
 	// teamID
-	int myID = (int)agents[0].get<object>()["teamID"].get<double>();
-	int enID = (int)agents[1].get<object>()["teamID"].get<double>();
+	int_fast32_t myID = (int)agents[0].get<object>()["teamID"].get<double_t>();
+	int_fast32_t enID = (int)agents[1].get<object>()["teamID"].get<double_t>();
 
 
 	// Debug---------------
 	std::cout << "\n\n";
-	std::cout << "[*] turn  :" << turn   << std::endl; // print turn
-	std::cout << "[*] height:" << height << std::endl; // print height
-	std::cout << "[*] width :" << width  << std::endl; // print width
-	std::cout << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
-	std::cout << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
+	std::cout << "[*] turn  :"   << turn   << std::endl; // print turn
+	std::cout << "[*] height:"   << height << std::endl; // print height
+	std::cout << "[*] width :"   << width  << std::endl; // print width
+	std::cout << "[*] myTeamID:" << myID   << std::endl; // print myTeamID
+	std::cout << "[*] enTeamID:" << enID   << std::endl; // print enemyTeamID
 	std::cout << std::endl;
 
 	// print myagent array
 	std::cout << "[*] myagent_array:" << std::endl;
 	for(value item : myagents){
-		agentid = (int)item.get<object>()["agentID"].get<double>();
-		x       = (int)item.get<object>()["x"].get<double>();
-		y       = (int)item.get<object>()["y"].get<double>();
-		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
-		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
-		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		agentid = (int_fast32_t)item.get<object>()["agentID"].get<double_t>();
+		x       = (int_fast32_t)item.get<object>()["x"].get<double_t>();
+		y       = (int_fast32_t)item.get<object>()["y"].get<double_t>();
+		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double_t>();
+		std::cout << "  x:" << (int)item.get<object>()["x"].get<double_t>();
+		std::cout << "  y:" << (int)item.get<object>()["y"].get<double_t>() << std::endl;
 		agent_data[agentid][0] = x;
 		agent_data[agentid][1] = y;
 		// agent数を求める
@@ -729,32 +702,32 @@ void Field::init(){
 	// print enagent array
 	std::cout << "[*] enagent_array:" << std::endl;
 	for(value item : enagents){
-		agentid = (int)item.get<object>()["agentID"].get<double>();
-		x       = (int)item.get<object>()["x"].get<double>();
-		y       = (int)item.get<object>()["y"].get<double>();
-		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
-		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
-		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		agentid = (int_fast32_t)item.get<object>()["agentID"].get<double>();
+		x       = (int_fast32_t)item.get<object>()["x"].get<double>();
+		y       = (int_fast32_t)item.get<object>()["y"].get<double>();
+		std::cout << "agentID:" << (int_fast32_t)item.get<object>()["agentID"].get<double_t>();
+		std::cout << "  x:"     << (int_fast32_t)item.get<object>()["x"].get<double_t>();
+		std::cout << "  y:"     << (int_fast32_t)item.get<object>()["y"].get<double_t>() << std::endl;
 		agent_data[agentid][0] = x;
 		agent_data[agentid][1] = y;
 	}
 
 
 	//genRandMap(仮)
-	std::vector<int> field_rand;
-  std::vector<int> buf;
-	int map_num = 0; //map用添字
-	int buf_height, buf_width;
-  int field_rand_sum = -1; // <- Debug
+	std::vector<int_fast32_t> field_rand;
+  std::vector<int_fast32_t> buf;
+	int_fast32_t map_num = 0; //map用添字
+	int_fast32_t buf_height, buf_width;
+  int_fast32_t field_rand_sum = -1; // <- Debug
 
-	buf_height=(this->height/2)+(this->height%2);
-	buf_width=(this->width/2)+(this->width%2);
+	buf_height = (this->height/2)+(this->height%2);
+	buf_width  = (this->width/2)+(this->width%2);
 
   while(field_rand_sum < 0){
     field_rand_sum = 0; // <- Debug
-    for(int i=0; i < height; i++){
-      for(int j=0; j < width; j++){
-        buf.push_back((int)map[map_num]);
+    for(size_t i=0; i < height; i++){
+      for(size_t j=0; j < width; j++){
+        buf.push_back((int_fast32_t)map[map_num]);
 
 				map_num += 1;
       }
@@ -767,28 +740,36 @@ void Field::init(){
   // showing field_sum pt ---------------------------------
   std::cout << "[*]field_sum:" << field_rand_sum << std::endl;
 
-	int val=0;
-
-	for(int i=0;i<this->height;i++){
-		for(int j=0;j<this->width;j++){
+	int_fast32_t val = 0;
+	for(size_t i = 0; i < this->height; i++){
+		for(size_t j = 0; j < this->width; j++){
 			this->setPanelScore(j, i, field_rand.at(val));
 			val++;
 		}
 	}
 
 	std::cout << "agents:" << agent_num << std::endl;
-	// Debug -----------------------------------------
 	agent_num *= 2;
-	for(int s=1; s <= agent_num; s++){
-		if(s <= agent_num/2){
-			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, MINE_ATTR, s);
+	for(size_t i = 1; i <= agent_num; i++){
+		if(i <= agent_num / 2){
+			this->agents.emplace_back(agent_data[i][0]-1, agent_data[i][1]-1, MINE_ATTR,  i);
 		}
 		else{
-			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, ENEMY_ATTR, s);
+			this->agents.emplace_back(agent_data[i][0]-1, agent_data[i][1]-1, ENEMY_ATTR, i);
 		}
 	}
 
-	//this->agents.emplace_back(dx,dy,bool,id)
+	this->canmoveAgents = std::vector<bool>(this->agents.size(), true);
+	
+	// エージェントの初期位置のパネルの属性を設定
+	for(auto &i: this->agents) {
+		setPanelAttr(i.getX(), i.getY(), i.getAttr());
+	}
 
+	//とりあえずSTOPにセット
+	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
+			a.move(STOP);
+		});
 
+	this->max_turn = 70;
 }

@@ -3,14 +3,16 @@
 #include "useful.hpp"
 #include "disp.hpp"
 
-Field field(12, 16);
-//Field field;
+//Field field(12, 16);
+Field field;
 
 Greedy greedy;
 BeamSearch beam_search;
 Astar astar;
 
 int main(int argc, char *argv[]) {
+
+	field.init();
 
 	DisplayWrapper* framework = new Display();
 
