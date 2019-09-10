@@ -4,25 +4,6 @@
 
 using namespace picojson;
 
-// ---------------------------------------- MoveLog ----------------------------------------
-MoveLog::MoveLog(){
-}
-
-MoveLog::~MoveLog(){
-}
-
-void MoveLog::init(const Field& field){
-
-}
-
-void MoveLog::set(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord){
-
-}
-
-bool MoveLog::repetitionOfMoves(const uint_fast32_t agent, const Direction direction) const{
-
-}
-
 // ---------------------------------------- Panel ----------------------------------------
 
 Panel::Panel():value(0) {
@@ -606,7 +587,7 @@ void Field::judgeWinner(){
 	}
 	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR))
 		printf("DRAW\n");
-	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR)){
+	if(this->calcScore(MINE_ATTR) < this->calcScore(ENEMY_ATTR)){
 		printf("win  ENEMY\n");
 		printf("lose MINE\n");
 	}

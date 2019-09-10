@@ -3,13 +3,14 @@
 #include "useful.hpp"
 #include "disp.hpp"
 
-Field field(12, 16);
-//Field field;
+//Field field(12, 16);
+Field field;
 
 Greedy greedy;
 BeamSearch beam_search;
 Astar astar;
 
+/*
 int main(int argc, char *argv[]) {
 
 	//field.init();
@@ -24,14 +25,14 @@ int main(int argc, char *argv[]) {
 	return 0;
 	
 }
+*/
 
-/*
 int main(int argc, char *argv[]){
-	
+	field.init();
 	astar.init(&field);
 	while(true){
-		//astar.move(&field, MINE_ATTR);
-		greedy.move(&field, MINE_ATTR);
+		astar.move(&field, MINE_ATTR);
+		//greedy.move(&field, MINE_ATTR);
 		greedy.move(&field, ENEMY_ATTR);
 		field.applyNextAgents();
 		field.print();
@@ -43,7 +44,6 @@ int main(int argc, char *argv[]){
 	}
 	return 0;
 }
-*/
 
 
 /*

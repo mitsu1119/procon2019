@@ -26,24 +26,6 @@ class Field;
 class Agent;
 class Display;
 class DisplayWrapper;
-
-class MoveLog {
-private:
-
-	std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>> coord_log;
-	std::vector<std::vector<Direction>> direction_log;
-
-public:
-
-	MoveLog();
-	~MoveLog();
-	void init(const Field& field);
-	void set(const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
-	void revert(Field& field);
-	bool repetitionOfMoves(const uint_fast32_t agent, const Direction direction) const;
-
-};
-
 /*
  * Panel 一つ一つの情報を管理するクラス
  */

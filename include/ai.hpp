@@ -187,7 +187,7 @@ inline const double Node::getScore() const{
 	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * this->move_num * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight);
 }
 
-class SimpleMove {
+class SimpleMove : public AI{
 private:
 
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
@@ -196,31 +196,36 @@ public:
 
 	SimpleMove();
 	~SimpleMove();
-	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num, const std::vector<uint_fast32_t, uint_fast32_t>& decided_coord);
-	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr, const std::vector<uint_fast32_t, uint_fast32_t>& decided_coord);
+	
+	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
+	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
+
+	void init(const Field* field) override;
+	void init(const Field& field) override;
+	void move(Field* field, const uint_fast32_t attr) override;
 	
 };
 
 
-constexpr double greedy_count              = 10;
-constexpr double occpancy_weight           = 15;
-constexpr double is_on_decided_weight      = 10;
-constexpr double is_my_pannel_weight       = 10;
+constexpr double_t greedy_count              = 10;
+constexpr double_t occpancy_weight           = 15;
+constexpr double_t is_on_decided_weight      = 10;
+constexpr double_t is_my_pannel_weight       = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
 constexpr uint_fast32_t min_agent_distance = 2;
 constexpr uint_fast32_t min_goal_distance  = 2;
-constexpr uint_fast32_t max_move_cost      = 35;
+constexpr uint_fast32_t max_move           = 35;
 constexpr uint_fast32_t min_value          = -5;
 constexpr uint_fast32_t min_move_cost      = 2;
 
 constexpr uint_fast32_t search_count       = 6;
 
 /*
-static double greedy_count;
-static double occpancy_weight;
-static double is_on_decided_weight;
+static double_t greedy_count;
+static double_t occpancy_weight;
+static double_t is_on_decided_weight;
 
 static uint_fast32_t max_mine_distance;
 static uint_fast32_t min_mine_distance;
@@ -234,6 +239,9 @@ static uint_fast32_t search_count;
 */
 
 class Astar : public AI{
+
+	friend SimpleMove;
+	
 private:
 
 	std::mutex mtx;
@@ -242,6 +250,7 @@ private:
 	Random random;
 	BeamSearch beam_search;
 	BreadthForceSearch breadth_force_search;
+	SimpleMove simple_move;
 
 private:
 
@@ -261,15 +270,13 @@ private:
 	
 	//カウンター
 	std::vector<uint_fast32_t> counter;
+
 	
 private:
 
 
 	//移動
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
-	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
-	
-	
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
 
 
@@ -294,28 +301,29 @@ private:
 	const uint_fast32_t whosePanel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
 
-	//ヒューリスティックコスト（推定コスト）計算
+	//評価関数
 	const double heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coord, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
+	
 
 
 	//探索関連
 	void initNode(const Field& field, std::vector<Node>& node);
 	static const bool comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs);
 	
-  std::pair<int_fast32_t, std::vector<Node>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);	
+  std::pair<int_fast32_t, std::vector<Node>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, const uint_fast32_t max_move_cost);	
 	void setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start);
 	void setNextNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next);
 
 
 	//枝切り用
-	const bool branchingCondition(Node* current) const;
+	const bool branchingCondition(Node* current, const uint_fast32_t max_move_cost) const;
 	const bool endCondition(Node* current) const;
 
 
 	//マルチスレッド用
-	void multiThread(Field& field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
+	void multiThread(Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
 
-
+	
 	void searchBestRoute(Field& field, const uint_fast32_t agent);
 	void search(Field& field, const uint_fast32_t attr);
 
@@ -345,3 +353,5 @@ public:
 	void move(Field *field, const uint_fast32_t attr) override;
 
 };
+
+
