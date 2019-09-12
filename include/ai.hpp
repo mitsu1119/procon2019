@@ -309,7 +309,7 @@ private:
 	void setAverageScore(const Field& field);
 	void setSearchTarget(Field& field, const uint_fast32_t agent);
 	const double goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
-
+	static const bool _comp(std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& lhs ,std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& rhs);
 
 	//ゴール選定用の評価関数関連
 	const uint_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
