@@ -451,24 +451,27 @@ void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
 	}
 }
 
+const bool Astar::_comp(std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& lhs ,std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& rhs){
+	bool result = lhs.first != rhs.first;
+	return (result ? lhs.first > rhs.first : lhs.first > rhs.first);
+}
+
 const double Astar::goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal){
-	bool is_my_pannel = false;
-	bool is_angle     = false;
+	bool is_my_pannel     = false;
+	bool is_angle         = false;
+	bool is_inside_closed = false;
 	
 	if(this->expectTarget(field, agent, goal))
 		return false;
 	
 	if(this->whosePanel(field, agent, goal) == MINE_ATTR)
-		is_my_pannel = true;
+		is_my_pannel     = true;
 	if(this->isSideOrAngle(field, goal))
-		is_angle     = true;
+		is_angle         = true;
+	if(field.is_inside_closed(goal))
+		is_inside_closed = true;
 	
-	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) * occpancy_weight - (this->isOnDecidedRoute(field, agent, goal) * is_on_decided_weight) - (is_my_pannel * is_my_pannel_weight) - (is_angle * is_angle_weight);
-}
-
-const bool Astar::_comp(std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& lhs ,std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& rhs){
-	bool result = lhs.first != rhs.first;
-	return (result ? lhs.first > rhs.first : lhs.first > rhs.first);
+	return field.at(goal.first, goal.second)->getValue() + this->occupancyRate(field, agent, goal) * occpancy_weight - (this->isOnDecidedRoute(field, agent, goal) * is_on_decided_weight) - (is_my_pannel * is_my_pannel_weight) - (is_angle * is_angle_weight) - (is_inside_closed * is_inside_closed_weight);
 }
 
 const uint_fast32_t Astar::occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{

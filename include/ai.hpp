@@ -224,11 +224,15 @@ public:
 };
 
 
-constexpr double_t greedy_count            = 10;
+constexpr uint_fast32_t greedy_count       = 10;
+constexpr uint_fast32_t search_count       = 12;
+constexpr uint_fast32_t astar_depth        = 10;
+
 constexpr double_t occpancy_weight         = 15;
 constexpr double_t is_on_decided_weight    = 10;
 constexpr double_t is_my_pannel_weight     = 10;
 constexpr double_t is_angle_weight         = 10;
+constexpr double_t is_inside_closed_weight = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
@@ -238,11 +242,8 @@ constexpr uint_fast32_t max_move           = 35;
 constexpr uint_fast32_t min_move_cost      = 2;
 constexpr uint_fast32_t min_value          = 5;
 
-constexpr uint_fast32_t search_count       = 12;
-constexpr uint_fast32_t astar_depth        = 10;
-
 //milliseconds
-//constexpr uint_fast32_t search_time        = 5000;
+constexpr uint_fast32_t search_time        = 5000;
 
 
 /*
@@ -308,8 +309,8 @@ private:
 	//ゴール候補の選定
 	void setAverageScore(const Field& field);
 	void setSearchTarget(Field& field, const uint_fast32_t agent);
-	const double goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 	static const bool _comp(std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& lhs ,std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& rhs);
+	const double goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 
 	//ゴール選定用の評価関数関連
 	const uint_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;

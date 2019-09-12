@@ -752,3 +752,56 @@ void Field::init(){
 
 	this->max_turn = 70;
 }
+
+bool Field::is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord){
+	int_fast32_t totalscore = 0, score, x, y;
+	bool check, flag;
+	
+	std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> pureTerritory;
+	pureTerritory = makePureTerritory(makePureTreeMine());
+	
+	for(const auto &[key, vec]: pureTerritory) {
+		check = true;
+		score = 0;
+		for(auto pn: vec) {
+			if(!checkLocalArea(indexX(pn), indexY(pn), MINE_ATTR)) {
+				check = false;
+				break;
+			}
+			
+			x = this->indexX(pn);
+			y = this->indexY(pn);
+			if(x == coord.first && y == coord.second)
+				flag = true;
+			
+		}
+		if(check == true || flag == true)
+			return true;
+	}
+
+	return false;
+}
+
+/*
+int_fast32_t Field::calcMineScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree) {
+	int_fast32_t totalscore = 0, score;
+	bool check, test;
+
+	for(const auto &[key, vec]: pureTree) {
+		check = true;
+		score = 0;
+		for(auto pn: vec) {
+			test = checkLocalArea(indexX(pn), indexY(pn), MINE_ATTR);
+			if(!checkLocalArea(indexX(pn), indexY(pn), MINE_ATTR)) {
+				check = false;
+				break;
+			}
+			score += std::abs(field.at(pn).getValue());
+		}
+		if(check == true) {
+			totalscore += score;
+		}
+	}
+	return totalscore;
+}
+*/

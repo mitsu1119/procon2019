@@ -184,4 +184,8 @@ public:
 
   //fieldの初期化
 	void init();
+
+	
+	bool is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord);
+	
 };
