@@ -127,6 +127,7 @@ public:
 	void move(Field* field, const uint_fast32_t attr) override;
 
 };
+
 /*
 constexpr double_t move_weight                = 3;
 constexpr double_t state_weight               = 40;
@@ -223,18 +224,19 @@ public:
 };
 
 
-constexpr double_t greedy_count              = 10;
-constexpr double_t occpancy_weight           = 15;
-constexpr double_t is_on_decided_weight      = 10;
-constexpr double_t is_my_pannel_weight       = 10;
+constexpr double_t greedy_count            = 10;
+constexpr double_t occpancy_weight         = 15;
+constexpr double_t is_on_decided_weight    = 10;
+constexpr double_t is_my_pannel_weight     = 10;
+constexpr double_t is_angle_weight         = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
 constexpr uint_fast32_t min_agent_distance = 2;
 constexpr uint_fast32_t min_goal_distance  = 2;
 constexpr uint_fast32_t max_move           = 35;
-constexpr uint_fast32_t min_value          = -5;
 constexpr uint_fast32_t min_move_cost      = 2;
+constexpr uint_fast32_t min_value          = 5;
 
 constexpr uint_fast32_t search_count       = 12;
 constexpr uint_fast32_t astar_depth        = 10;
@@ -281,6 +283,7 @@ private:
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> decided_coord;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
+	std::vector<int_fast32_t> current_score;
 
 
 	//マルチスレッド用
@@ -294,7 +297,6 @@ private:
 
 	
 private:
-
 
 	//移動
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
@@ -324,7 +326,6 @@ private:
 
 	//評価関数
 	const double heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coord, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
-	
 	const bool isAdjacentAgent(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
 	const bool isAdjacentMineAgent(Field& field, const uint_fast32_t agent);
 	const bool isAdjacentEnemyAgent(Field& field, const uint_fast32_t agent);

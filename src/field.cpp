@@ -94,7 +94,6 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 }
 
 Field::Field() {
-	//this->init();
 }
 
 uint_fast32_t Field::xyIndex(uint_fast32_t x, uint_fast32_t y) {
@@ -125,7 +124,6 @@ void Field::setPanelAttr(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr) {
 void Field::genRandMap(){
 	static const int m = 30;
   static const double s = 7.0;
-  //static const int n = 100; //Debug
   static const double slide = 25;
   static const double pi = 3.1415926535;
 
@@ -576,7 +574,7 @@ const uint_fast32_t Field::getMaxTurn() const{
 }
 
 const bool Field::checkEnd() const{
-	return (this->turn == this->max_turn);
+	return (this->turn == (uint_fast32_t)this->max_turn);
 }
 
 void Field::judgeWinner(){
