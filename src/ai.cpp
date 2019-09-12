@@ -444,7 +444,8 @@ void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
 	
 	std::sort(condidate.rbegin(), condidate.rend());
 	
-	for(size_t i = 0; i < std::thread::hardware_concurrency() * 2; i++){
+	//for(size_t i = 0; i < std::thread::hardware_concurrency() * 2; i++){
+	for(size_t i = 0; i < astar_depth; i++){
 		if(i >= condidate.size())
 			break;
 		this->search_target.emplace_back(condidate.at(i).second);
@@ -562,6 +563,59 @@ const double Astar::heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coo
 	return distance;
 }
 
+const bool Astar::isAdjacentAgent(Field& field, const uint_fast32_t agent, const uint_fast32_t attr){
+	if(attr == MINE_ATTR)
+		return this->isAdjacentMineAgent(field, agent);
+	if(attr == ENEMY_ATTR)
+		return this->isAdjacentEnemyAgent(field, agent);
+		
+	return false;
+}
+
+const bool Astar::isAdjacentMineAgent(Field& field, const uint_fast32_t agent){
+	const uint_fast32_t x    = field.agents.at(agent).getX();
+	const uint_fast32_t y    = field.agents.at(agent).getY();
+	const uint_fast32_t attr = field.agents.at(agent).getAttr();
+	bool flag = false;
+
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++){
+		std::for_each(field.agents.begin(), field.agents.end(), [&, this](auto& agent){
+				if(attr == agent.getAttr()){
+					if(x + this->vec_x.at(i) == agent.getX() && y + this->vec_y.at(i) == agent.getY()){
+						flag = true;
+						return;
+					}
+				}
+			});
+	}
+	
+	if(flag)
+		return true;
+	return false;
+}
+
+const bool Astar::isAdjacentEnemyAgent(Field& field, const uint_fast32_t agent){
+	const uint_fast32_t x    = field.agents.at(agent).getX();
+	const uint_fast32_t y    = field.agents.at(agent).getY();
+	const uint_fast32_t attr = field.agents.at(agent).getAttr();
+	bool flag = false;
+
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++){
+		std::for_each(field.agents.begin(), field.agents.end(), [&, this](auto& agent){
+				if(attr != agent.getAttr()){
+					if(x + this->vec_x.at(i) == agent.getX() && y + this->vec_y.at(i) == agent.getY()){
+						flag = true;
+						return;
+					}
+				}
+			});
+	}
+	
+	if(flag)
+		return true;
+	return false;
+}
+
 void Astar::initNode(const Field& field, std::vector<Node>& node){
 	node.clear();
 	node.resize(field.getWidth() * field.getHeight());
@@ -662,6 +716,11 @@ void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pai
 	start->heuristic           = this->heuristic(start->coord, goal);
 	start->is_on_decided_route = 0;
 	start->is_on_mine_panel    = 0;
+
+	
+	start->is_adjacent_agent   = 0;
+
+	
 	start->move_num            = 0;
 	
 	if(field.agents.at(agent).getAttr() != field.at(start->coord.first, start->coord.second)->getAttr())
@@ -680,6 +739,11 @@ void Astar::setNextNode(Field& field, const uint_fast32_t agent, const std::pair
 	
 	next->heuristic            = this->heuristic(next->coord, goal);
 	next->is_on_decided_route  = current->is_on_decided_route + this->isOnDecidedRoute(field, agent, next->coord);
+
+
+	next->is_adjacent_agent    = current->is_adjacent_agent + this->isAdjacentAgent(field, agent, MINE_ATTR);
+	
+	
 	next->move_num             = current->move_num + 1;
 	next->parent               = current;
 	
@@ -687,11 +751,11 @@ void Astar::setNextNode(Field& field, const uint_fast32_t agent, const std::pair
 		next->is_on_mine_panel   = current->is_on_mine_panel + 1;
 	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(next->coord.first, next->coord.second)->isEnemyPanel())
 		next->is_on_mine_panel   = current->is_on_mine_panel + 1;
-	
+
 	if(field.agents.at(agent).getAttr() != field.at(next->coord.first, next->coord.second)->getAttr())
-		next->value = field.at(next->coord.first, next->coord.second)->getValue();
+		next->value = field.at(next->coord.first, next->coord.second)->getValue() + current->value;
 	else
-		next->value = -1;
+		next->value = current->value;
 }
 
 const bool Astar::branchingCondition(Node* current , const uint_fast32_t max_move_cost) const{
@@ -725,7 +789,8 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	std::chrono::system_clock::time_point  start, end;
 	double time;
-	
+
+	this->tentative_route.clear();
 	this->tentative_max_score = - INT_MAX;	
 	this->setSearchTarget(field, agent);
 
@@ -863,7 +928,13 @@ const void Astar::printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>
 void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 	if(field.getTurn() >= field.getMaxTurn() - beam_depth){
 		this->breadth_force_search.singleMove(field, agent);
-		//this->beam_search.singleMove(field, agent);
+		this->decided_route.at(agent).clear();
+		return;
+	}
+
+	//敵Agentが隣接してたら、BeamSearchを使う
+	if(this->isAdjacentAgent(field, agent, ENEMY_ATTR)){
+		this->beam_search.singleMove(field, agent);
 		this->decided_route.at(agent).clear();
 		return;
 	}
@@ -880,7 +951,6 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 		this->searchBestRoute(field, agent);
 
 	if(this->decided_route.at(agent).empty()){
-		//this->greedy.singleMove(field, agent);
 		this->beam_search.singleMove(field, agent);
 		return;
 	}
@@ -888,15 +958,11 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	if(this->decided_route.at(agent).at(0).first == agentX && this->decided_route.at(agent).at(0).second == agentY)
 		this->decided_route.at(agent).erase(this->decided_route.at(agent).begin());
 
-	//--------------------------------------------------------------------------------------------------------------------------
-	
-	
 	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	if(result != this->next_coord.end())
 		this->searchBestRoute(field, agent);
 	
 	if(this->decided_route.at(agent).empty()){
-		//this->greedy.singleMove(field, agent);
 		this->beam_search.singleMove(field, agent);
 		return;
 	}
