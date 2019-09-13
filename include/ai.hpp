@@ -21,12 +21,10 @@ public:
 
 	virtual	void init(const Field* field) = 0;
 	virtual	void init(const Field& field) = 0;
-
 	virtual void move(Field *field, const uint_fast32_t attr) = 0;
 
 	const Direction changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const;
 	int_fast32_t nextScore(Field field, const uint_fast32_t agent, const Direction direction) const;
-
 	static const bool MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
 	static const bool EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
 
@@ -122,7 +120,6 @@ public:
 	void init(const Field* field) override;
 	void init(const Field& field) override;
 
-
 	void singleMove(Field& field, const uint_fast32_t agent);
 	void move(Field* field, const uint_fast32_t attr) override;
 
@@ -181,12 +178,8 @@ public:
   uint_fast32_t is_on_decided_route;
 	//自陣を何回移動したか
 	uint_fast32_t is_on_mine_panel;
-
-	
 	//Agent同士が隣接しているかどうか
 	uint_fast32_t is_adjacent_agent;
-
-	
 	//何回移動したか
 	uint_fast32_t move_num;
   //親のノード
@@ -200,7 +193,7 @@ public:
 };
 
 inline const double Node::getScore() const{
-	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * this->move_num * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->is_adjacent_agent * is_adjacent_agent_weight);
+	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->is_adjacent_agent * is_adjacent_agent_weight);
 }
 
 
@@ -243,7 +236,8 @@ constexpr uint_fast32_t min_move_cost      = 2;
 constexpr uint_fast32_t min_value          = 5;
 
 //milliseconds
-constexpr uint_fast32_t search_time        = 5000;
+constexpr uint_fast32_t search_time        = 20000;
+constexpr uint_fast32_t grace_time         = 3000;
 
 
 /*
@@ -297,6 +291,11 @@ private:
 	std::vector<uint_fast32_t> counter;
 
 	
+	//時間管理
+	std::chrono::system_clock::time_point clock;
+	bool is_time_over;
+
+	
 private:
 
 	//移動
@@ -346,7 +345,11 @@ private:
 	const bool branchingCondition(Node* current, const uint_fast32_t max_move_cost) const;
 	const bool endCondition(Node* current) const;
 
+	
+	//時間管理
+	const bool isTimeOver() const;
 
+	
 	//マルチスレッド用
 	void multiThread(Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
 

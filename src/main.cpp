@@ -11,11 +11,10 @@ BeamSearch beam_search;
 Astar astar;
 
 int main(int argc, char *argv[]) {
-
+	
 	field.init();
 
 	DisplayWrapper* framework = new Display();
-
 	framework->setField(&field);
 	framework->setInstance(framework);
 	framework->start(argc, argv);
@@ -38,13 +37,12 @@ int main(int argc, char *argv[]){
 		if(field.checkEnd()){
 			field.judgeWinner();
 			//std::this_thread::sleep_for(std::chrono::minutes(1));
-			std::exit(0);
+			break;
 		}
 	}
 	return 0;
 }
 */
-
 
 /*
 static double_t move_weight;
@@ -110,7 +108,7 @@ int main(int argc, double_t argv[]){
 		field.print();
 		if(field.checkEnd()){
 			field.judgeWinner();
-			std::exit(0);
+			break;
 		}
 	}
 	return 0;
