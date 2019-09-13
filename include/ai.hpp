@@ -311,6 +311,7 @@ private:
 	static const bool _comp(std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& lhs ,std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& rhs);
 	const double goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 
+	
 	//ゴール選定用の評価関数関連
 	const uint_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord);
@@ -326,15 +327,24 @@ private:
 
 	//評価関数
 	const double heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coord, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
+	
 	const bool isAdjacentAgent(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
 	const bool isAdjacentMineAgent(Field& field, const uint_fast32_t agent);
 	const bool isAdjacentEnemyAgent(Field& field, const uint_fast32_t agent);
-
+	
+	const double averageDistanceAgent(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
+	const double averageDistanceMineAgent(Field& field, const uint_fast32_t agent);
+	const double averageDistanceEnemyAgent(Field& field, const uint_fast32_t agent);
+	
+	const uint_fast32_t countWithinRangeAgent(Field& field, const uint_fast32_t agent, const double distance, const uint_fast32_t attr);
+	const uint_fast32_t countWithinRangeMineAgent(Field& field, const uint_fast32_t agent, const double distance);
+	const uint_fast32_t countWithinRangeEnemyAgent(Field& field, const uint_fast32_t agent, const double distance);
 
 
 	//探索関連
 	void initNode(const Field& field, std::vector<Node>& node);
 	static const bool comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs);
+
 	
   std::pair<int_fast32_t, std::vector<Node>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, const uint_fast32_t max_move_cost);	
 	void setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start);
@@ -353,11 +363,10 @@ private:
 	//マルチスレッド用
 	void multiThread(Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
 
-	
+
+	//最適ルート検索
 	void searchBestRoute(Field& field, const uint_fast32_t agent);
 	void search(Field& field, const uint_fast32_t attr);
-
-
 	const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> makeRoute(Field& field, std::vector<Node>& node, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
 	void setDecidedCoord(const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route);
 
