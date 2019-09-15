@@ -28,7 +28,6 @@ public:
 	static const bool MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
 	static const bool EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
 
-
 };
 
 inline const Direction AI::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
@@ -149,8 +148,6 @@ static double_t is_on_mine_panel_weight;
 */
 
 class Node{
-private:
-
 public:
 
 	enum Status{
@@ -159,8 +156,6 @@ public:
 		CLOSED
 	};
 
-	Node();
-	~Node();
 	//ステータス
 	Status status;
 	//移動コスト
@@ -188,7 +183,10 @@ public:
 	//座標
 	std::pair<uint_fast32_t, uint_fast32_t> coord;
 
-	//スコア所得
+public:
+
+	Node();
+	~Node();
 	const double getScore() const;
 
 };
@@ -196,7 +194,6 @@ public:
 inline const double Node::getScore() const{
 	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->is_adjacent_agent * is_adjacent_agent_weight);
 }
-
 
 class SimpleMove : public AI{
 private:
@@ -226,6 +223,7 @@ constexpr double_t occpancy_weight         = 15;
 constexpr double_t is_on_decided_weight    = 10;
 constexpr double_t is_my_pannel_weight     = 10;
 constexpr double_t is_angle_weight         = 10;
+constexpr double_t is_side_weight          = 10;
 constexpr double_t is_inside_closed_weight = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
@@ -256,15 +254,16 @@ static uint_fast32_t min_move_cost;
 static uint_fast32_t search_count;
 */
 
+#define ANGLE_COORD 1
+#define SIDE_COORD  2
+
 class Astar : public AI{
-
-	friend SimpleMove;
-	
 private:
-
-	std::mutex mtx;
+	
+	friend SimpleMove;
 	int_fast32_t average_score;
 
+	
 	Random random;
 	BeamSearch beam_search;
 	BreadthForceSearch breadth_force_search;
@@ -303,7 +302,6 @@ private:
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
 
-
 private:
 
 	//ゴール候補の選定
@@ -315,31 +313,39 @@ private:
 	
 	//ゴール選定用の評価関数関連
 	const uint_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
-	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord);
+	const uint_fast32_t whosePanel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const bool isOnDecidedRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	
+	const bool isMyPannel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const bool isAngleCoord(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const bool isSideCoord(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const bool isInsideClosed(Field field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
-
-	//ゴール候補の選定
-	const bool expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord);
-  const bool isOnDecidedRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	//ゴール候補選定
+	const bool expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherAgentDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherGoalDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
-	const uint_fast32_t whosePanel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
-
-	//評価関数
+	
+	//評価関数 & 位置関係所得
 	const double heuristic(const std::pair<uint_fast32_t, uint_fast32_t>& coord, const std::pair<uint_fast32_t, uint_fast32_t>& goal) const;
 	
-	const bool isAdjacentAgent(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
-	const bool isAdjacentMineAgent(Field& field, const uint_fast32_t agent);
-	const bool isAdjacentEnemyAgent(Field& field, const uint_fast32_t agent);
+	const bool isAdjacentAgent(const Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
+	const bool isAdjacentMineAgent(const Field& field, const uint_fast32_t agent);
+	const bool isAdjacentEnemyAgent(const Field& field, const uint_fast32_t agent);
 	
-	const double averageDistanceAgent(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
-	const double averageDistanceMineAgent(Field& field, const uint_fast32_t agent);
-	const double averageDistanceEnemyAgent(Field& field, const uint_fast32_t agent);
+	const uint_fast32_t countAdjacentAgent(const Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
+	const uint_fast32_t countAdjacentMineAgent(const Field& field, const uint_fast32_t agent);
+	const uint_fast32_t countAdjacentEnemyAgent(const Field& field, const uint_fast32_t agent);
 	
-	const uint_fast32_t countWithinRangeAgent(Field& field, const uint_fast32_t agent, const double range, const uint_fast32_t attr);
-	const uint_fast32_t countWithinRangeMineAgent(Field& field, const uint_fast32_t agent, const double range);
-	const uint_fast32_t countWithinRangeEnemyAgent(Field& field, const uint_fast32_t agent, const double range);
+	const double averageDistanceAgent(const Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
+	const double averageDistanceMineAgent(const Field& field, const uint_fast32_t agent);
+	const double averageDistanceEnemyAgent(const Field& field, const uint_fast32_t agent);
+	
+	const uint_fast32_t countWithinRangeAgent(const Field& field, const uint_fast32_t agent, const double range, const uint_fast32_t attr);
+	const uint_fast32_t countWithinRangeMineAgent(const Field& field, const uint_fast32_t agent, const double range);
+	const uint_fast32_t countWithinRangeEnemyAgent(const Field& field, const uint_fast32_t agent, const double range);
 
 
 	//探索関連

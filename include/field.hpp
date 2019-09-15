@@ -115,16 +115,6 @@ private:
 	// 実座標(x,y)のパネルの属性をセット
 	void setPanelAttr(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr);
 
-	// フィールドランダム生成用関数
-	//void genRandMap();
-
-	// agentがdirectionの方向に動けるかどうか true:動ける false:動けない
-	// bool canMove(Agent &agent, Direction direction);
-
-	// agentsの(nextX,nextY)を適用する
-	// 行きたい座標が重なるなどしたときその場に止まるように指示
-	// void applyNextAgents();
-
 	// 得点計算関係
 	UF makePureTreeMine();
 	UF makePureTreeEnemy();
@@ -186,6 +176,7 @@ public:
 	void init();
 
 	
-	bool is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord);
+	bool is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	//void setPannelAttr()
 	
 };
