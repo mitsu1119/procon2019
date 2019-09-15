@@ -645,8 +645,8 @@ void Field::judgeWinner(){
 
 void Field::init(){
 	// agetn情報
-	int agent_data[50][2];
-  int agent_index[30];  // agent用の添字配列
+	int agent_data[30][2];
+  int agent_index[20];  // agent用の添字配列
   int index_num = 0;     // ↑添字
 	int agentid, x, y;
 	int agent_num = 0;
@@ -675,7 +675,6 @@ void Field::init(){
     stream.close();
   }
 
-  puts("Hello1");
 
 	//int height = (int)maps.get<object>()["height"].get<double>();
 	//int width  = (int)maps.get<object>()["width"].get<double>();
@@ -709,7 +708,6 @@ void Field::init(){
 		}
 	}
   
-  puts("Hello2");
 
 	value::array agents = maps.get<object>()["teams"].get<value::array>(); // all agent
 
@@ -732,7 +730,6 @@ void Field::init(){
 	value::array myagents = agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
 	value::array enagents = agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
 
-  puts("Hello3");
 
   // Debug myTeamID -------------------------------------------------
   std::cout << "[*] myTeamID:" << myTeamID << std::endl;
@@ -827,10 +824,10 @@ void Field::init(){
 	agent_num *= 2;
 	for(int s=0; s < agent_num; s++){
 		if(s < agent_num/2){
-			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, MINE_ATTR, agent_index[s]);
+			this->agents.emplace_back(agent_data[agent_index[s]][0]-1, agent_data[agent_index[s]][1]-1, MINE_ATTR, agent_index[s]);
 		}
 		else{
-			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, ENEMY_ATTR, agent_index[s]);
+			this->agents.emplace_back(agent_data[agent_index[s]][0]-1, agent_data[agent_index[s]][1]-1, ENEMY_ATTR, agent_index[s]);
 		}
 	}
 
