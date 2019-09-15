@@ -297,6 +297,7 @@ void Field::applyNextAgents() {
 			a.move(STOP);
 		});
 
+
 	//ターンを刻む
 	this->turn++;
 }
@@ -603,6 +604,7 @@ void Field::print() {
 	fprintf(stdout, "enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
 	fprintf(stdout, "turn:       %d\n", this->turn);
 	fprintf(stderr, "%s", strip);
+
 }
 
 const uint_fast32_t Field::getWidth() const{
@@ -793,3 +795,4 @@ void Field::init(){
 
 
 }
+

@@ -340,6 +340,7 @@ void Astar::decidedMove(Field& field, const uint_fast32_t agent, std::vector<std
 	
 	field.applyNextAgents();
 	
+
 	for(size_t i = 0; i < field.agents.size(); i++){
 		if(route.at(i).empty())
 			continue;

@@ -202,4 +202,5 @@ public:
 
   //fieldの初期化
 	void init();
+
 };
