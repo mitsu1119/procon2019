@@ -75,6 +75,7 @@ void move2json(){
     array datalist;
     //int turn = Field.init().agent_num;	
     double j;
+    double ID;
 
     double dx,dy; // 移動先
     double x, y;  // 移動前
@@ -85,7 +86,8 @@ void move2json(){
 
 
         	object id;
-      		j = (double)i+1;  // agentID
+          ID= (double)field.agents.at(i).getID();    // agentID
+      		//j = (double)i+1;  // agentID
           x = (double)field.agents.at(i).getX();     // 移動前 x
           y = (double)field.agents.at(i).getY();     // 移動前 y
           dx= (double)field.agents.at(i).getnextX(); // 移動先 x
@@ -98,7 +100,7 @@ void move2json(){
 
         	//id.insert(std::make_pair("data", value(data)));
 
-		      id.insert(std::make_pair("agentID", value(j)));
+		      id.insert(std::make_pair("agentID", value(ID)));
 		      id.insert(std::make_pair("dx", value(dx)));
 		      id.insert(std::make_pair("dy", value(dy)));
 		      id.insert(std::make_pair("type", value("move")));

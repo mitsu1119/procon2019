@@ -645,9 +645,14 @@ void Field::judgeWinner(){
 
 void Field::init(){
 	// agetn情報
-	int agent_data[17][2];
+	int agent_data[50][2];
+  int agent_index[30];  // agent用の添字配列
+  int index_num = 0;     // ↑添字
 	int agentid, x, y;
 	int agent_num = 0;
+
+  int my_attr_tmp; // TeamID用のjson添字
+  int en_attr_tmp;
 
 	std::vector<int> map;
 	std::vector<int> tile;
@@ -660,6 +665,17 @@ void Field::init(){
 		assert(get_last_error().empty());
 		stream.close();
 	}
+
+  value matches;
+  {
+    std::fstream stream("./../../matches.json");
+    if(!stream.is_open()) return 1;
+    stream >> matches;
+    assert(get_last_error().empty());
+    stream.close();
+  }
+
+  puts("Hello1");
 
 	//int height = (int)maps.get<object>()["height"].get<double>();
 	//int width  = (int)maps.get<object>()["width"].get<double>();
@@ -692,16 +708,34 @@ void Field::init(){
 			map.push_back((int)buffer);
 		}
 	}
+  
+  puts("Hello2");
 
-	// agent array
 	value::array agents = maps.get<object>()["teams"].get<value::array>(); // all agent
-	value::array myagents = agents[0].get<object>()["agents"].get<value::array>(); // my
-	value::array enagents = agents[1].get<object>()["agents"].get<value::array>(); // enemy
 
-
-	// teamID
+	// teamID  <- 別のスクリプトで取ってくる必要あり
 	int myID = (int)agents[0].get<object>()["teamID"].get<double>();
 	int enID = (int)agents[1].get<object>()["teamID"].get<double>();
+
+  int myTeamID = (int)matches.get<object>()["teamID"].get<double>();
+
+  if (myTeamID == myID){
+    my_attr_tmp = 0;
+    en_attr_tmp = 1;
+  }else{
+    my_attr_tmp = 1;
+    en_attr_tmp = 0;
+  }
+
+// agent array
+	
+	value::array myagents = agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
+	value::array enagents = agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
+
+  puts("Hello3");
+
+  // Debug myTeamID -------------------------------------------------
+  std::cout << "[*] myTeamID:" << myTeamID << std::endl;
 
 
 	// Debug---------------
@@ -724,6 +758,9 @@ void Field::init(){
 		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
 		agent_data[agentid][0] = x;
 		agent_data[agentid][1] = y;
+    // index (Debug) ------------------------
+    agent_index[index_num] = agentid;
+    index_num += 1;
 		// agent数を求める
 		agent_num += 1;
 	}
@@ -740,6 +777,10 @@ void Field::init(){
 		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
 		agent_data[agentid][0] = x;
 		agent_data[agentid][1] = y;
+
+    // index (Debug) ---------------------------
+    agent_index[index_num] = agentid;
+    index_num += 1;
 	}
 
 
@@ -781,13 +822,15 @@ void Field::init(){
 
 	std::cout << "agents:" << agent_num << std::endl;
 	// Debug -----------------------------------------
+  // TODO: 汎用的な実装にする(agentIDとATTR)
+  // このままだと自チームが敵側の場合OUT
 	agent_num *= 2;
-	for(int s=1; s <= agent_num; s++){
-		if(s <= agent_num/2){
-			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, MINE_ATTR, s);
+	for(int s=0; s < agent_num; s++){
+		if(s < agent_num/2){
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, MINE_ATTR, agent_index[s]);
 		}
 		else{
-			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, ENEMY_ATTR, s);
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, ENEMY_ATTR, agent_index[s]);
 		}
 	}
 
