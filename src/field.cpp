@@ -773,3 +773,13 @@ bool Field::is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coor
 	}
 	return false;
 }
+
+void Field::setPanels(const std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& decided_route, const uint_fast32_t attr, const uint_fast32_t depth) const{
+	std::for_each(decided_route.begin(), decided_route.end(),[&, this](auto& route){
+			for(size_t i = 0; i < depth; i++){
+				if(i >= route.size())
+					break;
+				this->setPanelAttr(route.at(i).first, route.at(i).second, attr);
+			}
+		});
+}

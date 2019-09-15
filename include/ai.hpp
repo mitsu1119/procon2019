@@ -215,7 +215,7 @@ public:
 };
 
 
-constexpr uint_fast32_t greedy_count       = 10;
+constexpr uint_fast32_t greedy_count       = 14;
 constexpr uint_fast32_t search_count       = 14;
 constexpr uint_fast32_t astar_depth        = 10;
 
@@ -262,7 +262,6 @@ private:
 	
 	friend SimpleMove;
 	int_fast32_t average_score;
-
 	
 	Random random;
 	BeamSearch beam_search;
@@ -308,7 +307,7 @@ private:
 	void setAverageScore(const Field& field);
 	void setSearchTarget(Field& field, const uint_fast32_t agent);
 	static const bool _comp(std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& lhs ,std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& rhs);
-	const double goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal);
+	const double goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord);
 
 	
 	//ゴール選定用の評価関数関連
@@ -318,9 +317,9 @@ private:
 	const bool isOnDecidedRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	
 	const bool isMyPannel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const bool isInsideClosed(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isAngleCoord(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isSideCoord(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
-	const bool isInsideClosed(Field field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
 	//ゴール候補選定
 	const bool expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
