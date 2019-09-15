@@ -218,7 +218,7 @@ public:
 
 
 constexpr uint_fast32_t greedy_count       = 10;
-constexpr uint_fast32_t search_count       = 12;
+constexpr uint_fast32_t search_count       = 14;
 constexpr uint_fast32_t astar_depth        = 10;
 
 constexpr double_t occpancy_weight         = 15;
@@ -336,9 +336,9 @@ private:
 	const double averageDistanceMineAgent(Field& field, const uint_fast32_t agent);
 	const double averageDistanceEnemyAgent(Field& field, const uint_fast32_t agent);
 	
-	const uint_fast32_t countWithinRangeAgent(Field& field, const uint_fast32_t agent, const double distance, const uint_fast32_t attr);
-	const uint_fast32_t countWithinRangeMineAgent(Field& field, const uint_fast32_t agent, const double distance);
-	const uint_fast32_t countWithinRangeEnemyAgent(Field& field, const uint_fast32_t agent, const double distance);
+	const uint_fast32_t countWithinRangeAgent(Field& field, const uint_fast32_t agent, const double range, const uint_fast32_t attr);
+	const uint_fast32_t countWithinRangeMineAgent(Field& field, const uint_fast32_t agent, const double range);
+	const uint_fast32_t countWithinRangeEnemyAgent(Field& field, const uint_fast32_t agent, const double range);
 
 
 	//探索関連

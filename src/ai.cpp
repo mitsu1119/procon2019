@@ -467,6 +467,8 @@ const double Astar::goalEvaluation(Field& field, const uint_fast32_t agent, cons
 		is_my_pannel     = true;
 	if(this->isSideOrAngle(field, goal))
 		is_angle         = true;
+
+	//fieldを動かしてから考えたほうが良い
 	if(field.is_inside_closed(goal))
 		is_inside_closed = true;
 	
@@ -501,6 +503,8 @@ const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const st
 	/*
 	if(this->isOnDecidedRoute(field, agent, coord))
 		return true;
+	*/
+	/*
 	if(this->whosePanel(field, agent, coord) == MINE_ATTR)
 		return true;
 	*/
@@ -667,23 +671,49 @@ const double Astar::averageDistanceEnemyAgent(Field& field, const uint_fast32_t 
 	return (double)sum / field.agents.size();
 }
 
-/*
-const uint_fast32_t Astar::countWithinRangeAgent(Field& field, const uint_fast32_t agent, const double distance, const uint_fast32_t attr){
+const uint_fast32_t Astar::countWithinRangeAgent(Field& field, const uint_fast32_t agent, const double range, const uint_fast32_t attr){
 	if(attr == MINE_ATTR)
-		return this->countWithinRangeMineAgent(field, agent, distance);
+		return this->countWithinRangeMineAgent(field, agent, range);
 	if(attr == ENEMY_ATTR)
-		return this->countWithinRangeEnemyAgent(field, agent, distance);
+		return this->countWithinRangeEnemyAgent(field, agent, range);
 	return 0;
 }
 
-const uint_fast32_t Astar::countWithinRangeMineAgent(Field& field, const uint_fast32_t agent, const double distance){
-	
+const uint_fast32_t Astar::countWithinRangeMineAgent(Field& field, const uint_fast32_t agent, const double range){
+	const uint_fast32_t x    = field.agents.at(agent).getX();
+	const uint_fast32_t y    = field.agents.at(agent).getY();
+	const uint_fast32_t attr = field.agents.at(agent).getAttr();
+	uint_fast32_t count = 0;
+	double distance     = 0;
+
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++){
+		std::for_each(field.agents.begin(), field.agents.end(), [&, this](auto& agent){
+				if(attr == agent.getAttr()){
+					distance = this->heuristic(std::make_pair(x, y), std::make_pair(agent.getX(), agent.getY()));
+					if(distance <= range) count++;
+				}
+			});
+	}
+	return count;
 }
 
-const uint_fast32_t Astar::countWithinRangeEnemyAgent(Field& field, const uint_fast32_t agent, const double distance){
-	
+const uint_fast32_t Astar::countWithinRangeEnemyAgent(Field& field, const uint_fast32_t agent, const double range){
+	const uint_fast32_t x    = field.agents.at(agent).getX();
+	const uint_fast32_t y    = field.agents.at(agent).getY();
+	const uint_fast32_t attr = field.agents.at(agent).getAttr();
+	uint_fast32_t count = 0;
+	double distance     = 0;
+
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++){
+		std::for_each(field.agents.begin(), field.agents.end(), [&, this](auto& agent){
+				if(attr != agent.getAttr()){
+					distance = this->heuristic(std::make_pair(x, y), std::make_pair(agent.getX(), agent.getY()));
+					if(distance <= range) count++;
+				}
+			});
+	}
+	return count;
 }
-*/
 
 void Astar::initNode(const Field& field, std::vector<Node>& node){
 	node.clear();
