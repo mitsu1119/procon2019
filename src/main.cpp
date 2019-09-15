@@ -11,7 +11,6 @@ BeamSearch beam_search;
 Astar astar;
 
 int main(int argc, char *argv[]) {
-	
 	field.init();
 
 	DisplayWrapper* framework = new Display();
@@ -114,4 +113,3 @@ int main(int argc, double_t argv[]){
 	return 0;
 }
 */
-

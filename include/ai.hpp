@@ -32,9 +32,9 @@ public:
 };
 
 inline const Direction AI::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
-	for(size_t i = 0; i < DIRECTION_SIZE - 2; i++)
-		if(next.first == now.first + this->vec_x.at(i) && next.second == now.second + this->vec_y.at(i))
-			return (Direction)i;
+	int dx = next.first - now.first;
+	int dy = next.second - now.second;
+	return xyToDirection(next.first - now.first, next.second - now.second);
 }
 
 class Random : public AI{
@@ -49,7 +49,6 @@ public:
 
 	void init(const Field* field) override;
 	void init(const Field& field) override;
-
 	void move(Field *field, const uint_fast32_t attr) override;
 
 };
@@ -95,7 +94,6 @@ public:
 	void init(const Field* field) override;
 	void init(const Field& field) override;
 
-
 	void singleMove(Field& field, const uint_fast32_t agent);
 	void move(Field* field, const uint_fast32_t attr) override;
 
@@ -109,7 +107,6 @@ class BreadthForceSearch : public AI{
 private:
 
 	Greedy greedy;
-
 	Field search(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
 
 public:
@@ -178,8 +175,12 @@ public:
   uint_fast32_t is_on_decided_route;
 	//自陣を何回移動したか
 	uint_fast32_t is_on_mine_panel;
+
+	
 	//Agent同士が隣接しているかどうか
 	uint_fast32_t is_adjacent_agent;
+
+	
 	//何回移動したか
 	uint_fast32_t move_num;
   //親のノード

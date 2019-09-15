@@ -47,6 +47,13 @@ int_fast32_t direction2y(Direction direction) {
 	return 0;
 }
 
+Direction xyToDirection(int_fast32_t dx, int_fast32_t dy) {
+	int x = (dx + (7 * dy + 7) / (3 * dx + 4) + 8) % 8;
+	int y = 4 - dx;
+	int dir = (((dy + 1) / 2 + 1) % 2) * x + (dy + 1) / 2 * y;
+	return (Direction)dir;
+}
+
 XorOshiro128p::XorOshiro128p() {
 }
 
