@@ -72,17 +72,14 @@ public:
 
 };
 
-
 constexpr uint_fast32_t beam_depth = 3;
 constexpr uint_fast32_t beam_width = 3;
-
 
 class BeamSearch : public AI{
 
 private:
 
 	Greedy greedy;
-	
 	Field search(Field *field, const uint_fast32_t agent, uint_fast32_t depth);
 	
 public:
@@ -100,7 +97,6 @@ public:
 
 
 constexpr uint_fast32_t bfs_depth = 3;
-
 
 class BreadthForceSearch : public AI{
 private:
@@ -121,22 +117,13 @@ public:
 
 };
 
-/*
-constexpr double_t move_weight                = 3;
-constexpr double_t state_weight               = 40;
-constexpr double_t heuristic_weight           = 4;
-constexpr double_t value_weight               = 15;
-constexpr double_t is_on_decided_route_weight = 15;
-constexpr double_t is_on_mine_panel_weight    = 10;
-*/
-
 constexpr double_t move_weight                = 7;
 constexpr double_t state_weight               = 40;
 constexpr double_t heuristic_weight           = 10;
 constexpr double_t value_weight               = 30;
 constexpr double_t is_on_decided_route_weight = 30;
 constexpr double_t is_on_mine_panel_weight    = 10;
-constexpr double_t is_adjacent_agent_weight   = 20;
+constexpr double_t adjacent_agent_weight   = 20;
 
 /*
 static double_t move_weight;
@@ -173,7 +160,7 @@ public:
 
 	
 	//Agent同士が隣接しているかどうか
-	uint_fast32_t is_adjacent_agent;
+	uint_fast32_t adjacent_agent;
 
 	
 	//何回移動したか
@@ -192,7 +179,7 @@ public:
 };
 
 inline const double Node::getScore() const{
-	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->is_adjacent_agent * is_adjacent_agent_weight);
+	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight);
 }
 
 class SimpleMove : public AI{
@@ -223,7 +210,7 @@ constexpr double_t occpancy_weight         = 15;
 constexpr double_t is_on_decided_weight    = 10;
 constexpr double_t is_my_pannel_weight     = 10;
 constexpr double_t is_angle_weight         = 10;
-constexpr double_t is_side_weight          = 10;
+constexpr double_t is_side_weight          = 5;
 constexpr double_t is_inside_closed_weight = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
@@ -234,7 +221,6 @@ constexpr uint_fast32_t max_move           = 35;
 constexpr uint_fast32_t min_move_cost      = 2;
 constexpr uint_fast32_t min_value          = 5;
 
-//milliseconds
 constexpr uint_fast32_t search_time        = 20000;
 constexpr uint_fast32_t grace_time         = 3000;
 
@@ -315,7 +301,6 @@ private:
 	const uint_fast32_t whosePanel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isOnDecidedRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
-	
 	const bool isMyPannel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isInsideClosed(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isAngleCoord(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;

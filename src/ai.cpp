@@ -492,7 +492,7 @@ const bool Astar::isMyPannel(Field& field, const uint_fast32_t agent, const std:
 }
 
 const bool Astar::isInsideClosed(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
-	uint_fast32_t attr = field.agents.at(agent).getAttr();
+	const uint_fast32_t attr = field.agents.at(agent).getAttr();
 	field.setPanels(this->decided_route, attr, search_count);
 	if(field.is_inside_closed(coord))
 		return true;
@@ -832,7 +832,7 @@ void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pai
 	start->heuristic           = this->heuristic(start->coord, goal);
 	start->is_on_decided_route = 0;
 	start->is_on_mine_panel    = 0;
-	start->is_adjacent_agent   = 0;
+	start->adjacent_agent      = 0;
 	start->move_num            = 0;
 	
 	if(field.agents.at(agent).getAttr() != field.at(start->coord.first, start->coord.second)->getAttr())
@@ -851,7 +851,7 @@ void Astar::setNextNode(Field& field, const uint_fast32_t agent, const std::pair
 	
 	next->heuristic            = this->heuristic(next->coord, goal);
 	next->is_on_decided_route  = current->is_on_decided_route + this->isOnDecidedRoute(field, agent, next->coord);
-	next->is_adjacent_agent    = current->is_adjacent_agent + this->isAdjacentAgent(field, agent, MINE_ATTR);
+	next->adjacent_agent       = current->adjacent_agent + this->countAdjacentAgent(field, agent, MINE_ATTR);
 	next->move_num             = current->move_num + 1;
 	next->parent               = current;
 	
@@ -1154,7 +1154,6 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 		this->setDecidedCoord(route);
 		this->current_score.at(agent) = score;
 		this->setDecidedCoord(this->tentative_route);
-		//this->counter.at(agent)       = 0;
 		this->printRoute(route);
 	}
 }
