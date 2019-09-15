@@ -179,7 +179,7 @@ public:
 };
 
 inline const double Node::getScore() const{
-	return ((this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight)) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight);
+	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight);
 }
 
 class SimpleMove : public AI{
@@ -219,7 +219,7 @@ constexpr uint_fast32_t min_agent_distance = 2;
 constexpr uint_fast32_t min_goal_distance  = 2;
 constexpr uint_fast32_t max_move           = 35;
 constexpr uint_fast32_t min_move_cost      = 2;
-constexpr uint_fast32_t min_value          = 5;
+constexpr int_fast32_t  min_value          = 10;
 
 constexpr uint_fast32_t search_time        = 20000;
 constexpr uint_fast32_t grace_time         = 3000;
@@ -343,7 +343,8 @@ private:
 
 
 	//枝切り用
-	const bool branchingCondition(Node* current, const uint_fast32_t max_move_cost) const;
+	//const bool branchingCondition(Node* current, const uint_fast32_t max_move_cost) const;
+	const bool branchingCondition(Field& field, const uint_fast32_t agent, Node* current, const uint_fast32_t max_move_cost);
 	const bool endCondition(Node* current) const;
 
 	
