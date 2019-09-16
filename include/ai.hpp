@@ -76,7 +76,6 @@ constexpr uint_fast32_t beam_depth = 3;
 constexpr uint_fast32_t beam_width = 3;
 
 class BeamSearch : public AI{
-
 private:
 
 	Greedy greedy;
@@ -185,10 +184,15 @@ inline const double Node::getScore() const{
 	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight) + (this->average_distance * average_distance_weght);
 }
 
+//A*用にチューニングした探索法
 class SimpleMove : public AI{
 private:
 
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
+
+private:
+
+	Field beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
 
 public:
 
@@ -197,9 +201,13 @@ public:
 	
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
-	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
+	void greedyMove(Field& field, const uint_fast32_t agent);
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
 
+	
+	Direction beamSearchSingleMove(Field& field, const uint_fast32_t agent);
+	void beamSearchMove(Field& field, const uint_fast32_t attr);
+	
 	
 	void init(const Field* field) override;
 	void init(const Field& field) override;

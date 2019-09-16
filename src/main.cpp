@@ -10,7 +10,6 @@ Greedy greedy;
 BeamSearch beam_search;
 Astar astar;
 
-/*
 int main(int argc, char *argv[]) {
 	field.init();
 
@@ -23,8 +22,8 @@ int main(int argc, char *argv[]) {
 	return 0;
 	
 }
-*/
 
+/*
 int main(int argc, char *argv[]){
 	field.init();
 	astar.init(&field);
@@ -41,6 +40,7 @@ int main(int argc, char *argv[]){
 	}
 	return 0;
 }
+*/
 
 /*
 static double_t move_weight;
