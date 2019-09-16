@@ -191,7 +191,7 @@ private:
 
 private:
 
-	Field beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
+	Field beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const;
 
 public:
 
@@ -203,9 +203,9 @@ public:
 	void greedyMove(Field& field, const uint_fast32_t agent);
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
 
-	
-	Direction beamSearchSingleMove(Field& field, const uint_fast32_t agent);
-	void beamSearchMove(Field& field, const uint_fast32_t attr);
+	const Direction greedySingleMove(Field& field, const uint_fast32_t agent, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& expect_coord) const;
+	const Direction beamSearchSingleMove(Field& field, const uint_fast32_t agent) const;
+	void beamSearchMove(Field& field, const uint_fast32_t attr) const;
 	
 	
 	void init(const Field* field) override;
@@ -308,6 +308,7 @@ private:
 	//移動
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
+	void exceptionMove(Field& field, const uint_fast32_t agent);
 
 private:
 

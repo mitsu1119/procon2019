@@ -340,7 +340,6 @@ void SimpleMove::greedySingleMove(Field& field, const uint_fast32_t agent, const
 	this->next_coord.emplace_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
 }
 
-//---------------------------------------------------------------------------------------------------------------
 void SimpleMove::greedyMove(Field& field, const uint_fast32_t agent){
 	Direction direction = STOP;
 	uint_fast32_t attr = field.agents.at(agent).getAttr();
@@ -348,12 +347,6 @@ void SimpleMove::greedyMove(Field& field, const uint_fast32_t agent){
 	for(size_t i = 0; i < field.agents.size(); i++)
 		if(field.agents.at(i).getAttr() != field.agents.at(agent).getAttr())
 			this->greedySingleMove(field, i, attr);
-
-	/*
-	for(size_t i = agent + 1; i < field.agents.size(); i++)
-		if(field.agents.at(i).getAttr() == field.agents.at(agent).getAttr())
-			this->greedySingleMove(field, i, attr);
-	*/
 }
 
 void SimpleMove::greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr){
@@ -384,7 +377,33 @@ void SimpleMove::greedySingleMove(Field& field, const uint_fast32_t agent, const
 	field.agents.at(agent).move(direction);
 }
 
-Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth){
+const Direction SimpleMove::greedySingleMove(Field& field, const uint_fast32_t agent, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& expect_coord) const{
+	Direction direction = STOP;
+	int_fast32_t score = -INT_MAX, max_score = -INT_MAX;
+	
+	uint_fast32_t x = field.agents.at(agent).getX();
+	uint_fast32_t y = field.agents.at(agent).getY();
+	
+	for(size_t i = 0; i < DIRECTION_SIZE - 3; i++){
+		if(field.canMove(field.agents.at(agent), i)){
+			score = field.at(x + this->vec_x.at(i), y + this->vec_y.at(i))->getValue();
+			
+			auto result = std::find(expect_coord.begin(), expect_coord.end(), std::make_pair(x + this->vec_x.at(i), y + this->vec_y.at(i)));
+			if(result != this->next_coord.end())
+				continue;
+			
+			if(field.at(x + this->vec_x.at(i), y + this->vec_y.at(i))->getAttr() == field.agents.at(agent).getAttr())
+				score -= 100;
+			if(score > max_score){
+				max_score = score;
+				direction = (Direction)i;
+			}
+		}
+	}
+	return direction;
+}
+
+Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const{
 	if(depth == 0 || field->checkEnd())
 		return *field;
 	
@@ -394,7 +413,7 @@ Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast3
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);
-
+			
 			this->greedyMove(fbuf, agent);
 			
 			fbuf.applyNextAgents();
@@ -416,7 +435,7 @@ Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast3
 	return fields.at(0).first;
 }
 
-Direction SimpleMove::beamSearchSingleMove(Field& field, const uint_fast32_t agent){
+const Direction SimpleMove::beamSearchSingleMove(Field& field, const uint_fast32_t agent) const{
 	Field current_field = field;
 	Field next_field    = this->beamSearch(&current_field, agent, beam_depth);
 	
@@ -430,7 +449,7 @@ Direction SimpleMove::beamSearchSingleMove(Field& field, const uint_fast32_t age
 	return STOP;
 }
 
-void SimpleMove::beamSearchMove(Field& field, const uint_fast32_t attr){
+void SimpleMove::beamSearchMove(Field& field, const uint_fast32_t attr) const{
 	Direction direction = STOP;
 	for(size_t i =0; i < field.agents.size(); i++){
 		if(field.agents.at(i).getAttr() == attr){
@@ -439,7 +458,6 @@ void SimpleMove::beamSearchMove(Field& field, const uint_fast32_t attr){
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------------
 
 void SimpleMove::init(const Field* field){
 }
@@ -484,10 +502,30 @@ void Astar::decidedMove(Field& field, const uint_fast32_t agent, std::vector<std
 	}
 }
 
+//--------------------------------------------------------------------------
+void Astar::exceptionMove(Field& field, const uint_fast32_t agent){
+	const uint_fast32_t x = field.agents.at(agent).getX();
+	const uint_fast32_t y = field.agents.at(agent).getY();
+	Direction direction = simple_move.beamSearchSingleMove(field, agent);
+	
+	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
+
+	//ちょっときたない
+	if(result == this->next_coord.end() && direction != STOP){
+		field.agents.at(agent).move(direction);
+		this->next_coord.push_back(std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
+		return;
+	}
+	direction = simple_move.greedySingleMove(field, agent, this->next_coord);
+	field.agents.at(agent).move(direction);
+	this->next_coord.push_back(std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
+}
+//--------------------------------------------------------------------------
+
 void Astar::setAverageScore(const Field& field){
 	int_fast32_t count = 0, sum = 0;
-	for(size_t i = 0; i < field.getHeight(); i++) {
-		for(size_t j = 0; j < field.getWidth(); j++) {
+	for(size_t i = 0; i < field.getHeight(); i++){
+		for(size_t j = 0; j < field.getWidth(); j++){
 			sum += field.at(j, i)->getValue();
 			count++;
 		}
