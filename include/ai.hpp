@@ -95,7 +95,6 @@ public:
 
 };
 
-
 constexpr uint_fast32_t bfs_depth = 3;
 
 class BreadthForceSearch : public AI{
@@ -117,13 +116,14 @@ public:
 
 };
 
-constexpr double_t move_weight                = 7;
+constexpr double_t move_weight                = 5;
 constexpr double_t state_weight               = 40;
 constexpr double_t heuristic_weight           = 10;
 constexpr double_t value_weight               = 30;
 constexpr double_t is_on_decided_route_weight = 30;
 constexpr double_t is_on_mine_panel_weight    = 10;
-constexpr double_t adjacent_agent_weight   = 20;
+constexpr double_t adjacent_agent_weight      = 20;
+constexpr double_t average_distance_weght     = 5;
 
 /*
 static double_t move_weight;
@@ -132,6 +132,8 @@ static double_t heuristic_weight;
 static double_t value_weight;
 static double_t is_on_decided_route_weight;
 static double_t is_on_mine_panel_weight;
+static double_t adjacent_agent_weight;
+static double_t average_distance_weght;
 */
 
 class Node{
@@ -143,12 +145,14 @@ public:
 		CLOSED
 	};
 
+	//------ 評価値 ------
+	
 	//ステータス
 	Status status;
 	//移動コスト
 	uint_fast32_t move_cost;
 	//盤の状態によるコスト
-	double state_cost;
+	int_fast32_t state_cost;
 	//ヒューリスティックコスト（推定コスト）
 	uint_fast32_t heuristic;
 	//その地点での点数
@@ -157,17 +161,16 @@ public:
   uint_fast32_t is_on_decided_route;
 	//自陣を何回移動したか
 	uint_fast32_t is_on_mine_panel;
-
-	
 	//Agent同士が隣接しているかどうか
 	uint_fast32_t adjacent_agent;
+	//Agent同士の平均距離
+	double average_distance;
 
 	
-	//何回移動したか
+	//------ 探索で使用 ------
+	
 	uint_fast32_t move_num;
-  //親のノード
 	Node* parent;
-	//座標
 	std::pair<uint_fast32_t, uint_fast32_t> coord;
 
 public:
@@ -179,14 +182,14 @@ public:
 };
 
 inline const double Node::getScore() const{
-	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight);
+	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight) + (this->average_distance * average_distance_weght);
 }
 
 class SimpleMove : public AI{
 private:
 
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> next_coord;
-	
+
 public:
 
 	SimpleMove();
@@ -194,13 +197,15 @@ public:
 	
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
+	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
+	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
 
+	
 	void init(const Field* field) override;
 	void init(const Field& field) override;
 	void move(Field* field, const uint_fast32_t attr) override;
 	
 };
-
 
 constexpr uint_fast32_t greedy_count       = 14;
 constexpr uint_fast32_t search_count       = 14;
@@ -209,8 +214,8 @@ constexpr uint_fast32_t astar_depth        = 10;
 constexpr double_t occpancy_weight         = 15;
 constexpr double_t is_on_decided_weight    = 10;
 constexpr double_t is_my_pannel_weight     = 10;
-constexpr double_t is_angle_weight         = 10;
-constexpr double_t is_side_weight          = 5;
+constexpr double_t is_angle_weight         = 7;
+constexpr double_t is_side_weight          = 3;
 constexpr double_t is_inside_closed_weight = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
@@ -224,20 +229,28 @@ constexpr int_fast32_t  min_value          = 10;
 constexpr uint_fast32_t search_time        = 20000;
 constexpr uint_fast32_t grace_time         = 3000;
 
-
 /*
-static double_t greedy_count;
+static uint_fast32_t greedy_count;
+static uint_fast32_t search_count;
+static uint_fast32_t astar_depth;
+
 static double_t occpancy_weight;
 static double_t is_on_decided_weight;
+static double_t is_my_pannel_weight;
+static double_t is_angle_weight;
+static double_t is_side_weight;
+static double_t is_inside_closed_weight;
 
 static uint_fast32_t max_mine_distance;
 static uint_fast32_t min_mine_distance;
 static uint_fast32_t min_agent_distance;
 static uint_fast32_t min_goal_distance;
-static uint_fast32_t max_move_cost;
-static uint_fast32_t min_value;
+static uint_fast32_t max_move;
 static uint_fast32_t min_move_cost;
-static uint_fast32_t search_count;
+static int_fast32_t  min_value;
+
+static uint_fast32_t search_time;
+static uint_fast32_t grace_time;
 */
 
 #define ANGLE_COORD 1
@@ -248,7 +261,9 @@ private:
 	
 	friend SimpleMove;
 	int_fast32_t average_score;
-	
+
+
+	//探索法
 	Random random;
 	BeamSearch beam_search;
 	BreadthForceSearch breadth_force_search;
@@ -300,12 +315,14 @@ private:
 	const uint_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t whosePanel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	
 	const bool isOnDecidedRoute(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isMyPannel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isInsideClosed(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isAngleCoord(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isSideCoord(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
+	
 	//ゴール候補選定
 	const bool expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherAgentDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
