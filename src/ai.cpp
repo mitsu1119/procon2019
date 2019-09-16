@@ -431,7 +431,13 @@ Direction SimpleMove::beamSearchSingleMove(Field& field, const uint_fast32_t age
 }
 
 void SimpleMove::beamSearchMove(Field& field, const uint_fast32_t attr){
-	
+	Direction direction = STOP;
+	for(size_t i =0; i < field.agents.size(); i++){
+		if(field.agents.at(i).getAttr() == attr){
+			direction = this->beamSearchSingleMove(field, i);
+			field.agents.at(i).move(direction);
+		}
+	}
 }
 //---------------------------------------------------------------------------------------------------------------
 
@@ -1266,7 +1272,12 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	this->search(obj, attr);
 	this->printGoal(obj, attr);
 	*/
+	
+	Field tmp = static_cast<Field> (*field);
+	simple_move.beamSearchMove(tmp, MINE_ATTR);
+	*field = tmp;
 
+	/*
 	this->clock = std::chrono::system_clock::now();
 	this->is_time_over = false;
 
@@ -1283,4 +1294,5 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 		if(tmp.agents.at(i).getAttr() == attr)
 			this->chooseAlgorithm(tmp, i);
 	*field = tmp;
+	*/
 }
