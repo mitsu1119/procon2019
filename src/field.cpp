@@ -645,8 +645,8 @@ void Field::judgeWinner(){
 
 void Field::init(){
 	// agetn情報
-	int agent_data[30][2];
-  int agent_index[20];  // agent用の添字配列
+	int agent_data[30][3];
+  
   int index_num = 0;     // ↑添字
 	int agentid, x, y;
 	int agent_num = 0;
@@ -756,10 +756,10 @@ void Field::init(){
 		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
 		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
 		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
-		agent_data[agentid][0] = x;
-		agent_data[agentid][1] = y;
+		agent_data[index_num][0] = x;
+		agent_data[index_num][1] = y;
     // index (Debug) ------------------------
-    agent_index[index_num] = agentid;
+    agent_data[index_num][2] = agentid;
     index_num += 1;
 		// agent数を求める
 		agent_num += 1;
@@ -775,11 +775,11 @@ void Field::init(){
 		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
 		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
 		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
-		agent_data[agentid][0] = x;
-		agent_data[agentid][1] = y;
+		agent_data[index_num][0] = x;
+		agent_data[index_num][1] = y;
 
     // index (Debug) ---------------------------
-    agent_index[index_num] = agentid;
+    agent_data[index_num][2] = agentid;
     index_num += 1;
 	}
 
@@ -827,10 +827,10 @@ void Field::init(){
 	agent_num *= 2;
 	for(int s=0; s < agent_num; s++){
 		if(s < agent_num/2){
-			this->agents.emplace_back(agent_data[agent_index[s]][0]-1, agent_data[agent_index[s]][1]-1, MINE_ATTR, agent_index[s]);
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, MINE_ATTR, agent_data[s][2]);
 		}
 		else{
-			this->agents.emplace_back(agent_data[agent_index[s]][0]-1, agent_data[agent_index[s]][1]-1, ENEMY_ATTR, agent_index[s]);
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, ENEMY_ATTR, agent_data[s][2]);
 		}
 	}
 
