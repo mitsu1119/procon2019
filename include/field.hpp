@@ -177,5 +177,8 @@ public:
 	//指定した座標が囲われているか判定
 	bool is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	void setPanels(const std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& decided_route, const uint_fast32_t attr, const uint_fast32_t depth) const;
-	
+  
+  //fieldの更新
+  void update();
+
 };

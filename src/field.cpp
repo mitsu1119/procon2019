@@ -786,3 +786,7 @@ void Field::setPanels(const std::vector<std::vector<std::pair<uint_fast32_t, uin
 			}
 		});
 }
+
+void Field::update(){
+
+}

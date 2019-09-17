@@ -416,8 +416,6 @@ Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast3
 			this->greedyMove(fbuf, agent);
 			fbuf.applyNextAgents();
 			
-			fbuf.print();
-			
 			fields.emplace_back(fbuf, fbuf);
 		}
 	}
