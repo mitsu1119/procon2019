@@ -84,8 +84,10 @@ void move2json(){
 
     std::string type;
 
+    //std::cout << field.agents.size() << std::endl;
+
     // forで毎回id,dx,dyのデータを取ってくる必要あり
-    for(int i = 0; i < 7; i++){
+    for(int i = 0; i < field.agents.size()/2; i++){
     	{
 
 

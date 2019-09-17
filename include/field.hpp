@@ -202,5 +202,8 @@ public:
 
   //fieldの初期化
 	void init();
+  
+  //fieldの更新
+  void update();
 
 };
