@@ -590,6 +590,7 @@ void Field::judgeWinner(){
 	}
 }
 
+/*
 void Field::init(){
 	//ターン
 	this->turn = 0;
@@ -752,6 +753,203 @@ void Field::init(){
 
 	this->max_turn = 70;
 }
+*/
+
+void Field::init(){
+	// agetn情報
+	int agent_data[30][3];
+  
+  int index_num = 0;     // ↑添字
+	int agentid, x, y;
+	int agent_num = 0;
+
+  int my_attr_tmp; // TeamID用のjson添字
+  int en_attr_tmp;
+
+  int end_turn;    // 終了ターン数
+
+	std::vector<int> map;
+	std::vector<int> tile;
+	double buffer;
+	value maps;
+	{
+		std::fstream stream("./../../public_field/fields.json");
+		if(!stream.is_open()) return 1;
+		stream >> maps;
+		assert(get_last_error().empty());
+		stream.close();
+	}
+
+  value matches;
+  {
+    std::fstream stream("./../../matches.json");
+    if(!stream.is_open()) return 1;
+    stream >> matches;
+    assert(get_last_error().empty());
+    stream.close();
+  }
+
+
+	//int height = (int)maps.get<object>()["height"].get<double>();
+	//int width  = (int)maps.get<object>()["width"].get<double>();
+	this->height = (int)maps.get<object>()["height"].get<double>();
+	this->width  = (int)maps.get<object>()["width"].get<double>();
+
+
+	//------------------------------------------------------------------
+	double buff;
+	uint_fast32_t sizee;
+
+	buff = std::log2(this->width);
+	this->yShiftOffset = (uint_fast32_t)(buff + ((std::ceil(buff) == std::floor(buff)) ? 0 : 1));
+	sizee = this->height << this->yShiftOffset;
+
+	// マップ生成
+	this->field = std::vector<Panel>(sizee, Panel(0));
+  //------------------------------------------------------------------
+
+
+	// 終了ターン
+	end_turn   = (int)matches.get<object>()["turns"].get<double>();
+
+
+	value::array points = maps.get<object>()["points"].get<value::array>();
+	for(int i = 0; i < height; i++){
+		value::array pt = points[i].get<value::array>();
+		for(value item : pt){
+			buffer = item.get<double>();
+			map.push_back((int)buffer);
+		}
+	}
+  
+
+	value::array agents = maps.get<object>()["teams"].get<value::array>(); // all agent
+
+	// teamID  <- 別のスクリプトで取ってくる必要あり
+	int myID = (int)agents[0].get<object>()["teamID"].get<double>();
+	int enID = (int)agents[1].get<object>()["teamID"].get<double>();
+  // これ
+  int myTeamID = (int)matches.get<object>()["teamID"].get<double>();
+
+  if (myTeamID == myID){
+    my_attr_tmp = 0;
+    en_attr_tmp = 1;
+  }else{
+    my_attr_tmp = 1;
+    en_attr_tmp = 0;
+  }
+
+// agent array
+	
+	value::array myagents = agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
+	value::array enagents = agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
+
+
+  // Debug myTeamID -------------------------------------------------
+  std::cout << "[*] myTeamID:" << myTeamID << std::endl;
+
+
+	// Debug---------------
+	std::cout << "\n\n";
+  std::cout << "[*] turn    :" << turn << std::endl; // Debug
+	std::cout << "[*] turns   :" << end_turn   << std::endl; // print turns
+	std::cout << "[*] height  :" << height << std::endl; // print height
+	std::cout << "[*] width   :" << width  << std::endl; // print width
+	std::cout << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
+	std::cout << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
+	std::cout << std::endl;
+
+	// print myagent array
+	std::cout << "[*] myagent_array:" << std::endl;
+	for(value item : myagents){
+		agentid = (int)item.get<object>()["agentID"].get<double>();
+		x       = (int)item.get<object>()["x"].get<double>();
+		y       = (int)item.get<object>()["y"].get<double>();
+		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		agent_data[index_num][0] = x;
+		agent_data[index_num][1] = y;
+    // index (Debug) ------------------------
+    agent_data[index_num][2] = agentid;
+    index_num += 1;
+		// agent数を求める
+		agent_num += 1;
+	}
+	std::cout << std::endl;
+
+	// print enagent array
+	std::cout << "[*] enagent_array:" << std::endl;
+	for(value item : enagents){
+		agentid = (int)item.get<object>()["agentID"].get<double>();
+		x       = (int)item.get<object>()["x"].get<double>();
+		y       = (int)item.get<object>()["y"].get<double>();
+		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		agent_data[index_num][0] = x;
+		agent_data[index_num][1] = y;
+
+    // index (Debug) ---------------------------
+    agent_data[index_num][2] = agentid;
+    index_num += 1;
+	}
+
+
+	//genRandMap(仮)
+	std::vector<int> field_rand;
+  std::vector<int> buf;
+	int map_num = 0; //map用添字
+	int buf_height, buf_width;
+  int field_rand_sum = -1; // <- Debug
+
+	buf_height=(this->height/2)+(this->height%2);
+	buf_width=(this->width/2)+(this->width%2);
+
+  while(field_rand_sum < 0){
+    field_rand_sum = 0; // <- Debug
+    for(int i=0; i < height; i++){
+      for(int j=0; j < width; j++){
+        buf.push_back((int)map[map_num]);
+
+				map_num += 1;
+      }
+      field_rand.insert(field_rand.end(), buf.begin(), buf.end());
+      buf.clear();
+    }
+    field_rand_sum = std::accumulate(field_rand.begin(),field_rand.end(),0);  // <- Debug
+  }
+
+  // showing field_sum pt ---------------------------------
+  std::cout << "[*]field_sum:" << field_rand_sum << std::endl;
+
+	int val=0;
+
+	for(int i=0;i<this->height;i++){
+		for(int j=0;j<this->width;j++){
+			this->setPanelScore(j, i, field_rand.at(val));
+			val++;
+		}
+	}
+
+	std::cout << "agents:" << agent_num << std::endl;
+	// Debug -----------------------------------------
+  // TODO: 汎用的な実装にする(agentIDとATTR)
+  // このままだと自チームが敵側の場合OUT
+	agent_num *= 2;
+	for(int s=0; s < agent_num; s++){
+		if(s < agent_num/2){
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, MINE_ATTR, agent_data[s][2]);
+		}
+		else{
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, ENEMY_ATTR, agent_data[s][2]);
+		}
+	}
+
+	//this->agents.emplace_back(dx,dy,bool,id)
+
+
+}
 
 bool Field::is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
 	int_fast32_t totalscore = 0, score, x, y;
@@ -787,4 +985,122 @@ void Field::setPanels(const std::vector<std::vector<std::pair<uint_fast32_t, uin
 				this->setPanelAttr(route.at(i).first, route.at(i).second, attr);
 			}
 		});
+}
+
+void Field::update(){
+  // agetn情報
+	int agent_data[30][3];
+  
+  int index_num = 0;     // ↑添字
+	int agentid, x, y;
+	int agent_num = 0;
+
+  int my_attr_tmp; // TeamID用のjson添字
+  int en_attr_tmp;
+
+	//double buffer;
+	value maps;
+	{
+		std::fstream stream("./../../public_field/fields.json");
+		if(!stream.is_open()) return 1;
+		stream >> maps;
+		assert(get_last_error().empty());
+		stream.close();
+	}
+
+  value matches;
+  {
+    std::fstream stream("./../../matches.json");
+    if(!stream.is_open()) return 1;
+    stream >> matches;
+    assert(get_last_error().empty());
+    stream.close();
+  }
+
+	value::array agents = maps.get<object>()["teams"].get<value::array>(); // all agent
+
+	// teamID  <- 別のスクリプトで取ってくる必要あり
+	int myID = (int)agents[0].get<object>()["teamID"].get<double>();
+	int enID = (int)agents[1].get<object>()["teamID"].get<double>();
+  // これ
+  int myTeamID = (int)matches.get<object>()["teamID"].get<double>();
+
+  if (myTeamID == myID){
+    my_attr_tmp = 0;
+    en_attr_tmp = 1;
+  }else{
+    my_attr_tmp = 1;
+    en_attr_tmp = 0;
+  }
+
+// agent array
+	
+	value::array myagents = agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
+	value::array enagents = agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
+
+
+  // Debug myTeamID -------------------------------------------------
+  std::cout << "[*] myTeamID:" << myTeamID << std::endl;
+
+
+	// Debug---------------
+	std::cout << "\n\n";
+  std::cout << "[*] turn    :" << turn << std::endl; // Debug
+	//std::cout << "[*] turns   :" << end_turn   << std::endl; // print turns
+	std::cout << "[*] height  :" << height << std::endl; // print height
+	std::cout << "[*] width   :" << width  << std::endl; // print width
+	std::cout << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
+	std::cout << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
+	std::cout << std::endl;
+
+	// print myagent array
+	std::cout << "[*] myagent_array:" << std::endl;
+	for(value item : myagents){
+		agentid = (int)item.get<object>()["agentID"].get<double>();
+		x       = (int)item.get<object>()["x"].get<double>();
+		y       = (int)item.get<object>()["y"].get<double>();
+		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		agent_data[index_num][0] = x;
+		agent_data[index_num][1] = y;
+    // index (Debug) ------------------------
+    agent_data[index_num][2] = agentid;
+    index_num += 1;
+		// agent数を求める
+		agent_num += 1;
+	}
+	std::cout << std::endl;
+
+	// print enagent array
+	std::cout << "[*] enagent_array:" << std::endl;
+	for(value item : enagents){
+		agentid = (int)item.get<object>()["agentID"].get<double>();
+		x       = (int)item.get<object>()["x"].get<double>();
+		y       = (int)item.get<object>()["y"].get<double>();
+		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		agent_data[index_num][0] = x;
+		agent_data[index_num][1] = y;
+
+    // index (Debug) ---------------------------
+    agent_data[index_num][2] = agentid;
+    index_num += 1;
+	}
+
+	// Debug -----------------------------------------
+  // TODO: 汎用的な実装にする(agentIDとATTR)
+  // このままだと自チームが敵側の場合OUT
+	agent_num *= 2;
+  std::vector<Agent>().swap(this->agents);
+	for(int s=0; s < agent_num; s++){
+		if(s < agent_num/2){
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, MINE_ATTR, agent_data[s][2]);
+		}
+		else{
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, ENEMY_ATTR, agent_data[s][2]);
+		}
+	}
+	
 }
