@@ -214,7 +214,7 @@ public:
 	
 };
 
-constexpr uint_fast32_t greedy_count       = 14;
+constexpr uint_fast32_t greedy_count       = 10;
 constexpr uint_fast32_t search_count       = 14;
 constexpr uint_fast32_t astar_depth        = 10;
 

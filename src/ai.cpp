@@ -898,13 +898,13 @@ std::pair<int_fast32_t, std::vector<Node>> Astar::searchRoute(Field field, const
 			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
 				next_field = current_field;
 				next_field.agents.at(agent).move((Direction)i);
-				//this->greedyMove(next_field, agent, current->move_num);
+				this->greedyMove(next_field, agent, current->move_num);
 				this->decidedMove(next_field, agent,  next_field.decided_route);
 				next =& node.at(next_field.agents.at(agent).getY() * field.getWidth() + next_field.agents.at(agent).getX());
 				
 				if(current->coord == next->coord){
 					next_field.agents.at(agent).move((Direction)i);
-					//this->greedyMove(next_field, agent, current->move_num + 1);
+					this->greedyMove(next_field, agent, current->move_num + 1);
 				  this->decidedMove(next_field, agent,  next_field.decided_route);
 					next =& node.at(next_field.agents.at(agent).getY() * field.getWidth() + next_field.agents.at(agent).getX());
 
@@ -1176,7 +1176,6 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		return;
 	}
 
-	/*
 	//時間処理
 	if(this->is_time_over){
 	  const uint_fast32_t x = field.agents.at(agent).getX();
@@ -1188,7 +1187,6 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
 		return;
 	}
-	*/
 
 	/*
 	//時間処理
@@ -1197,17 +1195,6 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
 		return;
 	}
-	*/
-
-	/*
-	const uint_fast32_t x = field.agents.at(agent).getX();
-	const uint_fast32_t y = field.agents.at(agent).getY();
-	Direction direction = this->exceptionMove(field, agent);
-	
-	field.agents.at(agent).move(direction);
-	this->next_coord.push_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
-	this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
-	return;
 	*/
 	
 	this->singleMove(field, agent);
@@ -1223,7 +1210,6 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	else
 		this->correctionRoute(field, agent);
 
-	//時間処理
 	if(this->is_time_over)
 		goto _EXCEPTION_SEARCH;
 
@@ -1250,10 +1236,6 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	}
 
  _EXCEPTION_SEARCH:
-	/*
-	this->beam_search.singleMove(field, agent);
-	this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
-	*/
 	direction = this->exceptionMove(field, agent);
 	field.agents.at(agent).move(direction);
 	this->next_coord.push_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
