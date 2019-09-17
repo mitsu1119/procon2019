@@ -124,9 +124,14 @@ private:
 	void shuffleSwarm() {
 		for(size_t i = 0; i < swarm.size(); i++) {
 			size_t j = rand(swarm.size() - 1);
+			/* LP64 とかそのあたりの環境依存
 			Individual *work = swarm[i];
 			swarm[i] = swarm[j];
 			swarm[j] = work;
+			*/
+			swarm[i] = (Individual *)((unsigned long)swarm[i] ^ (unsigned long)swarm[j]);
+			swarm[j] = (Individual *)((unsigned long)swarm[j] ^ (unsigned long)swarm[i]);
+			swarm[i] = (Individual *)((unsigned long)swarm[i] ^ (unsigned long)swarm[j]);
 		}
 	}
 
@@ -228,7 +233,7 @@ int main() {
 		pid_t wait_pid = wait(&childStatus);
 		
 		read(fd[0], buf, sizeof(buf));
-		printf("Child stderr '%s'\n", buf);
+		printf("Child stdout '%s'\n", buf);
 		close(fd[0]);
 		close(fd[1]);
 		if(WIFEXITED(childStatus)) {
