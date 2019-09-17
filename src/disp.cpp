@@ -457,7 +457,6 @@ void Display::keyboard(unsigned char key, int x, int y){
 	case '\033':
 
 		std::exit(0);
-		
 		break;
 		
 	case 'w':
@@ -465,7 +464,6 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->greedy->move(this->field, MINE_ATTR);
 		this->greedy->move(this->field, ENEMY_ATTR);
-		
 		break;
 		
 	case 'm':
@@ -473,7 +471,6 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->random->move(this->field, MINE_ATTR);
 		this->random->move(this->field, ENEMY_ATTR);
-		
 		break;
 		
 	case 'g':
@@ -481,7 +478,6 @@ void Display::keyboard(unsigned char key, int x, int y){
 		
 		this->moveNext();
 		this->random->move(this->field, ENEMY_ATTR);
-
 		break;
 
 	case 't':
@@ -489,11 +485,9 @@ void Display::keyboard(unsigned char key, int x, int y){
 
 		this->astar->move(this->field, MINE_ATTR);
 		//this->astar->move(this->field, ENEMY_ATTR);
-
 		
 		this->random->move(this->field, ENEMY_ATTR);
 		//this->random->move(this->field, MINE_ATTR);
-		
 		break;
 
 	case 'b':
@@ -507,7 +501,6 @@ void Display::keyboard(unsigned char key, int x, int y){
 		
 		this->random->move(this->field, ENEMY_ATTR);
 		//this->random->move(this->field, MINE_ATTR);
-
 		break;
 		
 	case 'd':
@@ -516,11 +509,10 @@ void Display::keyboard(unsigned char key, int x, int y){
 		this->greedy->move(this->field, MINE_ATTR);
 		//this->greedy->move(this->field, ENEMY_ATTR);
 
-		
-		//this->random->move(this->field, ENEMY_ATTR);
-		
+		this->random->move(this->field, ENEMY_ATTR);
+		//this->random->move(this->field, MINE_ATTR);
 		break;
-		
+
 	default:
 		break;
 	}
