@@ -840,5 +840,120 @@ void Field::init(){
 }
 
 void Field::update(){
+  // agetn情報
+	int agent_data[30][3];
   
+  int index_num = 0;     // ↑添字
+	int agentid, x, y;
+	int agent_num = 0;
+
+  int my_attr_tmp; // TeamID用のjson添字
+  int en_attr_tmp;
+
+	//double buffer;
+	value maps;
+	{
+		std::fstream stream("./../../public_field/fields.json");
+		if(!stream.is_open()) return 1;
+		stream >> maps;
+		assert(get_last_error().empty());
+		stream.close();
+	}
+
+  value matches;
+  {
+    std::fstream stream("./../../matches.json");
+    if(!stream.is_open()) return 1;
+    stream >> matches;
+    assert(get_last_error().empty());
+    stream.close();
+  }
+
+	value::array agents = maps.get<object>()["teams"].get<value::array>(); // all agent
+
+	// teamID  <- 別のスクリプトで取ってくる必要あり
+	int myID = (int)agents[0].get<object>()["teamID"].get<double>();
+	int enID = (int)agents[1].get<object>()["teamID"].get<double>();
+  // これ
+  int myTeamID = (int)matches.get<object>()["teamID"].get<double>();
+
+  if (myTeamID == myID){
+    my_attr_tmp = 0;
+    en_attr_tmp = 1;
+  }else{
+    my_attr_tmp = 1;
+    en_attr_tmp = 0;
+  }
+
+// agent array
+	
+	value::array myagents = agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
+	value::array enagents = agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
+
+
+  // Debug myTeamID -------------------------------------------------
+  std::cout << "[*] myTeamID:" << myTeamID << std::endl;
+
+
+	// Debug---------------
+	std::cout << "\n\n";
+  std::cout << "[*] turn    :" << turn << std::endl; // Debug
+	//std::cout << "[*] turns   :" << end_turn   << std::endl; // print turns
+	std::cout << "[*] height  :" << height << std::endl; // print height
+	std::cout << "[*] width   :" << width  << std::endl; // print width
+	std::cout << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
+	std::cout << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
+	std::cout << std::endl;
+
+	// print myagent array
+	std::cout << "[*] myagent_array:" << std::endl;
+	for(value item : myagents){
+		agentid = (int)item.get<object>()["agentID"].get<double>();
+		x       = (int)item.get<object>()["x"].get<double>();
+		y       = (int)item.get<object>()["y"].get<double>();
+		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		agent_data[index_num][0] = x;
+		agent_data[index_num][1] = y;
+    // index (Debug) ------------------------
+    agent_data[index_num][2] = agentid;
+    index_num += 1;
+		// agent数を求める
+		agent_num += 1;
+	}
+	std::cout << std::endl;
+
+	// print enagent array
+	std::cout << "[*] enagent_array:" << std::endl;
+	for(value item : enagents){
+		agentid = (int)item.get<object>()["agentID"].get<double>();
+		x       = (int)item.get<object>()["x"].get<double>();
+		y       = (int)item.get<object>()["y"].get<double>();
+		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		agent_data[index_num][0] = x;
+		agent_data[index_num][1] = y;
+
+    // index (Debug) ---------------------------
+    agent_data[index_num][2] = agentid;
+    index_num += 1;
+	}
+
+	// Debug -----------------------------------------
+  // TODO: 汎用的な実装にする(agentIDとATTR)
+  // このままだと自チームが敵側の場合OUT
+	agent_num *= 2;
+  std::vector<Agent>().swap(this->agents);
+	for(int s=0; s < agent_num; s++){
+		if(s < agent_num/2){
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, MINE_ATTR, agent_data[s][2]);
+		}
+		else{
+			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, ENEMY_ATTR, agent_data[s][2]);
+		}
+	}
+
+
 }
