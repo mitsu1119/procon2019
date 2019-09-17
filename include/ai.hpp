@@ -121,7 +121,7 @@ constexpr double_t heuristic_weight           = 10;
 constexpr double_t value_weight               = 30;
 constexpr double_t is_on_decided_route_weight = 30;
 constexpr double_t is_on_mine_panel_weight    = 10;
-constexpr double_t adjacent_agent_weight      = 20;
+constexpr double_t adjacent_agent_weight      = 10;
 constexpr double_t average_distance_weght     = 5;
 
 /*
@@ -184,6 +184,10 @@ inline const double Node::getScore() const{
 	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight) + (this->average_distance * average_distance_weght);
 }
 
+constexpr uint_fast32_t simple_beam_depth = 3;
+constexpr uint_fast32_t simple_beam_width = 3;
+constexpr uint_fast32_t simple_bfs_depth  = 3;
+
 class SimpleMove : public AI{
 private:
 
@@ -192,6 +196,7 @@ private:
 private:
 
 	Field beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const;
+	Field breadthForceSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const;
 
 public:
 
@@ -202,11 +207,13 @@ public:
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
 	void greedyMove(Field& field, const uint_fast32_t agent);
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
-
 	const Direction greedySingleMove(Field& field, const uint_fast32_t agent, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& expect_coord) const;
+	
 	const Direction beamSearchSingleMove(Field field, const uint_fast32_t agent) const;
 	void beamSearchMove(Field& field, const uint_fast32_t attr) const;
-	
+
+	const Direction breadthForceSearchSingleMove(Field& field, const uint_fast32_t agent) const;
+	void breadthForceSearchSearchMove(Field& field, const uint_fast32_t attr) const;
 	
 	void init(const Field* field) override;
 	void init(const Field& field) override;
@@ -309,6 +316,7 @@ private:
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
 	Direction exceptionMove(Field& field, const uint_fast32_t agent);
+	Direction finalPhase(Field& field, const uint_fast32_t agent);
 
 private:
 
