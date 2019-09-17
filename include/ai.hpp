@@ -204,7 +204,7 @@ public:
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
 
 	const Direction greedySingleMove(Field& field, const uint_fast32_t agent, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& expect_coord) const;
-	const Direction beamSearchSingleMove(Field& field, const uint_fast32_t agent) const;
+	const Direction beamSearchSingleMove(Field field, const uint_fast32_t agent) const;
 	void beamSearchMove(Field& field, const uint_fast32_t attr) const;
 	
 	
@@ -308,7 +308,7 @@ private:
 	//移動
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
 	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
-	void exceptionMove(Field& field, const uint_fast32_t agent);
+	Direction exceptionMove(Field& field, const uint_fast32_t agent);
 
 private:
 
@@ -368,7 +368,6 @@ private:
 
 
 	//枝切り用
-	//const bool branchingCondition(Node* current, const uint_fast32_t max_move_cost) const;
 	const bool branchingCondition(Field& field, const uint_fast32_t agent, Node* current, const uint_fast32_t max_move_cost);
 	const bool endCondition(Node* current) const;
 
