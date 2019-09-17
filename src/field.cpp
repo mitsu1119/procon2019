@@ -218,10 +218,12 @@ void Field::applyNextAgents() {
 	// ||agents||が小さいため愚直な実装でも問題なさそう
 	// TODO:早くできるいい方法があるなら実装すべき
 	for(size_t i = 0; i < this->agents.size(); i++) {
-		for(size_t j = i + 1; j < this->agents.size(); j++) {
-			if(this->agents[i].getnextX() != this->agents[j].getnextX() ||  this->agents[i].getnextY() != this->agents[j].getnextY()) continue;
+		for(size_t j = 0; j < this->agents.size(); j++) {
+			if(i == j || this->agents[i].getnextX() != this->agents[j].getnextX() ||  this->agents[i].getnextY() != this->agents[j].getnextY()) continue;
 			this->canmoveAgents[i] = false;
 			this->canmoveAgents[j] = false;
+			this->agents[i].move(STOP);
+			this->agents[j].move(STOP);
 		}
 	}
 
