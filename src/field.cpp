@@ -246,6 +246,7 @@ void Field::applyNextAgents() {
 			a.move(STOP);
 		});
 
+
 	//ターンを刻む
 	this->turn++;
 }
@@ -552,6 +553,7 @@ void Field::print() {
 	fprintf(stderr, "enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
 	fprintf(stderr, "turn:       %d\n", this->turn);
 	fprintf(stderr, "%s", strip);
+
 }
 
 const uint_fast32_t Field::getWidth() const{
@@ -1102,5 +1104,5 @@ void Field::update(){
 			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, ENEMY_ATTR, agent_data[s][2]);
 		}
 	}
-	
+
 }

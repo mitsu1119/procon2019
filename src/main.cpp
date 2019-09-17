@@ -1,7 +1,12 @@
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <stdlib.h>
 #include "field.hpp"
 #include "useful.hpp"
 #include "disp.hpp"
+
+using namespace picojson;
 
 //Field field(16, 16);
 Field field;
