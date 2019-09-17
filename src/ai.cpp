@@ -1236,9 +1236,11 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	if(this->decided_route.at(agent).empty())
 		goto _EXCEPTION_SEARCH;
 
+	{
 	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	if(result != this->next_coord.end())
 		goto _EXCEPTION_SEARCH;
+	}
 	
 	this->next_coord.push_back(std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	
