@@ -182,7 +182,7 @@ void Field::genRandMap(){
     field_rand_sum = std::accumulate(field_rand.begin(),field_rand.end(),0);  // <- Debug
   }
   // showing field_sum pt ---------------------------------
-  std::cout << "[*]field_sum:" << field_rand_sum << std::endl;
+  std::cerr << "[*]field_sum:" << field_rand_sum << std::endl;
 
 	//奇数業に対応させる
 
@@ -546,9 +546,9 @@ void Field::print() {
 		else fprintf(stderr, "\x1b[31m");
 		fprintf(stderr, "agent[%u]: (%u, %u)\n\x1b[39m", i, this->agents[i].getX(), this->agents[i].getY());
 	}
-	fprintf(stdout, "mineScore:  %d\n", this->calcScore(MINE_ATTR));
-	fprintf(stdout, "enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
-	fprintf(stdout, "turn:       %d\n", this->turn);
+	fprintf(stderr, "mineScore:  %d\n", this->calcScore(MINE_ATTR));
+	fprintf(stderr, "enemyScore: %d\n", this->calcScore(ENEMY_ATTR));
+	fprintf(stderr, "turn:       %d\n", this->turn);
 	fprintf(stderr, "%s", strip);
 }
 
@@ -573,16 +573,18 @@ const bool Field::checkEnd() const{
 }
 
 void Field::judgeWinner(){
-	printf("\n---------------- finish ----------------\n");
+	fprintf(stderr, "\n---------------- finish ----------------\n");
+
 	if(this->calcScore(MINE_ATTR) > this->calcScore(ENEMY_ATTR)){
 		printf("win  MINE\n");
 		printf("lose ENEMY\n");
 	}
-	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR))
-		printf("DRAW\n");
+	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR)){
+		printf("Draw\n");
+	}
 	if(this->calcScore(MINE_ATTR) < this->calcScore(ENEMY_ATTR)){
-		printf("win  ENEMY\n");
-		printf("lose MINE\n");
+		printf("Lose MINE\n");
+		printf("Win  ENEMY\n");
 	}
 }
 
@@ -649,39 +651,39 @@ void Field::init(){
 
 
 	// Debug---------------
-	std::cout << "\n\n";
-	std::cout << "[*] turn  :"   << turn   << std::endl; // print turn
-	std::cout << "[*] height:"   << height << std::endl; // print height
-	std::cout << "[*] width :"   << width  << std::endl; // print width
-	std::cout << "[*] myTeamID:" << myID   << std::endl; // print myTeamID
-	std::cout << "[*] enTeamID:" << enID   << std::endl; // print enemyTeamID
-	std::cout << std::endl;
+	std::cerr << "\n\n";
+	std::cerr << "[*] turn  :" << turn   << std::endl; // print turn
+	std::cerr << "[*] height:" << height << std::endl; // print height
+	std::cerr << "[*] width :" << width  << std::endl; // print width
+	std::cerr << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
+	std::cerr << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
+	std::cerr << std::endl;
 
 	// print myagent array
-	std::cout << "[*] myagent_array:" << std::endl;
+	std::cerr << "[*] myagent_array:" << std::endl;
 	for(value item : myagents){
-		agentid = (int_fast32_t)item.get<object>()["agentID"].get<double_t>();
-		x       = (int_fast32_t)item.get<object>()["x"].get<double_t>();
-		y       = (int_fast32_t)item.get<object>()["y"].get<double_t>();
-		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double_t>();
-		std::cout << "  x:" << (int)item.get<object>()["x"].get<double_t>();
-		std::cout << "  y:" << (int)item.get<object>()["y"].get<double_t>() << std::endl;
+		agentid = (int)item.get<object>()["agentID"].get<double>();
+		x       = (int)item.get<object>()["x"].get<double>();
+		y       = (int)item.get<object>()["y"].get<double>();
+		std::cerr << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cerr << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cerr << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
 		agent_data[agentid][0] = x;
 		agent_data[agentid][1] = y;
 		// agent数を求める
 		agent_num += 1;
 	}
-	std::cout << std::endl;
+	std::cerr << std::endl;
 
 	// print enagent array
-	std::cout << "[*] enagent_array:" << std::endl;
+	std::cerr << "[*] enagent_array:" << std::endl;
 	for(value item : enagents){
-		agentid = (int_fast32_t)item.get<object>()["agentID"].get<double>();
-		x       = (int_fast32_t)item.get<object>()["x"].get<double>();
-		y       = (int_fast32_t)item.get<object>()["y"].get<double>();
-		std::cout << "agentID:" << (int_fast32_t)item.get<object>()["agentID"].get<double_t>();
-		std::cout << "  x:"     << (int_fast32_t)item.get<object>()["x"].get<double_t>();
-		std::cout << "  y:"     << (int_fast32_t)item.get<object>()["y"].get<double_t>() << std::endl;
+		agentid = (int)item.get<object>()["agentID"].get<double>();
+		x       = (int)item.get<object>()["x"].get<double>();
+		y       = (int)item.get<object>()["y"].get<double>();
+		std::cerr << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cerr << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cerr << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
 		agent_data[agentid][0] = x;
 		agent_data[agentid][1] = y;
 	}
@@ -712,7 +714,7 @@ void Field::init(){
   }
 
   // showing field_sum pt ---------------------------------
-  std::cout << "[*]field_sum:" << field_rand_sum << std::endl;
+  std::cerr << "[*]field_sum:" << field_rand_sum << std::endl;
 
 	int_fast32_t val = 0;
 	for(size_t i = 0; i < this->height; i++){
@@ -722,7 +724,8 @@ void Field::init(){
 		}
 	}
 
-	std::cout << "agents:" << agent_num << std::endl;
+	std::cerr << "agents:" << agent_num << std::endl;
+	// Debug -----------------------------------------
 	agent_num *= 2;
 	for(size_t i = 1; i <= agent_num; i++){
 		if(i <= agent_num / 2){

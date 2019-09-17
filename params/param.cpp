@@ -201,7 +201,7 @@ int main() {
 	*/
 
 	int fd[2];
-	char buf[10];
+	char buf[100];
 	memset(buf, 0, sizeof(buf));	// buf clear.
 
 	if(pipe(fd) < 0) {
@@ -221,7 +221,7 @@ int main() {
 		dup2(fd[1], 1);
 		close(fd[0]);
 		close(fd[1]);
-		char *const args[] = {"../build/src/run", NULL};
+		char *const args[] = {"./run", NULL};
 		execv(args[0], args);
 		break;
 			}
@@ -233,7 +233,9 @@ int main() {
 		pid_t wait_pid = wait(&childStatus);
 		
 		read(fd[0], buf, sizeof(buf));
-		printf("Child stdout '%s'\n", buf);
+		if(buf[0] == 'W') printf("Win Mine\n");
+		else if(buf[0] == 'L') printf("Lose Mine\n");
+		else printf("Draw\n");
 		close(fd[0]);
 		close(fd[1]);
 		if(WIFEXITED(childStatus)) {
@@ -245,6 +247,7 @@ int main() {
 			exit(EXIT_FAILURE);
 		}
 	}
+	
 	return 0;
 }
 
