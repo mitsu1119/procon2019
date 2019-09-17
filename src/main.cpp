@@ -125,6 +125,7 @@ int main(int argc, double_t argv[]){
 
 int main(int argc, char *argv[]) {
 	astar.init(&field);
+	field.init();
 
 	while(true){
 		

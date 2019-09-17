@@ -951,6 +951,27 @@ void Field::init(){
 	//this->agents.emplace_back(dx,dy,bool,id)
 
 
+
+	
+	//ターン
+	this->turn = 0;
+	this->max_turn = 70;
+	
+	//シード値設定
+	this->random = XorOshiro128p(time(NULL));
+	
+	this->canmoveAgents = std::vector<bool>(this->agents.size(), true);
+	
+	// エージェントの初期位置のパネルの属性を設定
+	for(auto &i: this->agents) {
+		setPanelAttr(i.getX(), i.getY(), i.getAttr());
+	}
+
+	//とりあえずSTOPにセット
+	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
+			a.move(STOP);
+		});
+
 }
 
 bool Field::is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
