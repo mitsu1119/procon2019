@@ -2,7 +2,7 @@
   "id": 6,
   "intervalMillis": 5000,
   "matchTo": "C高専",
-  "teamID": 2,
+  "teamID": 1,
   "turnMillis": 30000,
   "turns": 60
 }

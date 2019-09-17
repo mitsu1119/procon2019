@@ -654,12 +654,14 @@ void Field::init(){
   int my_attr_tmp; // TeamID用のjson添字
   int en_attr_tmp;
 
+  int end_turn;    // 終了ターン数
+
 	std::vector<int> map;
 	std::vector<int> tile;
 	double buffer;
 	value maps;
 	{
-		std::fstream stream("./../../public_field/E-1.json");
+		std::fstream stream("./../../public_field/fields.json");
 		if(!stream.is_open()) return 1;
 		stream >> maps;
 		assert(get_last_error().empty());
@@ -695,8 +697,8 @@ void Field::init(){
   //------------------------------------------------------------------
 
 
-	// 現在ターン
-	//int turn   = (int)maps.get<object>()["turn"].get<double>();
+	// 終了ターン
+	end_turn   = (int)matches.get<object>()["turns"].get<double>();
 
 
 	value::array points = maps.get<object>()["points"].get<value::array>();
@@ -714,7 +716,7 @@ void Field::init(){
 	// teamID  <- 別のスクリプトで取ってくる必要あり
 	int myID = (int)agents[0].get<object>()["teamID"].get<double>();
 	int enID = (int)agents[1].get<object>()["teamID"].get<double>();
-
+  // これ
   int myTeamID = (int)matches.get<object>()["teamID"].get<double>();
 
   if (myTeamID == myID){
@@ -737,9 +739,10 @@ void Field::init(){
 
 	// Debug---------------
 	std::cout << "\n\n";
-	std::cout << "[*] turn  :" << turn   << std::endl; // print turn
-	std::cout << "[*] height:" << height << std::endl; // print height
-	std::cout << "[*] width :" << width  << std::endl; // print width
+  std::cout << "[*] turn    :" << turn << std::endl; // Debug
+	std::cout << "[*] turns   :" << end_turn   << std::endl; // print turns
+	std::cout << "[*] height  :" << height << std::endl; // print height
+	std::cout << "[*] width   :" << width  << std::endl; // print width
 	std::cout << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
 	std::cout << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
 	std::cout << std::endl;

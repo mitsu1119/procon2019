@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <stdlib.h>
 #include "field.hpp"
 #include "useful.hpp"
@@ -16,7 +17,7 @@ BeamSearch beam_search;
 Astar astar;
 
 void move2json();
-void call_request();
+std::string getType(int nx, int ny, int dx, int dy);
 
 /*
 int main(int argc, char *argv[]) {
@@ -78,7 +79,10 @@ void move2json(){
     double ID;
 
     double dx,dy; // 移動先
+    double nx,ny;
     double x, y;  // 移動前
+
+    std::string type;
 
     // forで毎回id,dx,dyのデータを取ってくる必要あり
     for(int i = 0; i < 7; i++){
@@ -90,20 +94,23 @@ void move2json(){
       		//j = (double)i+1;  // agentID
           x = (double)field.agents.at(i).getX();     // 移動前 x
           y = (double)field.agents.at(i).getY();     // 移動前 y
-          dx= (double)field.agents.at(i).getnextX(); // 移動先 x
-          dy= (double)field.agents.at(i).getnextY(); // 移動先 y
+          nx= (double)field.agents.at(i).getnextX(); // 移動先 x
+          ny= (double)field.agents.at(i).getnextY(); // 移動先 y
 
-          dx -= x; // xの差をとる
-          dy -= y; // yの差をとる
-
+          dx = nx - x; // xの差をとる
+          dy = ny - y; // yの差をとる
+          
           std::cout << "x:" << dx << " " << "y:" << dy << std::endl;
 
         	//id.insert(std::make_pair("data", value(data)));
+          
+          // Debug
+          type = getType((int)nx, (int)ny , (int)dx, (int)dy);
 
 		      id.insert(std::make_pair("agentID", value(ID)));
 		      id.insert(std::make_pair("dx", value(dx)));
 		      id.insert(std::make_pair("dy", value(dy)));
-		      id.insert(std::make_pair("type", value("move")));
+		      id.insert(std::make_pair("type", value(type)));
 
 		
         	datalist.push_back(value(id));
@@ -127,11 +134,15 @@ void move2json(){
     outputfile.close();
 }
 
-void call_request(){
-  //char *command = "python ../../test.py"
-  //int req;
-
-  //system(command);
-
-  //std::cout << req << std::endl;
+std::string getType(int nx, int ny, int dx, int dy){
+    uint_fast32_t attr;
+    if((dx == 0) && (dy == 0)){
+      return "stay";
+    }else{
+      attr = field.at(nx,ny)->getAttr();
+      if(attr == ENEMY_ATTR)
+        return "remove";
+      else
+        return "move";
+    }
 }
