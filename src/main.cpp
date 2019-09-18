@@ -18,7 +18,6 @@ Astar astar;
 void move2json();
 std::string getType(int nx, int ny, int dx, int dy);
 
-/*
 int main(int argc, char *argv[]) {
 	field.init();
 
@@ -31,7 +30,6 @@ int main(int argc, char *argv[]) {
 	return 0;
 	
 }
-*/
 
 /*
 int main(int argc, char *argv[]){
@@ -123,6 +121,7 @@ int main(int argc, double_t argv[]){
 }
 */
 
+/*
 int main(int argc, char *argv[]) {
 	astar.init(&field);
 	field.init();
@@ -160,6 +159,7 @@ int main(int argc, char *argv[]) {
 	
 	return 0;
 }
+*/
 
 void move2json(){
     object actions;

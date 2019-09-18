@@ -116,13 +116,24 @@ public:
 };
 
 constexpr double_t move_weight                = 5;
-constexpr double_t state_weight               = 40;
+constexpr double_t state_weight               = 30;
 constexpr double_t heuristic_weight           = 10;
-constexpr double_t value_weight               = 30;
+constexpr double_t value_weight               = 50;
 constexpr double_t is_on_decided_route_weight = 30;
-constexpr double_t is_on_mine_panel_weight    = 10;
+constexpr double_t is_on_mine_panel_weight    = 70;
 constexpr double_t adjacent_agent_weight      = 10;
-constexpr double_t average_distance_weght     = 5;
+constexpr double_t average_distance_weght     = 30;
+
+/*
+constexpr double_t move_weight                = 5;
+constexpr double_t state_weight               = 20;
+constexpr double_t heuristic_weight           = 10;
+constexpr double_t value_weight               = 55;
+constexpr double_t is_on_decided_route_weight = 30;
+constexpr double_t is_on_mine_panel_weight    = 50;
+constexpr double_t adjacent_agent_weight      = 20;
+constexpr double_t average_distance_weght     = 30;
+*/
 
 /*
 static double_t move_weight;
@@ -149,19 +160,19 @@ public:
 	//ステータス
 	Status status;
 	//移動コスト
-	uint_fast32_t move_cost;
+	int_fast32_t move_cost;
 	//盤の状態によるコスト
 	int_fast32_t state_cost;
 	//ヒューリスティックコスト（推定コスト）
-	uint_fast32_t heuristic;
+	int_fast32_t heuristic;
 	//その地点での点数
 	int_fast32_t  value;
 	//確定ルートにかぶっているか？
-  uint_fast32_t is_on_decided_route;
+  int_fast32_t is_on_decided_route;
 	//自陣を何回移動したか
-	uint_fast32_t is_on_mine_panel;
+	int_fast32_t is_on_mine_panel;
 	//Agent同士が隣接しているかどうか
-	uint_fast32_t adjacent_agent;
+	int_fast32_t adjacent_agent;
 	//Agent同士の平均距離
 	double average_distance;
 
@@ -181,7 +192,7 @@ public:
 };
 
 inline const double Node::getScore() const{
-	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight) + (this->average_distance * average_distance_weght);
+	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight) - (this->average_distance * average_distance_weght);
 }
 
 constexpr uint_fast32_t simple_beam_depth = 3;
@@ -221,24 +232,24 @@ public:
 	
 };
 
-constexpr uint_fast32_t greedy_count       = 10;
-constexpr uint_fast32_t search_count       = 14;
+constexpr uint_fast32_t greedy_count       = 8;
+constexpr uint_fast32_t search_count       = 10;
 constexpr uint_fast32_t astar_depth        = 10;
 
-constexpr double_t occpancy_weight         = 15;
+constexpr double_t occpancy_weight         = 20;
 constexpr double_t is_on_decided_weight    = 10;
 constexpr double_t is_my_pannel_weight     = 10;
-constexpr double_t is_angle_weight         = 7;
+constexpr double_t is_angle_weight         = 3;
 constexpr double_t is_side_weight          = 3;
 constexpr double_t is_inside_closed_weight = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
-constexpr uint_fast32_t min_mine_distance  = 2;
+constexpr uint_fast32_t min_mine_distance  = 3;
 constexpr uint_fast32_t min_agent_distance = 2;
-constexpr uint_fast32_t min_goal_distance  = 2;
-constexpr uint_fast32_t max_move           = 35;
+constexpr uint_fast32_t min_goal_distance  = 4;
+constexpr uint_fast32_t max_move           = 33;
 constexpr uint_fast32_t min_move_cost      = 2;
-constexpr int_fast32_t  min_value          = 10;
+constexpr int_fast32_t  min_value          = 5;
 
 constexpr uint_fast32_t search_time        = 20000;
 constexpr uint_fast32_t grace_time         = 3000;
@@ -275,7 +286,6 @@ private:
 	
 	friend SimpleMove;
 	int_fast32_t average_score;
-
 
 	//探索法
 	Random random;
@@ -404,6 +414,7 @@ private:
 	void chooseAlgorithm(Field& field, const uint_fast32_t agent);
 	void singleMove(Field& field, const uint_fast32_t agent);
 	void correctionRoute(Field& field, const uint_fast32_t agent);
+	bool isPossibleRoute(Field field, const uint_fast32_t agent);
 
 public:
 

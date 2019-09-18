@@ -185,7 +185,7 @@ Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t 
 }
 	
 void BeamSearch::singleMove(Field& field, const uint_fast32_t agent){
-	Field current_field = field;
+	const Field current_field = field;
 	Field next_field    = this->search(&current_field, agent, beam_depth);
 	
 	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
@@ -247,7 +247,7 @@ Field BreadthForceSearch::search(Field* field, const uint_fast32_t agent,  uint_
 }
 
 void BreadthForceSearch::singleMove(Field& field, const uint_fast32_t agent){
-	Field current_field = field;
+	const Field current_field = field;
 	Field next_field    = this->search(&field, agent, bfs_depth);
 	
 	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
@@ -432,7 +432,7 @@ Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast3
 }
 
 const Direction SimpleMove::beamSearchSingleMove(Field field, const uint_fast32_t agent) const{
-	Field current_field = field;
+	const Field current_field = field;
 	Field next_field    = this->beamSearch(&current_field, agent, simple_beam_depth);
 	
 	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
@@ -456,7 +456,6 @@ void SimpleMove::beamSearchMove(Field& field, const uint_fast32_t attr) const{
 	}
 }
 
-//---------------------------------------------------------------------------------------------------------
 Field SimpleMove::breadthForceSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const{
 	if(depth == 0 || field->checkEnd())
 		return *field;
@@ -485,7 +484,7 @@ Field SimpleMove::breadthForceSearch(Field* field, const uint_fast32_t agent, ui
 }
 
 const Direction SimpleMove::breadthForceSearchSingleMove(Field& field, const uint_fast32_t agent) const{
-	Field current_field = field;
+	const Field current_field = field;
 	Field next_field    = this->breadthForceSearch(&current_field, agent, simple_bfs_depth);
 	
 	std::pair<uint_fast32_t, uint_fast32_t> current_coord = std::make_pair(current_field.agents.at(agent).getX(), current_field.agents.at(agent).getY()); 
@@ -543,7 +542,6 @@ void Astar::decidedMove(Field& field, const uint_fast32_t agent, std::vector<std
 	}
 	
 	field.applyNextAgents();
-	
 
 	for(size_t i = 0; i < field.agents.size(); i++){
 		if(route.at(i).empty())
@@ -565,7 +563,6 @@ Direction Astar::exceptionMove(Field& field, const uint_fast32_t agent){
 	return direction;
 }
 
-//---------------------------------------------------------------------------------------------------------
 Direction Astar::finalPhase(Field& field, const uint_fast32_t agent){
 	const uint_fast32_t x = field.agents.at(agent).getX();
 	const uint_fast32_t y = field.agents.at(agent).getY();
@@ -697,6 +694,18 @@ const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const st
 		return true;
 	if(this->anotherGoalDistance(field, agent, coord))
 		return true;
+
+
+	uint_fast32_t x = field.agents.at(agent).getX();
+	uint_fast32_t y = field.agents.at(agent).getY();
+	double mine_distance = this->heuristic(std::make_pair(x, y), coord);
+	if(min_mine_distance >= max_mine_distance)
+		if(mine_distance <= min_mine_distance)
+			return true;
+	if(mine_distance <= min_mine_distance || mine_distance >= max_mine_distance)
+		return true;
+
+	
 	return false;
 }
 
@@ -705,15 +714,18 @@ const bool Astar::anotherAgentDistance(Field& field, const uint_fast32_t agent, 
 	uint_fast32_t y = field.agents.at(agent).getY();
 	double another_distance, mine_distance = this->heuristic(std::make_pair(x, y), coord);
 	
+	/*
 	if(mine_distance <= min_mine_distance || mine_distance >= max_mine_distance)
 		return true;
+	*/
+	
 	for(size_t i = 0; i < field.agents.size(); i++){
 		if(agent == i)
 			continue;
 		if(field.agents.at(agent).getAttr() != field.agents.at(i).getAttr())
 			continue;
 		another_distance = this->heuristic(std::make_pair(x, y), coord);
-		if(another_distance < mine_distance && another_distance <= min_agent_distance)
+		if(another_distance <= mine_distance && another_distance <= min_agent_distance)
 			return true;
 	}
 	return false;
@@ -1000,33 +1012,22 @@ std::pair<int_fast32_t, std::vector<Node>> Astar::searchRoute(Field field, const
 void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start){
 	start->status              = Node::OPEN;
 	start->move_cost           = 0;
-	start->heuristic           = this->heuristic(start->coord, goal);
+	start->heuristic           = 0;
 	start->is_on_decided_route = 0;
 	start->is_on_mine_panel    = 0;
 	start->adjacent_agent      = 0;
+	start->average_distance    = 0;
 	start->move_num            = 0;
-	
-	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		start->state_cost        = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
-	else
-		start->state_cost        = field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
-
-	if(field.agents.at(agent).getAttr() != field.at(start->coord.first, start->coord.second)->getAttr())
-		start->value = field.at(start->coord.first, start->coord.second)->getValue();
-	else
-		start->value = 0;
-
-	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		start->average_distance = this->averageDistanceAgent(field, agent, MINE_ATTR);
-	else
-		start->average_distance = this->averageDistanceAgent(field, agent, ENEMY_ATTR);
+	start->state_cost          = 0;
+	start->value               = 0;
 }
 
 void Astar::setNextNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next){
 	next->status               = Node::OPEN;
 	next->heuristic            = this->heuristic(next->coord, goal);
-	next->is_on_decided_route  = current->is_on_decided_route + this->isOnDecidedRoute(field, agent, next->coord);
-	next->adjacent_agent       = current->adjacent_agent + this->countAdjacentAgent(field, agent, MINE_ATTR);
+	next->is_on_decided_route  = this->isOnDecidedRoute(field, agent, next->coord);
+	next->adjacent_agent       = this->countAdjacentAgent(field, agent, MINE_ATTR);
+	next->average_distance     = this->averageDistanceAgent(field, agent, MINE_ATTR);
 	next->move_num             = current->move_num + 1;
 	next->parent               = current;
 
@@ -1034,6 +1035,33 @@ void Astar::setNextNode(Field& field, const uint_fast32_t agent, const std::pair
 		next->state_cost         = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
 	else
 		next->state_cost         = field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
+
+	next->is_on_mine_panel     = -1;
+	
+	if(field.agents.at(agent).getAttr() == MINE_ATTR && field.at(next->coord.first, next->coord.second)->isMyPanel())
+		next->is_on_mine_panel   = true;
+	
+	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(next->coord.first, next->coord.second)->isEnemyPanel())
+		next->is_on_mine_panel   = true;
+
+	if(field.agents.at(agent).getAttr() != field.at(next->coord.first, next->coord.second)->getAttr())
+		next->value = field.at(next->coord.first, next->coord.second)->getValue();
+	else
+		next->value = -1;
+
+	/*
+	next->status               = Node::OPEN;
+	next->heuristic            = this->heuristic(next->coord, goal);
+	next->is_on_decided_route  = current->is_on_decided_route + this->isOnDecidedRoute(field, agent, next->coord);
+	next->adjacent_agent       = current->adjacent_agent + this->countAdjacentAgent(field, agent, MINE_ATTR);
+	next->average_distance     = current->average_distance + this->averageDistanceAgent(field, agent, MINE_ATTR);
+	next->move_num             = current->move_num + 1;
+	next->parent               = current;
+
+	if(field.agents.at(agent).getAttr() == MINE_ATTR)
+		next->state_cost         = field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR) + current->state_cost;
+	else
+		next->state_cost         = field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR) + current->state_cost;
 
 	next->is_on_mine_panel     = current->is_on_mine_panel;
 	
@@ -1044,14 +1072,10 @@ void Astar::setNextNode(Field& field, const uint_fast32_t agent, const std::pair
 		next->is_on_mine_panel   = current->is_on_mine_panel + 1;
 
 	if(field.agents.at(agent).getAttr() != field.at(next->coord.first, next->coord.second)->getAttr())
-		next->value = field.at(next->coord.first, next->coord.second)->getValue() + current->value;
+		next->value = current->value + field.at(next->coord.first, next->coord.second)->getValue();
 	else
 		next->value = current->value;
-
-	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		next->average_distance = this->averageDistanceAgent(field, agent, MINE_ATTR) + current->average_distance;
-	else
-		next->average_distance = current->average_distance;
+	*/
 }
 
 const bool Astar::branchingCondition(Field& field, const uint_fast32_t agent, Node* current, const uint_fast32_t max_move_cost){
@@ -1244,6 +1268,16 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		return;
 	}
 
+	//敵Agentが接近している場合
+	if(this->countAdjacentAgent(field, agent, ENEMY_ATTR) == 2){
+		Direction direction = this->exceptionMove(field, agent);
+		
+		field.agents.at(agent).move(direction);
+		this->next_coord.push_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
+		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
+		return;
+	}
+
 	//時間処理
 	if(this->is_time_over){
 		Direction direction = this->exceptionMove(field, agent);
@@ -1308,7 +1342,8 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	
 	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->decided_route.at(agent).size());
 	score     = condidate.first;
-	
+
+	//変えたほうがいいかも
 	if(score > this->current_score.at(agent)){
 		route = this->makeRoute(field, condidate.second, agent, this->decided_goal.at(agent));		
 		this->decided_route.at(agent) = route;
@@ -1317,6 +1352,10 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 		this->setDecidedCoord(this->tentative_route);
 		this->printRoute(route);
 	}
+}
+
+bool Astar::isPossibleRoute(Field field, const uint_fast32_t agent){
+	//そのルートの信用度
 }
 
 void Astar::init(const Field* field){
