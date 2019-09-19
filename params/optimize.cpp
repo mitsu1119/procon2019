@@ -64,8 +64,9 @@ class Swarm {
 private:
 	std::vector<Individual *> swarm;
 	XorOshiro128p rand;
+	double cumulativeSum;
 
-	Swarm(std::vector<Individual *> swarm): swarm(swarm) {
+	Swarm(std::vector<Individual *> swarm): swarm(swarm), cumulativeSum(0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
 	}
@@ -79,8 +80,25 @@ private:
 		}
 	}
 
+	std::vector<Individual *> samplingWithoutReplacement(size_t num) {
+		std::vector<Individual *> res(num, nullptr);
+		double cumulativeSumBuf = cumulativeSum;
+		for(size_t i = 0; i < num; i++) {
+			size_t pos = rand.gend(cumulativeSumBuf);
+			size_t j = 0;
+			double rateSum = 0;
+			while(rateSum <= pos && i +  j < swarm.size()) {
+				rateSum += swarm[i + j++]->rate;
+			}
+			res[i] = new Individual(swarm[i + j - 1]->params);
+			cumulativeSumBuf -= swarm[i + j - 1]->rate;
+			std::swap(swarm[i], swarm[i + j - 1]);
+		}
+		return res;
+	}
+
 public:
-	Swarm(size_t size) {
+	Swarm(size_t size): cumulativeSum(0) {
 		swarm = std::vector<Individual *>(size, nullptr);
 		for(size_t i = 0; i < size; i++) swarm[i] = new Individual();
 
@@ -96,7 +114,11 @@ public:
 	}
 
 	void eval() {
-		for(auto i: swarm) i->eval();
+		cumulativeSum = 0;
+		for(auto i: swarm) {
+			i->eval();
+			cumulativeSum += i->rate;
+		}
 	}
 
 	Swarm *makeNextSwarm() {
@@ -118,6 +140,7 @@ public:
 			}
 		}
 		for(size_t i = 0; i < nextSwarm.size(); i++) nextSwarm[i] = new Individual(elite->params);
+		nextSwarm = samplingWithoutReplacement(4);
 		return new Swarm(nextSwarm);
 	}
 
@@ -127,16 +150,6 @@ public:
 };
 
 int main() {
-	std::random_device seed;
-	XorOshiro128p rand(seed());
-
-	std::vector<double> vec(1000000);
-	for(size_t i = 0; i < vec.size(); i++) vec[i] = rand.gend(100.50);
-
-	DPlot<double> plot(vec);
-	plot.histogram();
-
-	/*
 	size_t Np = 4;
 	size_t Ng = 1;
 	Swarm *swarm, *nextSwarm;
@@ -152,7 +165,6 @@ int main() {
 	printf("---- Final Swarm -------------------------\n");
 	swarm->eval();
 	swarm->print();
-	*/
 
 	/*
 	int fd[2];
