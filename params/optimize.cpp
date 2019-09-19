@@ -37,6 +37,7 @@ private:
 		Individual *indiv = new Individual(genParam);
 		return indiv;
 	}
+
 public:
 	Individual(): rate(0.0) {
 		std::random_device seed;
@@ -90,7 +91,7 @@ private:
 			while(rateSum <= pos && i +  j < swarm.size()) {
 				rateSum += swarm[i + j++]->rate;
 			}
-			res[i] = new Individual(swarm[i + j - 1]->params);
+			res[i] = swarm[i + j - 1];
 			cumulativeSumBuf -= swarm[i + j - 1]->rate;
 			std::swap(swarm[i], swarm[i + j - 1]);
 		}
@@ -121,6 +122,18 @@ public:
 		}
 	}
 
+	Individual *getElite() {
+		Individual *elite;
+		double ratebuf = -1.0;
+		for(auto i: swarm) {
+			if(i->rate > ratebuf) {
+				ratebuf = i->rate;
+				elite = i;
+			}
+		}
+		return elite;
+	}
+
 	Swarm *makeNextSwarm() {
 		std::vector<Individual *> nextSwarm(swarm.size(), nullptr);
 		eval();
@@ -130,17 +143,17 @@ public:
 			i->print();
 			printf("addr = %p\n", i);
 		}
-		int cnt = 0;
-		double ratebuf = -1.0;
-		Individual *elite;
-		for(auto i: swarm) {
-			if(i->rate > ratebuf) {
-				ratebuf = i->rate;
-				elite = i;
-			}
+
+		// エリート
+		nextSwarm[0] = new Individual(getElite()->params);
+
+		// ルーレット
+		for(size_t i = 1; i < nextSwarm.size(); i++) {
+			std::vector<Individual *> p(2);
+			p = samplingWithoutReplacement(2);
+			nextSwarm[i] = p[0]->makeNewIndividual(p[1]);
 		}
-		for(size_t i = 0; i < nextSwarm.size(); i++) nextSwarm[i] = new Individual(elite->params);
-		nextSwarm = samplingWithoutReplacement(4);
+
 		return new Swarm(nextSwarm);
 	}
 
