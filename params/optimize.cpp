@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <vector>
 #include <cstring>
+#include <chrono>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -85,11 +86,12 @@ private:
 		}
 	}
 
-	std::vector<Individual *> samplingWithoutReplacement(size_t num) {
-		std::vector<Individual *> res(num, nullptr);
+	void samplingWithoutReplacement(size_t num, std::vector<Individual *> &res) {
+		res = std::vector<Individual *>(num);
 		double cumulativeSumBuf = cumulativeSum;
 		for(size_t i = 0; i < num; i++) {
-			size_t pos = rand.gend(cumulativeSumBuf);
+			// size_t pos = rand.gend(cumulativeSumBuf);
+			size_t pos = 0;
 			size_t j = 0;
 			double rateSum = 0;
 			while(rateSum <= pos && i +  j < swarm.size()) {
@@ -99,7 +101,6 @@ private:
 			cumulativeSumBuf -= swarm[i + j - 1]->rate;
 			std::swap(swarm[i], swarm[i + j - 1]);
 		}
-		return res;
 	}
 
 public:
@@ -153,8 +154,10 @@ public:
 
 		// ルーレット
 		for(size_t i = 1; i < nextSwarm.size(); i++) {
-			std::vector<Individual *> p(2);
-			p = samplingWithoutReplacement(2);
+			std::vector<Individual *> p;
+
+			samplingWithoutReplacement(2, p);
+
 			nextSwarm[i] = p[0]->makeNewIndividual(p[1]);
 		}
 
@@ -167,21 +170,29 @@ public:
 };
 
 int main() {
+	std::chrono::system_clock::time_point start, end;
+	/*	start = std::chrono::system_clock::now();
+		end = std::chrono::system_clock::now();
+		double time = (double)(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0);
+		printf("time: %lf\n", time);
+		*/
+
 	size_t Np = 4;
-	size_t Ng = 100;
+	size_t Ng = 1;
 	Swarm *swarm, *nextSwarm;
 
 	swarm = new Swarm(Np);
 
-	for(size_t i = 0; i <= Ng; i++) {
+	for(size_t i = 0; i <= Ng; i++) {	
 		fprintf(stderr, "----------------------------------------\n");
-		fprintf(stderr, "%ld 世代目!\n", i);
+		fprintf(stderr, "%ld世代目!!\n", i);
 
 		if(i == Ng) {
 			fprintf(stderr, "------ Final --------------------------\n");
 		}
 
 		nextSwarm = swarm->makeNextSwarm();
+
 		printf("%ld %lf\n", i, swarm->getElite()->getRate());
 		delete swarm;
 		swarm = nextSwarm;
