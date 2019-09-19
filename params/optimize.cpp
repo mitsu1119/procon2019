@@ -1,6 +1,18 @@
+/*
+ * 交叉法の条件
+ * 一つの群生の数を Np = swarm.size()
+ * 一つの個体の遺伝子長 Dim = individual.params.size()
+ *
+ * BLX-alpha + elite: Np >= 2
+ *
+ * SPX + elite: Np = n * (Dim + 1) + 1, nは任意の自然数
+ * 正の数が保証されないので良くないかもしれない
+ *
+ */
 #include <cstdio>
 #include <vector>
 #include <cstring>
+#include <cmath>
 #include <chrono>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -9,26 +21,29 @@
 #include <errno.h>
 #include "useful.hpp"
 
+size_t Dim = 4;
+size_t Np = 11;
+size_t Ng = 100;
+
 class Swarm;
 class Individual {
 friend Swarm;
 private:
 	XorOshiro128p rand;
 	double rate;
-	size_t dim;
 	std::vector<double> params;
 	
 	Individual(std::vector<double> parameters): rate(0.0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
 		params = parameters;
-		dim = params.size();
 	}
 
-	Individual *makeNewIndividual(const Individual *p) {
+	Individual *makeNewIndividual_BLXa(const Individual *p) {
+		// TODO: 最初にメモリを確保してemplace_backをなくす
 		std::vector<double> genParam;
 		double dist, max, min;
-		for(size_t i = 0; i < dim; i++) {
+		for(size_t i = 0; i < Dim; i++) {
 			dist = std::abs(p->params[i] - params[i]);
 			max = std::max(p->params[i], params[i]) + 0.3 * dist;
 			min = std::min(p->params[i], params[i]) - 0.3 * dist;
@@ -39,12 +54,55 @@ private:
 		return indiv;
 	}
 
+	void makeNewIndividual_SPX(std::vector<Individual *> &p, std::vector<Individual *> &res, size_t base) {
+		if(p.size() % Dim != 0) {
+			fprintf(stderr, "交叉に使用する個体の数が不正です。(SPX)\n");
+			exit(EXIT_FAILURE);
+		}
+
+		// Center of gravity
+		std::vector<double> g(Dim);
+		for(size_t i = 0; i < Dim; i++) {
+			for(size_t j = 0; j < Dim; j++) {
+				g[j] += p.at(i)->params[j];
+			}
+		}
+		for(size_t j = 0; j < Dim; j++) {
+			g[j] += params[j];
+			g[j] /= Dim + 1;
+		}
+
+		// (Si)	
+		double eps = std::sqrt(Dim + 2);
+		std::vector<std::vector<double>> S(Dim + 1, std::vector<double>(Dim));
+		for(size_t j = 0; j < Dim; j++) S[0][j] = g[j] + eps * (params[j] - g[j]);
+		for(size_t i = 1; i < Dim; i++) {
+			for(size_t j = 0; j < Dim; j++) {
+				S[i][j] = g[j] + eps * (p.at(i - 1)->params[j] - g[j]);
+			}
+		}
+
+		// (ri)
+		std::vector<double> r(Dim);
+		for(size_t i = 0; i < Dim; i++) r[i] = std::pow(rand.gend(), 1.0 / (double)(i + 1));
+
+		// (Ci)
+		std::vector<std::vector<double>> C(Dim + 1, std::vector<double>(Dim));
+		C[0] = S[0];
+		res.at(base) = new Individual(C[0]);
+		for(size_t i = 1; i < Dim + 1; i++) {
+			for(size_t j = 0; j < Dim; j++) {
+				C[i][j] = S[i][j] + r[i - 1] * (S[i - 1][j] - S[i][j] + C[i - 1][j]);
+			}
+			res.at(base + i) = new Individual(C[i]);
+		}
+	}
+
 public:
 	Individual(): rate(0.0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
-		for(size_t i = 0; i < 10; i++) params.emplace_back(rand.gend());
-		dim = params.size();
+		for(size_t i = 0; i < Dim; i++) params.emplace_back(rand.gend());
 	}
 
 	void eval() {
@@ -148,14 +206,22 @@ public:
 			fprintf(stderr, "addr = %p\n", i);
 		}
 
-		// エリート
-		nextSwarm[0] = new Individual(getElite()->params);
-
 		// ルーレット
-		for(size_t i = 1; i < nextSwarm.size(); i++) {
+		for(size_t i = 0; i < nextSwarm.size() - 1; i++) {
 			std::vector<Individual *> p;
 
+			// BLX-alpha 法
+			/*
 			samplingWithoutReplacement(2, p);
+			nextSwarm[i] = p[0]->makeNewIndividual_BLXa(p[1]);
+			*/
+
+			// SPX 法
+			samplingWithoutReplacement(Dim + 1, p);
+			Individual *pp = p[Dim];
+			p.pop_back();
+			pp->makeNewIndividual_SPX(p, nextSwarm, i);
+			i += Dim;
 
 			/*
 			fprintf(stderr, ">> 交叉\n");
@@ -164,12 +230,15 @@ public:
 			fprintf(stderr, ">> ");
 			p[1]->print();
 			*/
-			nextSwarm[i] = p[0]->makeNewIndividual(p[1]);
+
 			/*
 			fprintf(stderr, "<< 結果\n<< ");
 			*/
 			nextSwarm[i]->print();
 		}
+		
+		// エリート
+		nextSwarm[nextSwarm.size() - 1] = new Individual(getElite()->params);
 
 		return new Swarm(nextSwarm);
 	}
@@ -188,8 +257,6 @@ int main() {
 	printf("time: %lf\n", time);
 	*/
 
-	size_t Np = 14;
-	size_t Ng = 150;
 	Swarm *swarm, *nextSwarm;
 
 	swarm = new Swarm(Np);
