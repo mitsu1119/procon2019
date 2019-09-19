@@ -147,6 +147,7 @@ public:
 		return result;
 	}
 
+	// [0, max] の整数
 	uint_fast64_t operator()(uint_fast64_t max) {
 		uint_fast64_t s0 = this->seed[0], s1 = this->seed[1], result = s0 + s1;
 		s1 ^= s0; 
@@ -164,6 +165,18 @@ public:
 		this->seed[0] = ((s0 << 55) | (s0 >> (64 - 55))) ^ s1 ^ (s1 << 14);
 		this->seed[1] = ((s1 << 36) | (s1 >> (64 - 36)));
 		return (result >> 11) * (1. / (UINT64_C(1) << 53));
+	}
+
+	// [0, max) の実数
+	// モジュロバイアスどうにかならんのか
+	inline double gend(double max) {
+		uint_fast64_t s0 = this->seed[0], s1 = this->seed[1], result = s0 + s1;
+		s1 ^= s0; 
+		this->seed[0] = ((s0 << 55) | (s0 >> (64 - 55))) ^ s1 ^ (s1 << 14);
+		this->seed[1] = ((s1 << 36) | (s1 >> (64 - 36)));
+		double decimal = (result >> 11) * (1. / (UINT64_C(1) << 53));
+
+		return decimal * max;
 	}
 
 	inline bool genb() {

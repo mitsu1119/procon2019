@@ -127,6 +127,16 @@ public:
 };
 
 int main() {
+	std::random_device seed;
+	XorOshiro128p rand(seed());
+
+	std::vector<double> vec(1000000);
+	for(size_t i = 0; i < vec.size(); i++) vec[i] = rand.gend(100.50);
+
+	DPlot<double> plot(vec);
+	plot.histogram();
+
+	/*
 	size_t Np = 4;
 	size_t Ng = 1;
 	Swarm *swarm, *nextSwarm;
@@ -138,10 +148,11 @@ int main() {
 		delete swarm;
 		swarm = nextSwarm;
 	}
-
+	
 	printf("---- Final Swarm -------------------------\n");
 	swarm->eval();
 	swarm->print();
+	*/
 
 	/*
 	int fd[2];
