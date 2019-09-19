@@ -33,7 +33,7 @@ private:
 			max = std::max(p->params[i], params[i]) + 0.3 * dist;
 			min = std::min(p->params[i], params[i]) - 0.3 * dist;
 			dist = std::abs(max - min);
-			genParam.emplace_back((dist + min) * rand.gend());
+			genParam.emplace_back(min + rand.gend(dist));
 		}
 		Individual *indiv = new Individual(genParam);
 		return indiv;
@@ -90,8 +90,7 @@ private:
 		res = std::vector<Individual *>(num);
 		double cumulativeSumBuf = cumulativeSum;
 		for(size_t i = 0; i < num; i++) {
-			// size_t pos = rand.gend(cumulativeSumBuf);
-			size_t pos = 0;
+			size_t pos = rand.gend(cumulativeSumBuf);
 			size_t j = 0;
 			double rateSum = 0;
 			while(rateSum <= pos && i +  j < swarm.size()) {
@@ -158,7 +157,18 @@ public:
 
 			samplingWithoutReplacement(2, p);
 
+			/*
+			fprintf(stderr, ">> 交叉\n");
+			fprintf(stderr, ">> ");
+			p[0]->print();
+			fprintf(stderr, ">> ");
+			p[1]->print();
+			*/
 			nextSwarm[i] = p[0]->makeNewIndividual(p[1]);
+			/*
+			fprintf(stderr, "<< 結果\n<< ");
+			*/
+			nextSwarm[i]->print();
 		}
 
 		return new Swarm(nextSwarm);
@@ -171,14 +181,15 @@ public:
 
 int main() {
 	std::chrono::system_clock::time_point start, end;
-	/*	start = std::chrono::system_clock::now();
-		end = std::chrono::system_clock::now();
-		double time = (double)(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0);
-		printf("time: %lf\n", time);
-		*/
+	/*
+	start = std::chrono::system_clock::now();
+	end = std::chrono::system_clock::now();
+	double time = (double)(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0);
+	printf("time: %lf\n", time);
+	*/
 
-	size_t Np = 4;
-	size_t Ng = 1;
+	size_t Np = 14;
+	size_t Ng = 150;
 	Swarm *swarm, *nextSwarm;
 
 	swarm = new Swarm(Np);
