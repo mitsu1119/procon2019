@@ -54,10 +54,14 @@ public:
 	}
 
 	void print() const {
-		printf("params = ");
-		for(const auto i: params) printf("%lf ", i);
-		printf("\n");
-		printf("rate = %lf\n", rate);
+		fprintf(stderr, "params = ");
+		for(const auto i: params) fprintf(stderr, "%lf ", i);
+		fprintf(stderr, "\n");
+		fprintf(stderr, "rate = %lf\n", rate);
+	}
+
+	inline double getRate() {
+		return rate;
 	}
 };
 
@@ -138,10 +142,10 @@ public:
 		std::vector<Individual *> nextSwarm(swarm.size(), nullptr);
 		eval();
 		shuffleSwarm();
-		printf("------ Swarm --------------------------\n");
+		fprintf(stderr, "------ Swarm --------------------------\n");
 		for(const auto i: swarm) {
 			i->print();
-			printf("addr = %p\n", i);
+			fprintf(stderr, "addr = %p\n", i);
 		}
 
 		// エリート
@@ -164,20 +168,24 @@ public:
 
 int main() {
 	size_t Np = 4;
-	size_t Ng = 1;
+	size_t Ng = 100;
 	Swarm *swarm, *nextSwarm;
 
 	swarm = new Swarm(Np);
 
-	for(size_t i = 0; i < Ng; i++) {
+	for(size_t i = 0; i <= Ng; i++) {
+		fprintf(stderr, "----------------------------------------\n");
+		fprintf(stderr, "%ld 世代目!\n", i);
+
+		if(i == Ng) {
+			fprintf(stderr, "------ Final --------------------------\n");
+		}
+
 		nextSwarm = swarm->makeNextSwarm();
+		printf("%ld %lf\n", i, swarm->getElite()->getRate());
 		delete swarm;
 		swarm = nextSwarm;
 	}
-	
-	printf("---- Final Swarm -------------------------\n");
-	swarm->eval();
-	swarm->print();
 
 	/*
 	int fd[2];
