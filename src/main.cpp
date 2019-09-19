@@ -10,6 +10,7 @@ Greedy greedy;
 BeamSearch beam_search;
 Astar astar;
 
+/*
 int main(int argc, char *argv[]) {
 	field.init();
 
@@ -19,16 +20,17 @@ int main(int argc, char *argv[]) {
 	framework->start(argc, argv);
 	delete framework;
 
-	return 0;
-	
+	return 0;	
 }
+*/
 
-/*
+
 int main(int argc, char *argv[]){
 	field.init();
 	astar.init(&field);
 	while(true){
-		astar.move(&field, MINE_ATTR);
+		beam_search.move(&field, MINE_ATTR);
+		//astar.move(&field, MINE_ATTR);
 		//greedy.move(&field, MINE_ATTR);
 		greedy.move(&field, ENEMY_ATTR);
 		field.applyNextAgents();
@@ -40,7 +42,7 @@ int main(int argc, char *argv[]){
 	}
 	return 0;
 }
-*/
+
 
 /*
 static double_t move_weight;
