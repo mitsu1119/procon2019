@@ -44,15 +44,14 @@ private:
 	}
 
 	Individual *makeNewIndividual_BLXa(const Individual *p) {
-		// TODO: 最初にメモリを確保してemplace_backをなくす
-		std::vector<double> genParam;
+		std::vector<double> genParam(Dim);
 		double dist, max, min;
 		for(size_t i = 0; i < Dim; i++) {
 			dist = std::abs(p->params[i] - params[i]);
 			max = std::max(p->params[i], params[i]) + 0.3 * dist;
 			min = std::min(p->params[i], params[i]) - 0.3 * dist;
 			dist = std::abs(max - min);
-			genParam.emplace_back(min + rand.gend(dist));
+			genParam[i] = min + rand.gend(dist);
 		}
 		Individual *indiv = new Individual(genParam);
 		return indiv;
@@ -110,10 +109,62 @@ public:
 	}
 
 	void eval() {
-		// 適応度は今の所パラメータの平均にする
 		rate = 0.0;
-		for(const auto i: params) rate += i;
-		rate /= params.size();
+
+		int fd[2];
+		char buf[100];
+		memset(buf, 0, sizeof(buf));	// buf clear.
+
+		if(pipe(fd) < 0) {
+			perror("PIPE ERROR");
+			exit(EXIT_FAILURE);
+		}
+
+		pid_t pid = fork();
+		switch(pid) {
+		case -1:
+			// fork error.
+			err(EXIT_FAILURE, "Could not fork.");
+			break;
+		case 0: {
+			// child process.
+			dup2(fd[0], 0);
+			dup2(fd[1], 1);
+			close(fd[0]);
+			close(fd[1]);
+			char *const args[] = {"./run", NULL};
+			execv(args[0], args);
+			break;
+				}
+		default:
+			// parents
+			int childStatus;
+			printf("This is parent process. child process number is %d\n", pid);
+
+			pid_t wait_pid = wait(&childStatus);
+			
+			read(fd[0], buf, sizeof(buf));
+			if(buf[0] == 'W') {
+				printf("Win Mine\n");
+				rate = 3.0;
+			} else if(buf[0] == 'L') {
+				printf("Lose Mine\n");
+				rate = 1.0;
+			} else {
+				printf("Draw\n");
+				rate = 2.0;
+			}
+			close(fd[0]);
+			close(fd[1]);
+			if(WIFEXITED(childStatus)) {
+				printf("Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
+			} else if(WIFSIGNALED(childStatus)) {
+				printf("Child process %d ended by signale %d\n", wait_pid, WTERMSIG(childStatus));
+			} else {
+				err(EXIT_FAILURE, "wait err");
+				exit(EXIT_FAILURE);
+			}
+		}
 	}
 
 	void print() const {
@@ -268,55 +319,5 @@ int main() {
 		delete swarm;
 		swarm = nextSwarm;
 	}
-
-	/*
-	int fd[2];
-	char buf[100];
-	memset(buf, 0, sizeof(buf));	// buf clear.
-
-	if(pipe(fd) < 0) {
-		perror("PIPE ERROR");
-		exit(EXIT_FAILURE);
-	}
-
-	pid_t pid = fork();
-	switch(pid) {
-	case -1:
-		// fork error.
-		err(EXIT_FAILURE, "Could not fork.");
-		break;
-	case 0: {
-		// child process.
-		dup2(fd[0], 0);
-		dup2(fd[1], 1);
-		close(fd[0]);
-		close(fd[1]);
-		char *const args[] = {"./run", NULL};
-		execv(args[0], args);
-		break;
-			}
-	default:
-		// parents
-		int childStatus;
-		printf("This is parent process. child process number is %d\n", pid);
-
-		pid_t wait_pid = wait(&childStatus);
-		
-		read(fd[0], buf, sizeof(buf));
-		if(buf[0] == 'w') printf("Win Mine\n");
-		else if(buf[0] == 'l') printf("Lose Mine\n");
-		else printf("Draw\n");
-		close(fd[0]);
-		close(fd[1]);
-		if(WIFEXITED(childStatus)) {
-			printf("Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
-		} else if(WIFSIGNALED(childStatus)) {
-			printf("Child process %d ended by signale %d\n", wait_pid, WTERMSIG(childStatus));
-		} else {
-			err(EXIT_FAILURE, "wait err");
-			exit(EXIT_FAILURE);
-		}
-	}
-	*/
 }
 

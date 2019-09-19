@@ -578,8 +578,8 @@ void Field::judgeWinner(){
 	fprintf(stderr, "\n---------------- finish ----------------\n");
 
 	if(this->calcScore(MINE_ATTR) > this->calcScore(ENEMY_ATTR)){
-		printf("win  MINE\n");
-		printf("lose ENEMY\n");
+		printf("Win  MINE\n");
+		printf("Lose ENEMY\n");
 	}
 	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR)){
 		printf("Draw\n");
@@ -750,7 +750,7 @@ void Field::init(){
 			a.move(STOP);
 		});
 
-	this->max_turn = 70;
+	this->max_turn = 10;
 }
 
 bool Field::is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
