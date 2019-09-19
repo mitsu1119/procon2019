@@ -29,6 +29,9 @@ size_t Ng = 150;
 #define CHIASMA_BLXa
 // #define CHIASMA_SPX
 
+// メインプログラムでの評価を行うときの試行回数
+size_t numberOfTrials = 10;
+
 class Swarm;
 class Individual {
 friend Swarm;
@@ -111,60 +114,63 @@ public:
 	void eval() {
 		rate = 0.0;
 
-		int fd[2];
-		char buf[100];
-		memset(buf, 0, sizeof(buf));	// buf clear.
+		for(size_t i = 0; i < numberOfTrials; i++) {
+			int fd[2];
+			char buf[100];
+			memset(buf, 0, sizeof(buf));	// buf clear.
 
-		if(pipe(fd) < 0) {
-			perror("PIPE ERROR");
-			exit(EXIT_FAILURE);
-		}
-
-		pid_t pid = fork();
-		switch(pid) {
-		case -1:
-			// fork error.
-			err(EXIT_FAILURE, "Could not fork.");
-			break;
-		case 0: {
-			// child process.
-			dup2(fd[0], 0);
-			dup2(fd[1], 1);
-			close(fd[0]);
-			close(fd[1]);
-			char *const args[] = {"./run", NULL};
-			execv(args[0], args);
-			break;
-				}
-		default:
-			// parents
-			int childStatus;
-			printf("This is parent process. child process number is %d\n", pid);
-
-			pid_t wait_pid = wait(&childStatus);
-			
-			read(fd[0], buf, sizeof(buf));
-			if(buf[0] == 'W') {
-				printf("Win Mine\n");
-				rate = 3.0;
-			} else if(buf[0] == 'L') {
-				printf("Lose Mine\n");
-				rate = 1.0;
-			} else {
-				printf("Draw\n");
-				rate = 2.0;
-			}
-			close(fd[0]);
-			close(fd[1]);
-			if(WIFEXITED(childStatus)) {
-				printf("Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
-			} else if(WIFSIGNALED(childStatus)) {
-				printf("Child process %d ended by signale %d\n", wait_pid, WTERMSIG(childStatus));
-			} else {
-				err(EXIT_FAILURE, "wait err");
+			if(pipe(fd) < 0) {
+				perror("PIPE ERROR");
 				exit(EXIT_FAILURE);
 			}
+
+			pid_t pid = fork();
+			switch(pid) {
+			case -1:
+				// fork error.
+				err(EXIT_FAILURE, "Could not fork.");
+				break;
+			case 0: {
+				// child process.
+				dup2(fd[0], 0);
+				dup2(fd[1], 1);
+				close(fd[0]);
+				close(fd[1]);
+				char *const args[] = {"./run", NULL};
+				execv(args[0], args);
+				break;
+					}
+			default:
+				// parents
+				int childStatus;
+				printf("This is parent process. child process number is %d\n", pid);
+
+				pid_t wait_pid = wait(&childStatus);
+				
+				read(fd[0], buf, sizeof(buf));
+				if(buf[0] == 'W') {
+					printf("Win Mine\n");
+					rate = 3.0;
+				} else if(buf[0] == 'L') {
+					printf("Lose Mine\n");
+					rate = 1.0;
+				} else {
+					printf("Draw\n");
+					rate = 2.0;
+				}
+				close(fd[0]);
+				close(fd[1]);
+				if(WIFEXITED(childStatus)) {
+					printf("Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
+				} else if(WIFSIGNALED(childStatus)) {
+					printf("Child process %d ended by signale %d\n", wait_pid, WTERMSIG(childStatus));
+				} else {
+					err(EXIT_FAILURE, "wait err");
+					exit(EXIT_FAILURE);
+				}
+			}
 		}
+		rate /= numberOfTrials;
 	}
 
 	void print() const {
