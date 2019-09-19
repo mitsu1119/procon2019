@@ -21,9 +21,13 @@
 #include <errno.h>
 #include "useful.hpp"
 
-size_t Dim = 4;
-size_t Np = 11;
-size_t Ng = 100;
+size_t Dim = 10;
+size_t Np = 14;
+size_t Ng = 150;
+
+// 交叉法
+#define CHIASMA_BLXa
+// #define CHIASMA_SPX
 
 class Swarm;
 class Individual {
@@ -210,31 +214,20 @@ public:
 		for(size_t i = 0; i < nextSwarm.size() - 1; i++) {
 			std::vector<Individual *> p;
 
-			// BLX-alpha 法
-			/*
+#ifdef CHIASMA_BLXa
+			// BLX-alpha 法	
 			samplingWithoutReplacement(2, p);
-			nextSwarm[i] = p[0]->makeNewIndividual_BLXa(p[1]);
-			*/
+			nextSwarm[i] = p[0]->makeNewIndividual_BLXa(p[1]);	
+#endif
 
+#ifdef CHIASMA_SPX
 			// SPX 法
 			samplingWithoutReplacement(Dim + 1, p);
 			Individual *pp = p[Dim];
 			p.pop_back();
 			pp->makeNewIndividual_SPX(p, nextSwarm, i);
 			i += Dim;
-
-			/*
-			fprintf(stderr, ">> 交叉\n");
-			fprintf(stderr, ">> ");
-			p[0]->print();
-			fprintf(stderr, ">> ");
-			p[1]->print();
-			*/
-
-			/*
-			fprintf(stderr, "<< 結果\n<< ");
-			*/
-			nextSwarm[i]->print();
+#endif
 		}
 		
 		// エリート
