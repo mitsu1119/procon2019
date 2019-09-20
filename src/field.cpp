@@ -751,7 +751,7 @@ void Field::init(){
 			a.move(STOP);
 		});
 
-	this->max_turn = 10;
+	this->max_turn = 70;
 }
 
 bool Field::is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
