@@ -30,7 +30,7 @@ size_t Ng = 150;
 // #define CHIASMA_SPX
 
 // メインプログラムでの評価を行うときの試行回数
-size_t numberOfTrials = 10;
+size_t numberOfTrials = 8;
 
 class Swarm;
 class Individual {
@@ -148,16 +148,26 @@ public:
 				pid_t wait_pid = wait(&childStatus);
 				
 				read(fd[0], buf, sizeof(buf));
+
+				// 勝率での評価
+				/*	
 				if(buf[0] == 'W') {
 					printf("Win Mine\n");
-					rate = 3.0;
+					rate += 3.0;
 				} else if(buf[0] == 'L') {
 					printf("Lose Mine\n");
-					rate = 1.0;
+					rate += 1.0;
 				} else {
 					printf("Draw\n");
-					rate = 2.0;
+					rate += 2.0;
 				}
+				*/
+
+				// 得点差による評価
+				int scoreDiff = std::atoi(buf);
+				printf("スコア差: %d\n", scoreDiff);
+				rate += scoreDiff;
+
 				close(fd[0]);
 				close(fd[1]);
 				if(WIFEXITED(childStatus)) {
