@@ -115,25 +115,17 @@ public:
 
 };
 
-constexpr double_t move_weight                = 5;
-constexpr double_t state_weight               = 30;
-constexpr double_t heuristic_weight           = 10;
+constexpr double_t move_weight                = 2;
+constexpr double_t state_weight               = 50;
+constexpr double_t heuristic_weight           = 5;
 constexpr double_t value_weight               = 50;
 constexpr double_t is_on_decided_route_weight = 30;
-constexpr double_t is_on_mine_panel_weight    = 70;
+
+constexpr double_t is_on_mine_panel_weight    = 90;
+constexpr double_t is_on_enemy_panel_weight   = 90;
+
 constexpr double_t adjacent_agent_weight      = 10;
 constexpr double_t average_distance_weght     = 30;
-
-/*
-constexpr double_t move_weight                = 5;
-constexpr double_t state_weight               = 20;
-constexpr double_t heuristic_weight           = 10;
-constexpr double_t value_weight               = 55;
-constexpr double_t is_on_decided_route_weight = 30;
-constexpr double_t is_on_mine_panel_weight    = 50;
-constexpr double_t adjacent_agent_weight      = 20;
-constexpr double_t average_distance_weght     = 30;
-*/
 
 /*
 static double_t move_weight;
@@ -169,8 +161,10 @@ public:
 	int_fast32_t  value;
 	//確定ルートにかぶっているか？
   int_fast32_t is_on_decided_route;
-	//自陣を何回移動したか
+	
 	int_fast32_t is_on_mine_panel;
+	int_fast32_t is_on_enemy_panel;
+	
 	//Agent同士が隣接しているかどうか
 	int_fast32_t adjacent_agent;
 	//Agent同士の平均距離
@@ -192,7 +186,7 @@ public:
 };
 
 inline const double Node::getScore() const{
-	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight) - (this->average_distance * average_distance_weght);
+	return (this->move_cost * move_weight) + (this->state_cost * state_weight) + (this->heuristic * heuristic_weight) + (this->is_on_decided_route * is_on_decided_route_weight) - (this->value * value_weight) + (this->is_on_mine_panel * is_on_mine_panel_weight) + (this->adjacent_agent * adjacent_agent_weight) - (this->average_distance * average_distance_weght) - (this->is_on_enemy_panel * is_on_enemy_panel_weight);
 }
 
 constexpr uint_fast32_t simple_beam_depth = 3;
@@ -232,25 +226,30 @@ public:
 	
 };
 
-constexpr uint_fast32_t greedy_count       = 8;
-constexpr uint_fast32_t search_count       = 10;
-constexpr uint_fast32_t astar_depth        = 10;
+constexpr uint_fast32_t greedy_count       = 4;
+constexpr uint_fast32_t search_count       = 16;
+constexpr uint_fast32_t astar_depth        = 20;
 
-constexpr double_t occpancy_weight         = 20;
-constexpr double_t is_on_decided_weight    = 10;
-constexpr double_t is_my_pannel_weight     = 10;
-constexpr double_t is_angle_weight         = 3;
-constexpr double_t is_side_weight          = 3;
+constexpr double_t occpancy_weight         = 50;
+constexpr double_t is_on_decided_weight    = 20;
+constexpr double_t is_angle_weight         = 2;
+constexpr double_t is_side_weight          = 2;
 constexpr double_t is_inside_closed_weight = 10;
+//constexpr double_t is_my_pannel_weight     = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
-constexpr uint_fast32_t min_mine_distance  = 3;
+constexpr uint_fast32_t min_mine_distance  = 2;
 constexpr uint_fast32_t min_agent_distance = 2;
-constexpr uint_fast32_t min_goal_distance  = 4;
-constexpr uint_fast32_t max_move           = 33;
+constexpr uint_fast32_t min_goal_distance  = 2;
+constexpr uint_fast32_t max_move           = 30;
 constexpr uint_fast32_t min_move_cost      = 2;
-constexpr int_fast32_t  min_value          = 5;
+constexpr int_fast32_t  min_value          = 10;
 
+
+constexpr double_t goal_weight             = 6;
+constexpr int_fast32_t min_open_list_value = 8;
+
+	
 constexpr uint_fast32_t search_time        = 20000;
 constexpr uint_fast32_t grace_time         = 3000;
 
@@ -338,7 +337,7 @@ private:
 
 	
 	//ゴール選定用の評価関数関連
-	const uint_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const int_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t whosePanel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	
@@ -347,10 +346,10 @@ private:
 	const bool isInsideClosed(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isAngleCoord(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool isSideCoord(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
-
 	
 	//ゴール候補選定
 	const bool expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const bool isOutOfRange(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherAgentDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const bool anotherGoalDistance(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 
@@ -388,6 +387,7 @@ private:
 	//枝切り用
 	const bool branchingCondition(Field& field, const uint_fast32_t agent, Node* current, const uint_fast32_t max_move_cost);
 	const bool endCondition(Node* current) const;
+	const bool isPushOpenlist(Field& field, Node* next) const;
 
 	
 	//時間管理
@@ -416,6 +416,9 @@ private:
 	void correctionRoute(Field& field, const uint_fast32_t agent);
 	bool isPossibleRoute(Field field, const uint_fast32_t agent);
 
+	int_fast32_t expectedScore(Field field, const uint_fast32_t agent, std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route);
+	
+	
 public:
 
 	Astar();

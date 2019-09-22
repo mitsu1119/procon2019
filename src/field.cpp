@@ -610,7 +610,7 @@ void Field::init(){
 	double buffer;
 	value maps;
 	{
-		std::fstream stream("./../../public_field/D-1.json");
+		std::fstream stream("./../../public_field/E-1.json");
 		if(!stream.is_open()) return 1;
 		stream >> maps;
 		assert(get_last_error().empty());
