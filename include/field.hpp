@@ -129,8 +129,8 @@ private:
 	bool checkLocalArea(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr);
 
 	int_fast32_t Field::isInsideClosed(std::vector<int_fast32_t> &vec);
-	int_fast32_t calcMineScore(std::unordered_map<int_fast32_t , std::vector<int_fast32_t>> &pureTree);
-	int_fast32_t calcEnemyScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree);
+	int_fast32_t calcMineScore(UF &pureTree);
+	int_fast32_t calcEnemyScore(UF &pureTree);
 
 public:
 
