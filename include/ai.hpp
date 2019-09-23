@@ -116,16 +116,16 @@ public:
 };
 
 constexpr double_t move_weight                = 2;
-constexpr double_t state_weight               = 50;
+constexpr double_t state_weight               = 55;
 constexpr double_t heuristic_weight           = 5;
-constexpr double_t value_weight               = 50;
-constexpr double_t is_on_decided_route_weight = 30;
+constexpr double_t value_weight               = 35;
+constexpr double_t is_on_decided_route_weight = 80;
 
-constexpr double_t is_on_mine_panel_weight    = 90;
+constexpr double_t is_on_mine_panel_weight    = 95;
 constexpr double_t is_on_enemy_panel_weight   = 90;
 
 constexpr double_t adjacent_agent_weight      = 10;
-constexpr double_t average_distance_weght     = 30;
+constexpr double_t average_distance_weght     = 40;
 
 /*
 static double_t move_weight;
@@ -161,9 +161,11 @@ public:
 	int_fast32_t  value;
 	//確定ルートにかぶっているか？
   int_fast32_t is_on_decided_route;
+
 	
 	int_fast32_t is_on_mine_panel;
 	int_fast32_t is_on_enemy_panel;
+
 	
 	//Agent同士が隣接しているかどうか
 	int_fast32_t adjacent_agent;
@@ -208,7 +210,7 @@ public:
 	SimpleMove();
 	~SimpleMove();
 	
-	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
+	void greedyMove(Field& field, const uint_fast32_t agent, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
 	void greedyMove(Field& field, const uint_fast32_t agent);
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
@@ -226,9 +228,9 @@ public:
 	
 };
 
-constexpr uint_fast32_t greedy_count       = 4;
+constexpr uint_fast32_t greedy_count       = 8;
 constexpr uint_fast32_t search_count       = 16;
-constexpr uint_fast32_t astar_depth        = 20;
+constexpr uint_fast32_t astar_depth        = 16;
 
 constexpr double_t occpancy_weight         = 50;
 constexpr double_t is_on_decided_weight    = 20;
@@ -245,13 +247,13 @@ constexpr uint_fast32_t max_move           = 30;
 constexpr uint_fast32_t min_move_cost      = 2;
 constexpr int_fast32_t  min_value          = 10;
 
-
-constexpr double_t goal_weight             = 6;
+constexpr double_t score_weight            = 1.1;
+constexpr double_t goal_weight             = 8;
+constexpr double_t cost_weight             = 0.023;
 constexpr int_fast32_t min_open_list_value = 8;
-
 	
-constexpr uint_fast32_t search_time        = 20000;
-constexpr uint_fast32_t grace_time         = 3000;
+constexpr uint_fast32_t search_time        = 25000;
+constexpr uint_fast32_t grace_time         = 2000;
 
 /*
 static uint_fast32_t greedy_count;
@@ -260,10 +262,11 @@ static uint_fast32_t astar_depth;
 
 static double_t occpancy_weight;
 static double_t is_on_decided_weight;
-static double_t is_my_pannel_weight;
 static double_t is_angle_weight;
 static double_t is_side_weight;
 static double_t is_inside_closed_weight;
+//static double_t is_my_pannel_weight;
+
 
 static uint_fast32_t max_mine_distance;
 static uint_fast32_t min_mine_distance;
@@ -272,6 +275,11 @@ static uint_fast32_t min_goal_distance;
 static uint_fast32_t max_move;
 static uint_fast32_t min_move_cost;
 static int_fast32_t  min_value;
+
+static double_t score_weight;;
+static double_t goal_weight;
+static double_t cost_weight;
+static int_fast32_t min_open_list_value;
 
 static uint_fast32_t search_time;
 static uint_fast32_t grace_time;
@@ -338,6 +346,7 @@ private:
 	
 	//ゴール選定用の評価関数関連
 	const int_fast32_t occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
+	const uint_fast32_t occupancyMineRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t whosePanel(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	const uint_fast32_t isSideOrAngle(Field& field, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const;
 	
@@ -414,11 +423,7 @@ private:
 	void chooseAlgorithm(Field& field, const uint_fast32_t agent);
 	void singleMove(Field& field, const uint_fast32_t agent);
 	void correctionRoute(Field& field, const uint_fast32_t agent);
-	bool isPossibleRoute(Field field, const uint_fast32_t agent);
 
-	int_fast32_t expectedScore(Field field, const uint_fast32_t agent, std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route);
-	
-	
 public:
 
 	Astar();
@@ -429,5 +434,8 @@ public:
 	void move(Field *field, const uint_fast32_t attr) override;
 
 };
+
+//-------------------------------------------------------------------------------------
+int_fast32_t expectedScore(Astar* astar, Field field, const uint_fast32_t agent);
 
 

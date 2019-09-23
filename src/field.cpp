@@ -68,13 +68,13 @@ Field::Field(uint_fast32_t width, uint_fast32_t height):width(width),height(heig
 
 	// とりあえずAgentを適当に生成
 	this->agents.emplace_back(1, 1, MINE_ATTR);
-	this->agents.emplace_back(width - 2, 1, ENEMY_ATTR);
-	this->agents.emplace_back(1, height - 2, ENEMY_ATTR);
+	this->agents.emplace_back(width - 3, 2, MINE_ATTR);
+	this->agents.emplace_back(2, height - 3, MINE_ATTR);
 	this->agents.emplace_back(width - 2, height - 2, MINE_ATTR);
 
 	this->agents.emplace_back(2, 2, ENEMY_ATTR);
-	this->agents.emplace_back(width - 3, 2, MINE_ATTR);
-	this->agents.emplace_back(2, height - 3, MINE_ATTR);
+	this->agents.emplace_back(width - 2, 1, ENEMY_ATTR);
+	this->agents.emplace_back(1, height - 2, ENEMY_ATTR);
 	this->agents.emplace_back(width - 3, height - 3, ENEMY_ATTR);
 
 	this->canmoveAgents = std::vector<bool>(this->agents.size(), true);
