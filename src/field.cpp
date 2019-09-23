@@ -438,25 +438,42 @@ bool Field::checkLocalArea(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr)
 	return isPanelEnemyBetween(x, y);
 }
 
-int_fast32_t Field::calcMineScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree) {
-	int_fast32_t totalscore = 0, score;
-	bool check, test;
-
-	for(const auto &[key, vec]: pureTree) {
-		check = true;
-		score = 0;
-		for(auto pn: vec) {
-			test = checkLocalArea(indexX(pn), indexY(pn), MINE_ATTR);
-			if(!checkLocalArea(indexX(pn), indexY(pn), MINE_ATTR)) {
-				check = false;
-				break;
-			}
-			score += std::abs(field.at(pn).getValue());
-		}
-		if(check == true) {
-			totalscore += score;
+int_fast32_t Field::isInsideClosed(std::vector<int_fast32_t> &vec) {
+	uint_fast32_t x, y;
+	int_fast32_t absscore = 0;
+	for(auto pn: vec) {
+		x = indexX(pn);
+		y = indexY(pn);
+		if(!isEdge(x, y)) absscore += std::abs(this->at(x, y)->getValue());
+		else {
+			absscore = -1;
+			break;
 		}
 	}
+	return absscore;
+}
+
+int_fast32_t Field::calcMineScore(UF &pureTree) {
+	int_fast32_t totalscore = 0, root;
+	std::unordered_map<int_fast32_t, std::pair<bool, int_fast32_t>> scoreAndClosed;
+
+	for(size_t i = 0; i < height; i++) {
+		for(size_t j = 0; j < width; j++) {
+			if(this->at(j, i)->isPurePanel()) {
+				root = pureTree.root(xyIndex(j, i));
+				if(scoreAndClosed[root].first == false) {
+					if(isEdge(j, i)) {
+						scoreAndClosed[root].first = true;
+						totalscore -= scoreAndClosed[root].second;
+					} else {
+						scoreAndClosed[root].second += std::abs(this->at(j, i)->getValue());
+						totalscore += std::abs(this->at(j, i)->getValue());
+					}
+				}
+			}
+		}
+	}
+
 	return totalscore;
 }
 
@@ -464,24 +481,27 @@ const Panel *Field::at(uint_fast32_t x, uint_fast32_t y) const {
 	return (const Panel *)&(this->field[x + (y << this->yShiftOffset)]);
 }
 
-int_fast32_t Field::calcEnemyScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree) {
-	int_fast32_t totalscore = 0, score;
-	bool check;
+int_fast32_t Field::calcEnemyScore(UF &pureTree) {
+	int_fast32_t totalscore = 0, root;
+	std::unordered_map<int_fast32_t, std::pair<bool, int_fast32_t>> scoreAndClosed;
 
-	for(const auto &[key, vec]: pureTree) {
-		check = true;
-		score = 0;
-		for(auto pn: vec) {
-			if(!checkLocalArea(indexX(pn), indexY(pn), ENEMY_ATTR)) {
-				check = false;
-				break;
+	for(size_t i = 0; i < height; i++) {
+		for(size_t j = 0; j < width; j++) {
+			if(this->at(j, i)->isPurePanel()) {
+				root = pureTree.root(xyIndex(j, i));
+				if(scoreAndClosed[root].first == false) {
+					if(isEdge(j, i)) {
+						scoreAndClosed[root].first = true;
+						totalscore -= scoreAndClosed[root].second;
+					} else {
+						scoreAndClosed[root].second += std::abs(this->at(j, i)->getValue());
+						totalscore += std::abs(this->at(j, i)->getValue());
+					}
+				}
 			}
-			score += std::abs(field.at(pn).getValue());
-		}
-		if(check == true) {
-			totalscore += score;
 		}
 	}
+
 	return totalscore;
 }
 
@@ -491,12 +511,12 @@ int_fast32_t Field::calcScore(uint_fast32_t attr) {
 
 	if(attr == MINE_ATTR) {
 		score += calcMinepanelScore();
-		pureTerritory = makePureTerritory(makePureTreeMine());
-		score += calcMineScore(pureTerritory);
+		UF pureTree = makePureTreeMine();
+		score += calcMineScore(pureTree);
 	} else {
 		score += calcEnemypanelScore();
-		pureTerritory = makePureTerritory(makePureTreeEnemy());
-		score += calcEnemyScore(pureTerritory);
+		UF pureTree = makePureTreeEnemy();
+		score += calcEnemyScore(pureTree);
 	}
 
 	return score;

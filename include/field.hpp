@@ -108,6 +108,12 @@ private:
 		return index - indexY(index) * (field.size() / height);
 	}
 
+	inline bool Field::isEdge(uint_fast32_t x, uint_fast32_t y) {
+		if(x == 0 || y == 0) return true;
+		if(x == width - 1 || y == height - 1) return true;
+		return false;
+	}
+
 	// 実座標(x,y)のパネルにスコアをセット
 	void setPanelScore(uint_fast32_t x, uint_fast32_t y, int_fast32_t value);
 
@@ -121,8 +127,10 @@ private:
 	bool isPanelMineBetween(uint_fast32_t x, uint_fast32_t y);
 	bool isPanelEnemyBetween(uint_fast32_t x, uint_fast32_t y);
 	bool checkLocalArea(uint_fast32_t x, uint_fast32_t y, uint_fast32_t attr);
-	int_fast32_t calcMineScore(std::unordered_map<int_fast32_t , std::vector<int_fast32_t>> &pureTree);
-	int_fast32_t calcEnemyScore(std::unordered_map<int_fast32_t, std::vector<int_fast32_t>> &pureTree);
+
+	int_fast32_t Field::isInsideClosed(std::vector<int_fast32_t> &vec);
+	int_fast32_t calcMineScore(UF &pureTree);
+	int_fast32_t calcEnemyScore(UF &pureTree);
 
 public:
 
