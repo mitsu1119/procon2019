@@ -72,7 +72,7 @@ public:
 
 };
 
-constexpr uint_fast32_t beam_depth = 3;
+constexpr uint_fast32_t beam_depth = 1;
 constexpr uint_fast32_t beam_width = 3;
 
 class BeamSearch : public AI{
