@@ -54,43 +54,13 @@ int main(int argc, char *argv[]){
 }
 */
 
-/*
-static double_t move_weight;
-static double_t state_weight;
-static double_t heuristic_weight;
-static double_t value_weight;
-static double_t is_on_decided_route_weight;
-static double_t is_on_mine_panel_weight;
-static double_t is_on_enemy_panel_weight;
-static double_t adjacent_agent_weight;
-static double_t average_distance_weght;
-
-static uint_fast32_t greedy_count = 1;
-static uint_fast32_t search_count = 1;
-
-static double_t occpancy_weight = 1;
-static double_t is_on_decided_weight = 1;
-static double_t is_angle_weight = 1;
-static double_t is_side_weight = 1;
-static double_t is_inside_closed_weight = 1;
-
-static uint_fast32_t min_agent_distance = 1;
-static uint_fast32_t min_goal_distance = 1;
-static uint_fast32_t max_move = 1;
-static uint_fast32_t min_move_cost = 1;
-static uint_fast32_t min_value = 1;
-
-static double_t score_weight = 1;
-static double_t goal_weight = 1;
-static double_t cost_weight = 1;
-*/
-
 int main(int argc, char* argv[]){
 	
 	if(argc <= 25 ){
 		printf("\nparameters error\n");
 		std::exit(0);
 	}
+	
 	//---------------------- Node ----------------------
 	move_weight = std::stof(argv[1]);
 	state_weight = std::stof(argv[2]);
@@ -125,7 +95,7 @@ int main(int argc, char* argv[]){
 	greedy_count = std::stof(argv[23]);
 	search_count = std::stof(argv[24]);
 
-	//表示
+	//パラメータの表示
 	std::cout << "move_weight:" << move_weight << std::endl;
 	std::cout << "state_weight:" << state_weight << std::endl;
 	std::cout << "heuristic_weight:" << heuristic_weight << std::endl;
