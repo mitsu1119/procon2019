@@ -538,17 +538,17 @@ void Astar::decidedMove(Field& field, const uint_fast32_t agent, std::vector<std
 			continue;
 		if(route.at(i).size() <= 1)
 			continue;
+		
 		direction = this->changeDirection(route.at(i).at(0), route.at(i).at(1));
 		if(field.canMove(field.agents.at(i), direction))
 			field.agents.at(i).move(direction);
 	}
-	
+
 	field.applyNextAgents();
 
 	for(size_t i = 0; i < field.agents.size(); i++){
 		if(route.at(i).size() <= 2)
 			continue;
-		//if(field.agents.at(i).getX() != route.at(i).at(0).first || field.agents.at(i).getY() != route.at(i).at(0).second)
 		if(field.agents.at(i).getX() == route.at(i).at(1).first && field.agents.at(i).getY() == route.at(i).at(1).second)
 			route.at(i).erase(route.at(i).begin());
 	}
@@ -1302,11 +1302,12 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	{
 	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	if(result != this->next_coord.end()){
-		//goto _EXCEPTION_SEARCH;
-		
+		goto _EXCEPTION_SEARCH;
+	}
 
-		//考え中
-		//-------------------------------------
+	
+	/*
+	if(result != this->next_coord.end()){
 		this->searchBestRoute(field, agent);
 		if(this->is_time_over)
 			goto _EXCEPTION_SEARCH;
@@ -1320,10 +1321,10 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 		if(this->decided_route.at(agent).empty())
 			goto _EXCEPTION_SEARCH;
 	}
-	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
+	result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	if(result != this->next_coord.end())
 		goto _EXCEPTION_SEARCH;
-	  //-------------------------------------
+	*/
 
 	
 	}

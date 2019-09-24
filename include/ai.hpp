@@ -230,14 +230,13 @@ public:
 
 constexpr uint_fast32_t greedy_count       = 8;
 constexpr uint_fast32_t search_count       = 16;
-constexpr uint_fast32_t astar_depth        = 16;
+constexpr uint_fast32_t astar_depth        = 10;
 
 constexpr double_t occpancy_weight         = 50;
 constexpr double_t is_on_decided_weight    = 20;
 constexpr double_t is_angle_weight         = 2;
 constexpr double_t is_side_weight          = 2;
 constexpr double_t is_inside_closed_weight = 10;
-//constexpr double_t is_my_pannel_weight     = 10;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
@@ -252,7 +251,7 @@ constexpr double_t goal_weight             = 8;
 constexpr double_t cost_weight             = 0.023;
 constexpr int_fast32_t min_open_list_value = 8;
 	
-constexpr uint_fast32_t search_time        = 25000;
+constexpr uint_fast32_t search_time        = 30000;
 constexpr uint_fast32_t grace_time         = 2000;
 
 /*
@@ -265,8 +264,6 @@ static double_t is_on_decided_weight;
 static double_t is_angle_weight;
 static double_t is_side_weight;
 static double_t is_inside_closed_weight;
-//static double_t is_my_pannel_weight;
-
 
 static uint_fast32_t max_mine_distance;
 static uint_fast32_t min_mine_distance;
