@@ -115,6 +115,7 @@ public:
 
 };
 
+/*
 constexpr double_t move_weight                = 2;
 constexpr double_t state_weight               = 55;
 constexpr double_t heuristic_weight           = 5;
@@ -124,8 +125,8 @@ constexpr double_t is_on_mine_panel_weight    = 95;
 constexpr double_t is_on_enemy_panel_weight   = 90;
 constexpr double_t adjacent_agent_weight      = 10;
 constexpr double_t average_distance_weght     = 40;
+*/
 
-/*
 static double_t move_weight = 1;
 static double_t state_weight = 1;
 static double_t heuristic_weight = 1;
@@ -135,7 +136,6 @@ static double_t is_on_mine_panel_weight = 1;
 static double_t is_on_enemy_panel_weight = 1;
 static double_t adjacent_agent_weight = 1;
 static double_t average_distance_weght = 1;
-*/
 
 class Node{
 public:
@@ -224,6 +224,7 @@ public:
 	
 };
 
+/*
 constexpr uint_fast32_t greedy_count       = 8;
 constexpr uint_fast32_t search_count       = 16;
 constexpr uint_fast32_t astar_depth        = 10;
@@ -245,13 +246,12 @@ constexpr int_fast32_t min_value          = 10;
 constexpr double_t score_weight            = 1.1;
 constexpr double_t goal_weight             = 8;
 constexpr double_t cost_weight             = 0.023;
+*/
 
-constexpr int_fast32_t min_open_list_value = 8;
+constexpr int_fast32_t min_open_list_value  = 8;
 constexpr uint_fast32_t search_time         = 30000;
 constexpr uint_fast32_t grace_time          = 2000;
 
-
-/*
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
 constexpr uint_fast32_t astar_depth        = 10;
@@ -274,7 +274,6 @@ static uint_fast32_t min_value = 1;
 static double_t score_weight = 1;
 static double_t goal_weight = 1;
 static double_t cost_weight = 1;
-*/
 
 #define ANGLE_COORD 1
 #define SIDE_COORD  2
