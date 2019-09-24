@@ -578,15 +578,16 @@ const bool Field::checkEnd() const{
 
 void Field::judgeWinner(){
 	fprintf(stderr, "\n---------------- finish ----------------\n");
+	int_fast32_t mineScore = this->calcScore(MINE_ATTR);
+	int_fast32_t enemyScore = this->calcScore(ENEMY_ATTR);
 
-	if(this->calcScore(MINE_ATTR) > this->calcScore(ENEMY_ATTR)){
-		printf("win  MINE\n");
-		printf("lose ENEMY\n");
-	}
-	if(this->calcScore(MINE_ATTR) == this->calcScore(ENEMY_ATTR)){
+	printf("%d\n", mineScore - enemyScore);
+	if(mineScore > enemyScore){
+		printf("Win  MINE\n");
+		printf("Lose ENEMY\n");
+	} else if(mineScore == enemyScore){
 		printf("Draw\n");
-	}
-	if(this->calcScore(MINE_ATTR) < this->calcScore(ENEMY_ATTR)){
+	} else if(mineScore < enemyScore){
 		printf("Lose MINE\n");
 		printf("Win  ENEMY\n");
 	}
