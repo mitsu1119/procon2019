@@ -115,28 +115,27 @@ public:
 
 };
 
+/*
 constexpr double_t move_weight                = 2;
 constexpr double_t state_weight               = 55;
 constexpr double_t heuristic_weight           = 5;
 constexpr double_t value_weight               = 35;
 constexpr double_t is_on_decided_route_weight = 80;
-
 constexpr double_t is_on_mine_panel_weight    = 95;
 constexpr double_t is_on_enemy_panel_weight   = 90;
-
 constexpr double_t adjacent_agent_weight      = 10;
 constexpr double_t average_distance_weght     = 40;
-
-/*
-static double_t move_weight;
-static double_t state_weight;
-static double_t heuristic_weight;
-static double_t value_weight;
-static double_t is_on_decided_route_weight;
-static double_t is_on_mine_panel_weight;
-static double_t adjacent_agent_weight;
-static double_t average_distance_weght;
 */
+
+static double_t move_weight = 1;
+static double_t state_weight = 1;
+static double_t heuristic_weight = 1;
+static double_t value_weight = 1;
+static double_t is_on_decided_route_weight = 1;
+static double_t is_on_mine_panel_weight = 1;
+static double_t is_on_enemy_panel_weight = 1;
+static double_t adjacent_agent_weight = 1;
+static double_t average_distance_weght = 1;
 
 class Node{
 public:
@@ -147,7 +146,7 @@ public:
 		CLOSED
 	};
 
-	//------ 評価値 ------
+	//------------ 評価値 ------------
 	
 	//ステータス
 	Status status;
@@ -161,19 +160,16 @@ public:
 	int_fast32_t  value;
 	//確定ルートにかぶっているか？
   int_fast32_t is_on_decided_route;
-
-	
+	//パネル属性
 	int_fast32_t is_on_mine_panel;
 	int_fast32_t is_on_enemy_panel;
-
-	
 	//Agent同士が隣接しているかどうか
 	int_fast32_t adjacent_agent;
 	//Agent同士の平均距離
 	double average_distance;
 
 	
-	//------ 探索で使用 ------
+	//------------ 探索で使用 ------------
 	
 	uint_fast32_t move_num;
 	Node* parent;
@@ -228,6 +224,7 @@ public:
 	
 };
 
+/*
 constexpr uint_fast32_t greedy_count       = 8;
 constexpr uint_fast32_t search_count       = 16;
 constexpr uint_fast32_t astar_depth        = 10;
@@ -244,43 +241,40 @@ constexpr uint_fast32_t min_agent_distance = 2;
 constexpr uint_fast32_t min_goal_distance  = 2;
 constexpr uint_fast32_t max_move           = 30;
 constexpr uint_fast32_t min_move_cost      = 2;
-constexpr int_fast32_t  min_value          = 10;
+constexpr uint_fast32_t min_value          = 10;
 
 constexpr double_t score_weight            = 1.1;
 constexpr double_t goal_weight             = 8;
 constexpr double_t cost_weight             = 0.023;
-constexpr int_fast32_t min_open_list_value = 8;
-	
-constexpr uint_fast32_t search_time        = 30000;
-constexpr uint_fast32_t grace_time         = 2000;
-
-/*
-static uint_fast32_t greedy_count;
-static uint_fast32_t search_count;
-static uint_fast32_t astar_depth;
-
-static double_t occpancy_weight;
-static double_t is_on_decided_weight;
-static double_t is_angle_weight;
-static double_t is_side_weight;
-static double_t is_inside_closed_weight;
-
-static uint_fast32_t max_mine_distance;
-static uint_fast32_t min_mine_distance;
-static uint_fast32_t min_agent_distance;
-static uint_fast32_t min_goal_distance;
-static uint_fast32_t max_move;
-static uint_fast32_t min_move_cost;
-static int_fast32_t  min_value;
-
-static double_t score_weight;;
-static double_t goal_weight;
-static double_t cost_weight;
-static int_fast32_t min_open_list_value;
-
-static uint_fast32_t search_time;
-static uint_fast32_t grace_time;
 */
+
+constexpr uint_fast32_t max_mine_distance  = 20;
+constexpr uint_fast32_t min_mine_distance  = 2;
+constexpr uint_fast32_t astar_depth        = 10;
+
+constexpr uint_fast32_t min_open_list_value = 8;
+constexpr uint_fast32_t search_time         = 30000;
+constexpr uint_fast32_t grace_time          = 2000;
+
+
+static uint_fast32_t greedy_count = 1;
+static uint_fast32_t search_count = 1;
+
+static double_t occpancy_weight = 1;
+static double_t is_on_decided_weight = 1;
+static double_t is_angle_weight = 1;
+static double_t is_side_weight = 1;
+static double_t is_inside_closed_weight = 1;
+
+static uint_fast32_t min_agent_distance = 1;
+static uint_fast32_t min_goal_distance = 1;
+static uint_fast32_t max_move = 1;
+static uint_fast32_t min_move_cost = 1;
+static uint_fast32_t min_value = 1;
+
+static double_t score_weight = 1;
+static double_t goal_weight = 1;
+static double_t cost_weight = 1;
 
 #define ANGLE_COORD 1
 #define SIDE_COORD  2

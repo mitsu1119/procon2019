@@ -139,6 +139,10 @@ string
 -
 stdlib.h
 -
+cstdlib
+-
+typeinfo
+-
 field.hpp
 /home/kaito/program/procon2019/src/field.hpp
 useful.hpp
