@@ -20,6 +20,7 @@ Astar astar;
 void move2json();
 std::string getType(int nx, int ny, int dx, int dy);
 
+/*
 int main(int argc, char *argv[]) {
 	field.init();
 
@@ -31,6 +32,7 @@ int main(int argc, char *argv[]) {
 
 	return 0;	
 }
+*/
 
 /*
 int main(int argc, char *argv[]){
@@ -52,7 +54,6 @@ int main(int argc, char *argv[]){
 }
 */
 
-/*
 int main(int argc, char* argv[]){
 	
 	if(argc <= 25 ){
@@ -140,7 +141,6 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
-*/
 
 /*
 int main(int argc, char *argv[]) {
