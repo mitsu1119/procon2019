@@ -1409,12 +1409,3 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 			this->chooseAlgorithm(tmp, i);
 	*field = tmp;
 }
-
-int_fast32_t expectedScore(Astar* astar, Field field, const uint_fast32_t agent){
-	Astar tmp = *astar;
-	
-	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		return field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
-	else
-		return field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
-}

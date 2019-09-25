@@ -246,7 +246,12 @@ constexpr int_fast32_t min_value          = 10;
 constexpr double_t score_weight            = 1.1;
 constexpr double_t goal_weight             = 8;
 constexpr double_t cost_weight             = 0.023;
+
+constexpr int_fast32_t min_open_list_value  = 8;
+constexpr uint_fast32_t search_time         = 30000;
+constexpr uint_fast32_t grace_time          = 2000;
 */
+
 
 constexpr int_fast32_t min_open_list_value  = 8;
 constexpr uint_fast32_t search_time         = 30000;
@@ -424,8 +429,3 @@ public:
 	void move(Field *field, const uint_fast32_t attr) override;
 
 };
-
-//-------------------------------------------------------------------------------------
-int_fast32_t expectedScore(Astar* astar, Field field, const uint_fast32_t agent);
-
-
