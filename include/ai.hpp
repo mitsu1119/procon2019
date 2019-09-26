@@ -171,7 +171,7 @@ public:
 	
 	//------------ 探索で使用 ------------
 	
-	uint_fast32_t move_num;
+	int_fast32_t move_num;
 	Node* parent;
 	std::pair<uint_fast32_t, uint_fast32_t> coord;
 
@@ -253,7 +253,6 @@ constexpr uint_fast32_t grace_time          = 2000;
 */
 
 
-constexpr int_fast32_t min_open_list_value  = 8;
 constexpr uint_fast32_t search_time         = 30000;
 constexpr uint_fast32_t grace_time          = 2000;
 
@@ -261,6 +260,7 @@ constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
 constexpr uint_fast32_t astar_depth        = 10;
 
+static int_fast32_t min_open_list_value = 1;
 static uint_fast32_t greedy_count = 1;
 static uint_fast32_t search_count = 1;
 
@@ -285,8 +285,7 @@ static double_t cost_weight = 1;
 
 class Astar : public AI{
 private:
-	
-	friend SimpleMove;
+	friend void _multiThread(Astar* astar, Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
 	int_fast32_t average_score;
 
 	//探索法
@@ -310,7 +309,7 @@ private:
 	//マルチスレッド用
 	std::pair<uint_fast32_t, uint_fast32_t> tentative_goal;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> tentative_route;
-	int_fast32_t tentative_max_score;
+	double tentative_max_score;
 
 	
 	//カウンター
@@ -383,7 +382,7 @@ private:
 	static const bool comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs);
 
 	
-  std::pair<int_fast32_t, std::vector<Node>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, const uint_fast32_t max_move_cost);	
+  std::pair<double, std::vector<Node>> searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, const uint_fast32_t max_move_cost);	
 	void setStartNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* start);
 	void setNextNode(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, Node* current, Node* next);
 
@@ -429,3 +428,10 @@ public:
 	void move(Field *field, const uint_fast32_t attr) override;
 
 };
+
+//マルチスレッド用
+static std::pair<uint_fast32_t, uint_fast32_t> _tentative_goal;
+static std::vector<std::pair<uint_fast32_t, uint_fast32_t>> _tentative_route;
+static double _tentative_max_score;
+
+void _multiThread(Astar* astar, Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);
