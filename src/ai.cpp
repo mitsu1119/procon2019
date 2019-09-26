@@ -1120,7 +1120,6 @@ void Astar::multiThread(Field field, const uint_fast32_t agent, std::pair<uint_f
 }
 
 void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
-	/*
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 
@@ -1151,8 +1150,8 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 	
 	this->printRoute(this->tentative_route);
 	this->counter.at(agent) = 0;
-	*/
 
+	/*
 	_tentative_max_score = - INT_MAX;
 	_tentative_route.clear();
 
@@ -1183,6 +1182,7 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 	this->setDecidedCoord(_tentative_route);
 	this->printRoute(_tentative_route);
 	this->counter.at(agent) = 0;
+	*/
 }
 
 void 	Astar::search(Field& field, const uint_fast32_t attr){
