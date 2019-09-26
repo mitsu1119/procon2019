@@ -687,6 +687,12 @@ void Field::init(){
 	int enID = (int)agents[1].get<object>()["teamID"].get<double>();
   // これ
   int myTeamID = (int)matches.get<object>()["teamID"].get<double>();
+	int enTeamID;
+	if (myTeamID == myID){
+		enTeamID = enID;
+	}else{
+		enTeamID = myID;
+	}
 
   if (myTeamID == myID){
     my_attr_tmp = 0;
@@ -788,13 +794,18 @@ void Field::init(){
 		}
 	}
 
-	//----------------------------------------------------------------------------------
+	val = 0;
 	for(int i=0;i<this->height;i++){
 		for(int j=0;j<this->width;j++){
-			
+			if(tiles[val] == myTeamID)
+				this->setPanelAttr(j, i, MINE_ATTR);
+			else if(tiles[val] == enTeamID)
+				this->setPanelAttr(j, i, ENEMY_ATTR);
+			else
+				this->setPanelAttr(j, i, PURE_ATTR);
+			val++;
 		}
 	}
-	//----------------------------------------------------------------------------------
 
 	std::cout << "agents:" << agent_num << std::endl;
 	// Debug -----------------------------------------
