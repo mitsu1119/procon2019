@@ -945,13 +945,13 @@ const bool Astar::comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rh
 	return (result ? lhs.first->getScore() < rhs.first->getScore() : lhs.first->state_cost < rhs.first->state_cost);
 }
 
-std::pair<int_fast32_t, std::vector<Node>> Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, const uint_fast32_t max_move_cost){
+std::pair<double, std::vector<Node>> Astar::searchRoute(Field field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& goal, const uint_fast32_t max_move_cost){
 	std::vector<std::pair<Node*, Field>> open;
 	std::vector<Node> node;
 	
 	Node *start, *current , *next;
 	Field current_field, next_field;
-	int_fast32_t score;
+	double score;
 	
 	this->initNode(field, node);
 	start =& node.at(field.agents.at(agent).getY() * field.getWidth() + field.agents.at(agent).getX());
@@ -1109,7 +1109,7 @@ const bool Astar::isTimeOver() const{
 
 void Astar::multiThread(Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord){
 	std::pair<int_fast32_t, std::vector<Node>> condidate;
-	int_fast32_t score;
+	double score;
 	condidate = this->searchRoute(field, agent, coord, max_move);
 	score     = condidate.first;
 	if(score > this->tentative_max_score){
@@ -1123,8 +1123,8 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 
+	this->tentative_max_score = - INT_MAX;
 	this->tentative_route.clear();
-	this->tentative_max_score = - INT_MAX;	
 	this->setSearchTarget(field, agent);
 	
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
@@ -1152,28 +1152,35 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 	this->counter.at(agent) = 0;
 
 	/*
+	_tentative_max_score = - INT_MAX;
+	_tentative_route.clear();
+
 	std::vector<std::thread> threads;
-	std::chrono::system_clock::time_point  start, end;
+	std::chrono::system_clock::time_point start, end;
 	double time;
-	tentative_max_score = - INT_MAX;
+
 	start = std::chrono::system_clock::now();
 	this->setSearchTarget(field, agent);
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
-			threads.emplace_back(std::thread(&Astar::multiThread, this, std::ref(field), agent, std::ref(coord)));
+			threads.emplace_back(std::thread(_multiThread, this, std::ref(field), agent, std::ref(coord)));
 		});
+
 	for(auto& thread : threads)
 		thread.join();
+
 	end = std::chrono::system_clock::now();
 	time = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
 	std::cout << time << "milliseconds" << std::endl;
+
 	if(this->tentative_max_score == -INT_MAX){
 		this->decided_route.at(agent).clear();
 		return;
 	}
-	this->decided_route.at(agent) = this->tentative_route;
-	this->decided_goal.at(agent)  = this->tentative_goal;
-	this->setDecidedCoord(this->tentative_route);
-	this->printRoute(this->tentative_route);
+
+	this->decided_route.at(agent) = _tentative_route;
+	this->decided_goal.at(agent)  = _tentative_goal;
+	this->setDecidedCoord(_tentative_route);
+	this->printRoute(_tentative_route);
 	this->counter.at(agent) = 0;
 	*/
 }
@@ -1301,6 +1308,7 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 
 	{
 	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
+	
 	if(result != this->next_coord.end()){
 		goto _EXCEPTION_SEARCH;
 	}
@@ -1410,11 +1418,16 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	*field = tmp;
 }
 
-int_fast32_t expectedScore(Astar* astar, Field field, const uint_fast32_t agent){
+void _multiThread(Astar* astar, Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord){
+	std::pair<int_fast32_t, std::vector<Node>> condidate;
+	int_fast32_t score;
 	Astar tmp = *astar;
+	condidate = tmp.searchRoute(field, agent, coord, max_move);
+	score     = condidate.first;
 	
-	if(field.agents.at(agent).getAttr() == MINE_ATTR)
-		return field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
-	else
-		return field.calcScore(ENEMY_ATTR) - field.calcScore(MINE_ATTR);
+	if(score > _tentative_max_score){
+		_tentative_max_score = score;
+		_tentative_goal      = coord;
+		_tentative_route     = tmp.makeRoute(field, condidate.second, agent, coord);
+	}
 }

@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
 
 int main(int argc, char* argv[]){
 	
-	if(argc <= 25 ){
+	if(argc <= 26){
 		printf("\nparameters error\n");
 		std::exit(0);
 	}
@@ -92,8 +92,9 @@ int main(int argc, char* argv[]){
 	cost_weight = std::stof(argv[22]);
 
 	//---------------------- Another ----------------------
-	greedy_count = std::stof(argv[23]);
-	search_count = std::stof(argv[24]);
+	min_open_list_value = std::stof(argv[23]);
+	greedy_count = std::stof(argv[24]);
+	search_count = std::stof(argv[25]);
 
 	//パラメータの表示
 	std::cerr << "move_weight:" << move_weight << std::endl;
@@ -122,6 +123,7 @@ int main(int argc, char* argv[]){
 	std::cerr << "goal_weight:" << goal_weight << std::endl;
 	std::cerr << "cost_weight:" << cost_weight << std::endl;
 		
+	field.init();
 	astar.init(&field);
 	while(true){
 		astar.move(&field, MINE_ATTR);
