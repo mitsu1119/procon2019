@@ -108,7 +108,31 @@ public:
 	Individual(): rate(0.0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
-		for(size_t i = 0; i < Dim; i++) params.emplace_back(rand.gend(200));
+		params.emplace_back(2);
+		params.emplace_back(55);
+		params.emplace_back(5);
+		params.emplace_back(35);
+		params.emplace_back(80);
+		params.emplace_back(95);
+		params.emplace_back(90);
+		params.emplace_back(10);
+		params.emplace_back(40);
+		params.emplace_back(50);
+		params.emplace_back(20);
+		params.emplace_back(2);
+		params.emplace_back(2);
+		params.emplace_back(10);
+		params.emplace_back(2);
+		params.emplace_back(2);
+		params.emplace_back(30);
+		params.emplace_back(2);
+		params.emplace_back(10);
+		params.emplace_back(1.1);
+		params.emplace_back(8);
+		params.emplace_back(0.023);
+		params.emplace_back(8);
+		params.emplace_back(8);
+		params.emplace_back(16);
 	}
 
 	void eval() {
@@ -149,7 +173,7 @@ public:
 			default:
 				// parents
 				int childStatus;
-				printf("This is parent process. child process number is %d\n", pid);
+				fprintf(stderr, "This is parent process. child process number is %d\n", pid);
 
 				pid_t wait_pid = wait(&childStatus);
 				
@@ -314,7 +338,7 @@ public:
 	}
 };
 
-int main() {
+int main(int argc, char *argv[]) {
 	std::chrono::system_clock::time_point start, end;
 	/*
 	start = std::chrono::system_clock::now();
@@ -327,6 +351,9 @@ int main() {
 
 	swarm = new Swarm(Np);
 
+	FILE *fp;
+	if(argc == 2) fp = fopen(argv[1], "w");
+
 	for(size_t i = 0; i <= Ng; i++) {	
 		fprintf(stderr, "----------------------------------------\n");
 		fprintf(stderr, "%ld世代目!!\n", i);
@@ -337,9 +364,16 @@ int main() {
 
 		nextSwarm = swarm->makeNextSwarm();
 
-		printf("%ld %lf\n", i, swarm->getElite()->getRate());
+		if(fp) {
+			fprintf(fp, "%ld %lf\n", i, swarm->getElite()->getRate());
+			fflush(fp);
+		} else {
+			printf("%ld %lf\n", i, swarm->getElite()->getRate());
+		}
 		delete swarm;
 		swarm = nextSwarm;
 	}
+
+	fclose(fp);
 }
 
