@@ -629,7 +629,7 @@ void Field::init(){
 	double buffer;
 	value maps;
 	{
-		std::fstream stream("./../../public_field/E-1.json");
+		std::fstream stream("./../../public_field/fields.json");
 		if(!stream.is_open()) return 1;
 		stream >> maps;
 		assert(get_last_error().empty());
@@ -835,19 +835,10 @@ void Field::init(){
 	
 	this->canmoveAgents = std::vector<bool>(this->agents.size(), true);
 
-	/*
-	// エージェントの初期位置のパネルの属性を設定
-	for(auto &i: this->agents) {
-		setPanelAttr(i.getX(), i.getY(), i.getAttr());
-	}
-	*/
-
 	//とりあえずSTOPにセット
 	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
 			a.move(STOP);
 		});
-
-	
 }
 
 bool Field::is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
