@@ -176,9 +176,9 @@ public:
 				close(fd[0]);
 				close(fd[1]);
 				if(WIFEXITED(childStatus)) {
-					printf("Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
+					fprintf(stderr, "Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
 				} else if(WIFSIGNALED(childStatus)) {
-					printf("Child process %d ended by signale %d\n", wait_pid, WTERMSIG(childStatus));
+					fprintf(stderr, "Child process %d ended by signale %d\n", wait_pid, WTERMSIG(childStatus));
 				} else {
 					err(EXIT_FAILURE, "wait err");
 					exit(EXIT_FAILURE);
@@ -186,7 +186,7 @@ public:
 			}
 		}
 		rate /= numberOfTrials;
-		printf("%rate = %lf\n", rate);
+		fprintf(stderr, "rate = %lf\n", rate);
 	}
 
 	void print() const {
