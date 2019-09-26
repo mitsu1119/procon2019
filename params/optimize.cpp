@@ -21,8 +21,8 @@
 #include <errno.h>
 #include "useful.hpp"
 
-constexpr size_t Dim = 25;
-size_t Np = 14;
+constexpr size_t Dim = 26;
+size_t Np = 8;
 size_t Ng = 150;
 
 // 交叉法
@@ -30,7 +30,7 @@ size_t Ng = 150;
 // #define CHIASMA_SPX
 
 // メインプログラムでの評価を行うときの試行回数
-size_t numberOfTrials = 8;
+size_t numberOfTrials = 4;
 
 class Swarm;
 class Individual {
@@ -170,8 +170,7 @@ public:
 				*/
 
 				// 得点差による評価
-				int scoreDiff = std::atoi(buf);
-				printf("スコア差: %d\n", scoreDiff);
+				double scoreDiff = std::atof(buf);
 				rate += scoreDiff;
 
 				close(fd[0]);
@@ -187,6 +186,7 @@ public:
 			}
 		}
 		rate /= numberOfTrials;
+		printf("%rate = %lf\n", rate);
 	}
 
 	void print() const {

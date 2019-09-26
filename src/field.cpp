@@ -624,7 +624,7 @@ void Field::init(){
   int my_attr_tmp; // TeamID用のjson添字
   int en_attr_tmp;
 
-  int end_turn;    // 終了ターン数
+  // int end_turn;    // 終了ターン数
 
 	std::vector<int> map;
 	std::vector<int> tile;
@@ -698,28 +698,28 @@ void Field::init(){
 
 
   // Debug myTeamID -------------------------------------------------
-  std::cout << "[*] myTeamID:" << myTeamID << std::endl;
+  std::cerr << "[*] myTeamID:" << myTeamID << std::endl;
 
 
 	// Debug---------------
-	std::cout << "\n\n";
-  std::cout << "[*] turn    :" << turn << std::endl; // Debug
-	std::cout << "[*] turns   :" << end_turn   << std::endl; // print turns
-	std::cout << "[*] height  :" << height << std::endl; // print height
-	std::cout << "[*] width   :" << width  << std::endl; // print width
-	std::cout << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
-	std::cout << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
-	std::cout << std::endl;
+	std::cerr << "\n\n";
+  std::cerr << "[*] turn    :" << turn << std::endl; // Debug
+	// std::cerr << "[*] turns   :" << end_turn   << std::endl; // print turns
+	std::cerr << "[*] height  :" << height << std::endl; // print height
+	std::cerr << "[*] width   :" << width  << std::endl; // print width
+	std::cerr << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
+	std::cerr << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
+	std::cerr << std::endl;
 
 	// print myagent array
-	std::cout << "[*] myagent_array:" << std::endl;
+	std::cerr << "[*] myagent_array:" << std::endl;
 	for(value item : myagents){
 		agentid = (int)item.get<object>()["agentID"].get<double>();
 		x       = (int)item.get<object>()["x"].get<double>();
 		y       = (int)item.get<object>()["y"].get<double>();
-		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
-		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
-		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		std::cerr << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cerr << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cerr << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
 		agent_data[index_num][0] = x;
 		agent_data[index_num][1] = y;
     // index (Debug) ------------------------
@@ -728,17 +728,17 @@ void Field::init(){
 		// agent数を求める
 		agent_num += 1;
 	}
-	std::cout << std::endl;
+	std::cerr << std::endl;
 
 	// print enagent array
-	std::cout << "[*] enagent_array:" << std::endl;
+	std::cerr << "[*] enagent_array:" << std::endl;
 	for(value item : enagents){
 		agentid = (int)item.get<object>()["agentID"].get<double>();
 		x       = (int)item.get<object>()["x"].get<double>();
 		y       = (int)item.get<object>()["y"].get<double>();
-		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
-		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
-		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		std::cerr << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cerr << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cerr << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
 		agent_data[index_num][0] = x;
 		agent_data[index_num][1] = y;
 
@@ -773,7 +773,7 @@ void Field::init(){
   }
 
   // showing field_sum pt ---------------------------------
-  std::cout << "[*]field_sum:" << field_rand_sum << std::endl;
+  std::cerr << "[*]field_sum:" << field_rand_sum << std::endl;
 
 	int val=0;
 
@@ -784,7 +784,7 @@ void Field::init(){
 		}
 	}
 
-	std::cout << "agents:" << agent_num << std::endl;
+	std::cerr << "agents:" << agent_num << std::endl;
 	// Debug -----------------------------------------
   // TODO: 汎用的な実装にする(agentIDとATTR)
   // このままだと自チームが敵側の場合OUT
@@ -804,7 +804,8 @@ void Field::init(){
 	
 	// 終了ターン
 	this->max_turn = (int)matches.get<object>()["turns"].get<double>();
-	std::cout << "max_turn:" << this->max_turn << std::endl;
+	this->max_turn = 2;
+	std::cerr << "max_turn:" << this->max_turn << std::endl;
 	
 	//シード値設定
 	this->random = XorOshiro128p(time(NULL));
@@ -912,28 +913,28 @@ void Field::update(){
 
 
   // Debug myTeamID -------------------------------------------------
-  std::cout << "[*] myTeamID:" << myTeamID << std::endl;
+  std::cerr << "[*] myTeamID:" << myTeamID << std::endl;
 
 
 	// Debug---------------
-	std::cout << "\n\n";
-  std::cout << "[*] turn    :" << turn << std::endl; // Debug
-	//std::cout << "[*] turns   :" << end_turn   << std::endl; // print turns
-	std::cout << "[*] height  :" << height << std::endl; // print height
-	std::cout << "[*] width   :" << width  << std::endl; // print width
-	std::cout << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
-	std::cout << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
-	std::cout << std::endl;
+	std::cerr << "\n\n";
+  std::cerr << "[*] turn    :" << turn << std::endl; // Debug
+	//std::cerr << "[*] turns   :" << end_turn   << std::endl; // print turns
+	std::cerr << "[*] height  :" << height << std::endl; // print height
+	std::cerr << "[*] width   :" << width  << std::endl; // print width
+	std::cerr << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
+	std::cerr << "[*] enTeamID:"  << enID  << std::endl; // print enemyTeamID
+	std::cerr << std::endl;
 
 	// print myagent array
-	std::cout << "[*] myagent_array:" << std::endl;
+	std::cerr << "[*] myagent_array:" << std::endl;
 	for(value item : myagents){
 		agentid = (int)item.get<object>()["agentID"].get<double>();
 		x       = (int)item.get<object>()["x"].get<double>();
 		y       = (int)item.get<object>()["y"].get<double>();
-		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
-		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
-		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		std::cerr << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cerr << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cerr << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
 		agent_data[index_num][0] = x;
 		agent_data[index_num][1] = y;
     // index (Debug) ------------------------
@@ -942,17 +943,17 @@ void Field::update(){
 		// agent数を求める
 		agent_num += 1;
 	}
-	std::cout << std::endl;
+	std::cerr << std::endl;
 
 	// print enagent array
-	std::cout << "[*] enagent_array:" << std::endl;
+	std::cerr << "[*] enagent_array:" << std::endl;
 	for(value item : enagents){
 		agentid = (int)item.get<object>()["agentID"].get<double>();
 		x       = (int)item.get<object>()["x"].get<double>();
 		y       = (int)item.get<object>()["y"].get<double>();
-		std::cout << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
-		std::cout << "  x:" << (int)item.get<object>()["x"].get<double>();
-		std::cout << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
+		std::cerr << "agentID:" << (int)item.get<object>()["agentID"].get<double>();
+		std::cerr << "  x:" << (int)item.get<object>()["x"].get<double>();
+		std::cerr << "  y:" << (int)item.get<object>()["y"].get<double>() << std::endl;
 		agent_data[index_num][0] = x;
 		agent_data[index_num][1] = y;
 
