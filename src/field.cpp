@@ -624,10 +624,10 @@ void Field::init(){
   int my_attr_tmp; // TeamID用のjson添字
   int en_attr_tmp;
 
-  int end_turn;    // 終了ターン数
+	// int end_turn;    // 終了ターン数
 
 	std::vector<int> map;
-	std::vector<int> tile;
+	std::vector<int> tiles;
 	double buffer;
 	value maps;
 	{
@@ -652,7 +652,6 @@ void Field::init(){
 	this->width  = (int)maps.get<object>()["width"].get<double>();
 
 
-	//------------------------------------------------------------------
 	double buff;
 	uint_fast32_t sizee;
 
@@ -662,7 +661,6 @@ void Field::init(){
 
 	// マップ生成
 	this->field = std::vector<Panel>(sizee, Panel(0));
-  //------------------------------------------------------------------
 
 	
 	value::array points = maps.get<object>()["points"].get<value::array>();
@@ -671,6 +669,15 @@ void Field::init(){
 		for(value item : pt){
 			buffer = item.get<double>();
 			map.push_back((int)buffer);
+		}
+	}
+
+	value::array tile = maps.get<object>()["tiled"].get<value::array>();
+	for(int i = 0; i < height; i++){
+		value::array tl = tile[i].get<value::array>();
+		for(value item : tl){
+			buffer = item.get<double>();
+			tiles.push_back((int)buffer);
 		}
 	}
   
@@ -692,7 +699,6 @@ void Field::init(){
   }
 
 	// agent array
-	
 	value::array myagents = agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
 	value::array enagents = agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
 
@@ -704,7 +710,7 @@ void Field::init(){
 	// Debug---------------
 	std::cout << "\n\n";
   std::cout << "[*] turn    :" << turn << std::endl; // Debug
-	std::cout << "[*] turns   :" << end_turn   << std::endl; // print turns
+	//std::cout << "[*] turns   :" << end_turn   << std::endl; // print turns
 	std::cout << "[*] height  :" << height << std::endl; // print height
 	std::cout << "[*] width   :" << width  << std::endl; // print width
 	std::cout << "[*] myTeamID:"  << myID  << std::endl; // print myTeamID
@@ -784,6 +790,14 @@ void Field::init(){
 		}
 	}
 
+	//----------------------------------------------------------------------------------
+	for(int i=0;i<this->height;i++){
+		for(int j=0;j<this->width;j++){
+			
+		}
+	}
+	//----------------------------------------------------------------------------------
+
 	std::cout << "agents:" << agent_num << std::endl;
 	// Debug -----------------------------------------
   // TODO: 汎用的な実装にする(agentIDとATTR)
@@ -801,7 +815,7 @@ void Field::init(){
 
 	//ターン
 	this->turn = 0;
-	
+
 	// 終了ターン
 	this->max_turn = (int)matches.get<object>()["turns"].get<double>();
 	std::cout << "max_turn:" << this->max_turn << std::endl;
@@ -810,17 +824,20 @@ void Field::init(){
 	this->random = XorOshiro128p(time(NULL));
 	
 	this->canmoveAgents = std::vector<bool>(this->agents.size(), true);
-	
+
+	/*
 	// エージェントの初期位置のパネルの属性を設定
 	for(auto &i: this->agents) {
 		setPanelAttr(i.getX(), i.getY(), i.getAttr());
 	}
+	*/
 
 	//とりあえずSTOPにセット
 	std::for_each(this->agents.begin(), this->agents.end(), [&, this](auto& a){
 			a.move(STOP);
 		});
 
+	
 }
 
 bool Field::is_inside_closed(const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{

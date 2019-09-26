@@ -28,6 +28,8 @@ public:
 	static const bool MineComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
 	static const bool EnemyComp(std::pair<Field, Field>& lhs, std::pair<Field, Field>& rhs);
 
+	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
+	
 };
 
 inline const Direction AI::changeDirection(const std::pair<uint_fast32_t, uint_fast32_t>& now, const std::pair<uint_fast32_t, uint_fast32_t>& next) const{
@@ -115,7 +117,6 @@ public:
 
 };
 
-/*
 constexpr double_t move_weight                = 2;
 constexpr double_t state_weight               = 55;
 constexpr double_t heuristic_weight           = 5;
@@ -125,8 +126,8 @@ constexpr double_t is_on_mine_panel_weight    = 95;
 constexpr double_t is_on_enemy_panel_weight   = 90;
 constexpr double_t adjacent_agent_weight      = 10;
 constexpr double_t average_distance_weght     = 40;
-*/
 
+/*
 static double_t move_weight = 1;
 static double_t state_weight = 1;
 static double_t heuristic_weight = 1;
@@ -136,6 +137,7 @@ static double_t is_on_mine_panel_weight = 1;
 static double_t is_on_enemy_panel_weight = 1;
 static double_t adjacent_agent_weight = 1;
 static double_t average_distance_weght = 1;
+*/
 
 class Node{
 public:
@@ -224,7 +226,6 @@ public:
 	
 };
 
-/*
 constexpr uint_fast32_t greedy_count       = 8;
 constexpr uint_fast32_t search_count       = 16;
 constexpr uint_fast32_t astar_depth        = 10;
@@ -250,9 +251,9 @@ constexpr double_t cost_weight             = 0.023;
 constexpr int_fast32_t min_open_list_value  = 8;
 constexpr uint_fast32_t search_time         = 30000;
 constexpr uint_fast32_t grace_time          = 2000;
-*/
 
 
+/*
 constexpr uint_fast32_t search_time         = 30000;
 constexpr uint_fast32_t grace_time          = 2000;
 
@@ -279,6 +280,7 @@ static uint_fast32_t min_value = 1;
 static double_t score_weight = 1;
 static double_t goal_weight = 1;
 static double_t cost_weight = 1;
+*/
 
 #define ANGLE_COORD 1
 #define SIDE_COORD  2
@@ -325,7 +327,7 @@ private:
 
 	//移動
 	void greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num);
-	void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
+	//void decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route);
 	Direction exceptionMove(Field& field, const uint_fast32_t agent);
 	Direction finalPhase(Field& field, const uint_fast32_t agent);
 
