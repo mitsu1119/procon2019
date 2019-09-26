@@ -708,7 +708,7 @@ void Field::init(){
 
 
   // Debug myTeamID -------------------------------------------------
-  std::cerr << "[*] myTeamID:" << myTeamID << std::endl;
+	// std::cerr << "[*] myTeamID:" << myTeamID << std::endl;
 
 
 	// Debug---------------
@@ -930,7 +930,7 @@ void Field::update(){
 
 
   // Debug myTeamID -------------------------------------------------
-  std::cerr << "[*] myTeamID:" << myTeamID << std::endl;
+	// std::cerr << "[*] myTeamID:" << myTeamID << std::endl;
 
 
 	// Debug---------------

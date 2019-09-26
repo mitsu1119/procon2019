@@ -543,6 +543,86 @@ void SimpleMove::move(Field* field, const uint_fast32_t attr){
 Astar::Astar(){
 }
 
+Astar::Astar(double_t _move_weight, double_t _state_weight, double_t _heuristic_weight, double_t _value_weight, double_t _is_on_decided_route_weight, double_t _is_on_mine_panel_weight, double_t _is_on_enemy_panel_weight, double_t _adjacent_agent_weight, double_t _average_distance_weght, int_fast32_t _min_open_list_value, uint_fast32_t _greedy_count, uint_fast32_t _search_count, double_t _occpancy_weight, double_t _is_on_decided_weight, double_t _is_angle_weight, double_t _is_side_weight, double_t _is_inside_closed_weight, uint_fast32_t _min_agent_distance, uint_fast32_t _min_goal_distance, uint_fast32_t _max_move, uint_fast32_t _min_move_cost, uint_fast32_t _min_value, double_t _score_weight, double_t _goal_weight, double_t _cost_weight){
+
+	/*
+	//セット
+	//---------------------- Node ----------------------
+	this->move_weight = _move_weight;
+	this->state_weight = state_weight;
+	this->heuristic_weight = _heuristic_weight;
+	this->value_weight = _value_weight;
+	this->is_on_decided_route_weight = _is_on_decided_route_weight;
+	this->is_on_mine_panel_weight = _is_on_mine_panel_weight;
+	this->is_on_enemy_panel_weight = _is_on_enemy_panel_weight;
+	this->adjacent_agent_weight = _adjacent_agent_weight;
+	this->average_distance_weght = _average_distance_weght;
+
+	//---------------------- Another ----------------------
+	this->min_open_list_value = _min_open_list_value;
+	this->greedy_count = _greedy_count;
+	this->search_count = _search_count;
+
+	//---------------------- Goal ----------------------
+	this->occpancy_weight = _occpancy_weight;
+	this->is_on_decided_weight = _is_on_decided_weight;
+	this->is_angle_weight = _is_angle_weight;
+	this->is_side_weight = _is_side_weight;
+	this->is_inside_closed_weight = _is_inside_closed_weight;
+	
+	//---------------------- Branching ----------------------
+	this->min_agent_distance = _min_agent_distance;
+	this->min_goal_distance = _min_goal_distance;
+	this->max_move = _max_move;
+	this->min_move_cost = _min_move_cost;
+	this->min_value = _min_value;
+
+	//---------------------- Score ----------------------
+	this->score_weight = _score_weight;
+	this->goal_weight = _goal_weight;
+	this->cost_weight = _cost_weight;
+
+	
+	//パラメータの表示
+	std::cerr << "---------------------- Params ----------------------"  << std::endl;
+	//---------------------- Node ----------------------
+	std::cerr << "move_weight:" << this->move_weight << std::endl;
+	std::cerr << "state_weight:" << this->state_weight << std::endl;
+	std::cerr << "heuristic_weight:" << this->heuristic_weight << std::endl;
+	std::cerr << "value_weight:" << this->value_weight << std::endl;
+	std::cerr << "is_on_decided_route_weight:" << this->is_on_decided_route_weight << std::endl;
+	std::cerr << "is_on_mine_panel_weight:" << this->is_on_mine_panel_weight << std::endl;
+	std::cerr << "is_on_enemy_panel_weight:" << this->is_on_enemy_panel_weight << std::endl;
+	std::cerr << "adjacent_agent_weight:" << this->adjacent_agent_weight << std::endl;
+	std::cerr << "average_distance_weght:" << this->average_distance_weght << std::endl;
+
+	//---------------------- Another ----------------------
+	std::cerr << "min_open_list_value" << this->min_open_list_value << std::endl;
+	std::cerr << "greedy_count" << this->greedy_count << std::endl;
+	std::cerr << "search_count" << this->search_count << std::endl;
+
+	//---------------------- Goal ----------------------
+	std::cerr << "occpancy_weight" << this->occpancy_weight << std::endl;
+	std::cerr << "is_on_decided_weight" << this->is_on_decided_weight << std::endl;
+	std::cerr << "is_angle_weight" << this->is_angle_weight << std::endl;
+	std::cerr << "is_side_weight" << this->is_side_weight << std::endl;
+	std::cerr << "is_inside_closed_weight" << this->is_inside_closed_weight << std::endl;
+
+	//---------------------- Branching ----------------------
+	std::cerr << "min_agent_distance:" << this->min_agent_distance << std::endl;
+	std::cerr << "min_goal_distance:" << this->min_goal_distance << std::endl;
+	std::cerr << "max_move:" << this->max_move << std::endl;
+	std::cerr << "min_move_cost:" << this->min_move_cost << std::endl;
+	std::cerr << "min_value:" << this->min_value << std::endl;
+	
+	//---------------------- Score ----------------------
+	std::cerr << "score_weight:" << this->score_weight << std::endl;
+	std::cerr << "goal_weight:" << this->goal_weight << std::endl;
+	std::cerr << "cost_weight:" << this->cost_weight << std::endl;
+	*/
+	
+}
+
 Astar::~Astar(){
 }
 
@@ -554,31 +634,6 @@ void Astar::greedyMove(Field& field, const uint_fast32_t agent, const uint_fast3
 	}
 	simple_move.greedyMove(field, agent, this->decided_coord);
 }
-
-/*
-void Astar::decidedMove(Field& field, const uint_fast32_t agent, std::vector<std::vector<std::pair<uint_fast32_t, uint_fast32_t>>>& route){
-	Direction direction;
-	for(size_t i = 0; i < field.agents.size(); i++){
-		if(i == agent)
-			continue;
-		if(route.at(i).size() <= 1)
-			continue;
-		
-		direction = this->changeDirection(route.at(i).at(0), route.at(i).at(1));
-		if(field.canMove(field.agents.at(i), direction))
-			field.agents.at(i).move(direction);
-	}
-
-	field.applyNextAgents();
-
-	for(size_t i = 0; i < field.agents.size(); i++){
-		if(route.at(i).size() <= 2)
-			continue;
-		if(field.agents.at(i).getX() == route.at(i).at(1).first && field.agents.at(i).getY() == route.at(i).at(1).second)
-			route.at(i).erase(route.at(i).begin());
-	}
-}
-*/
 
 Direction Astar::exceptionMove(Field& field, const uint_fast32_t agent){
 	const uint_fast32_t x = field.agents.at(agent).getX();
@@ -1449,11 +1504,89 @@ void Astar::move(Field *field, const uint_fast32_t attr){
 	*field = tmp;
 }
 
+void Astar::setParams(double_t _move_weight, double_t _state_weight, double_t _heuristic_weight, double_t _value_weight, double_t _is_on_decided_route_weight, double_t _is_on_mine_panel_weight, double_t _is_on_enemy_panel_weight, double_t _adjacent_agent_weight, double_t _average_distance_weght, int_fast32_t _min_open_list_value, uint_fast32_t _greedy_count, uint_fast32_t _search_count, double_t _occpancy_weight, double_t _is_on_decided_weight, double_t _is_angle_weight, double_t _is_side_weight, double_t _is_inside_closed_weight, uint_fast32_t _min_agent_distance, uint_fast32_t _min_goal_distance, uint_fast32_t _max_move, uint_fast32_t _min_move_cost, uint_fast32_t _min_value, double_t _score_weight, double_t _goal_weight, double_t _cost_weight){
+
+	//セット
+	//---------------------- Node ----------------------
+	this->move_weight = _move_weight;
+	this->state_weight = state_weight;
+	this->heuristic_weight = _heuristic_weight;
+	this->value_weight = _value_weight;
+	this->is_on_decided_route_weight = _is_on_decided_route_weight;
+	this->is_on_mine_panel_weight = _is_on_mine_panel_weight;
+	this->is_on_enemy_panel_weight = _is_on_enemy_panel_weight;
+	this->adjacent_agent_weight = _adjacent_agent_weight;
+	this->average_distance_weght = _average_distance_weght;
+
+	//---------------------- Another ----------------------
+	this->min_open_list_value = _min_open_list_value;
+	this->greedy_count = _greedy_count;
+	this->search_count = _search_count;
+
+	//---------------------- Goal ----------------------
+	this->occpancy_weight = _occpancy_weight;
+	this->is_on_decided_weight = _is_on_decided_weight;
+	this->is_angle_weight = _is_angle_weight;
+	this->is_side_weight = _is_side_weight;
+	this->is_inside_closed_weight = _is_inside_closed_weight;
+	
+	//---------------------- Branching ----------------------
+	this->min_agent_distance = _min_agent_distance;
+	this->min_goal_distance = _min_goal_distance;
+	this->max_move = _max_move;
+	this->min_move_cost = _min_move_cost;
+	this->min_value = _min_value;
+
+	//---------------------- Score ----------------------
+	this->score_weight = _score_weight;
+	this->goal_weight = _goal_weight;
+	this->cost_weight = _cost_weight;
+
+	
+	//パラメータの表示
+	std::cerr << "---------------------- Params ----------------------"  << std::endl;
+	//---------------------- Node ----------------------
+	std::cerr << "move_weight:" << this->move_weight << std::endl;
+	std::cerr << "state_weight:" << this->state_weight << std::endl;
+	std::cerr << "heuristic_weight:" << this->heuristic_weight << std::endl;
+	std::cerr << "value_weight:" << this->value_weight << std::endl;
+	std::cerr << "is_on_decided_route_weight:" << this->is_on_decided_route_weight << std::endl;
+	std::cerr << "is_on_mine_panel_weight:" << this->is_on_mine_panel_weight << std::endl;
+	std::cerr << "is_on_enemy_panel_weight:" << this->is_on_enemy_panel_weight << std::endl;
+	std::cerr << "adjacent_agent_weight:" << this->adjacent_agent_weight << std::endl;
+	std::cerr << "average_distance_weght:" << this->average_distance_weght << std::endl;
+
+	//---------------------- Another ----------------------
+	std::cerr << "min_open_list_value" << this->min_open_list_value << std::endl;
+	std::cerr << "greedy_count" << this->greedy_count << std::endl;
+	std::cerr << "search_count" << this->search_count << std::endl;
+
+	//---------------------- Goal ----------------------
+	std::cerr << "occpancy_weight" << this->occpancy_weight << std::endl;
+	std::cerr << "is_on_decided_weight" << this->is_on_decided_weight << std::endl;
+	std::cerr << "is_angle_weight" << this->is_angle_weight << std::endl;
+	std::cerr << "is_side_weight" << this->is_side_weight << std::endl;
+	std::cerr << "is_inside_closed_weight" << this->is_inside_closed_weight << std::endl;
+
+	//---------------------- Branching ----------------------
+	std::cerr << "min_agent_distance:" << this->min_agent_distance << std::endl;
+	std::cerr << "min_goal_distance:" << this->min_goal_distance << std::endl;
+	std::cerr << "max_move:" << this->max_move << std::endl;
+	std::cerr << "min_move_cost:" << this->min_move_cost << std::endl;
+	std::cerr << "min_value:" << this->min_value << std::endl;
+	
+	//---------------------- Score ----------------------
+	std::cerr << "score_weight:" << this->score_weight << std::endl;
+	std::cerr << "goal_weight:" << this->goal_weight << std::endl;
+	std::cerr << "cost_weight:" << this->cost_weight << std::endl;
+	
+}
+
 void _multiThread(Astar* astar, Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord){
 	std::pair<int_fast32_t, std::vector<Node>> condidate;
 	int_fast32_t score;
 	Astar tmp = *astar;
-	condidate = tmp.searchRoute(field, agent, coord, max_move);
+	condidate = tmp.searchRoute(field, agent, coord, tmp.max_move);
 	score     = condidate.first;
 	
 	if(score > _tentative_max_score){
