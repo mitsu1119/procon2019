@@ -21,7 +21,7 @@
 #include <errno.h>
 #include "useful.hpp"
 
-size_t Dim = 10;
+constexpr size_t Dim = 25;
 size_t Np = 14;
 size_t Ng = 150;
 
@@ -108,7 +108,7 @@ public:
 	Individual(): rate(0.0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
-		for(size_t i = 0; i < Dim; i++) params.emplace_back(rand.gend());
+		for(size_t i = 0; i < Dim; i++) params.emplace_back(rand.gend(200));
 	}
 
 	void eval() {
@@ -136,8 +136,14 @@ public:
 				dup2(fd[1], 1);
 				close(fd[0]);
 				close(fd[1]);
-				char *const args[] = {"./run", NULL};
+				char *args[Dim + 2] = {"./run"};
+				for(int i = 0; i < Dim; i++) {
+					args[i + 1] = new char[std::to_string(params[i]).size() + 1];
+					std::strcpy(args[i + 1], std::to_string(params[i]).c_str());
+				}
+				args[Dim + 1] = NULL;
 				execv(args[0], args);
+				for(int i = 0; i < Dim; i++) delete[] args[i + 1];
 				break;
 					}
 			default:

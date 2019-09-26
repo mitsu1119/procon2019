@@ -96,31 +96,31 @@ int main(int argc, char* argv[]){
 	search_count = std::stof(argv[24]);
 
 	//パラメータの表示
-	std::cout << "move_weight:" << move_weight << std::endl;
-	std::cout << "state_weight:" << state_weight << std::endl;
-	std::cout << "heuristic_weight:" << heuristic_weight << std::endl;
-	std::cout << "value_weight:" << value_weight << std::endl;
-	std::cout << "is_on_decided_route_weight:" << is_on_decided_route_weight << std::endl;
-	std::cout << "is_on_mine_panel_weight:" << is_on_mine_panel_weight << std::endl;
-	std::cout << "is_on_enemy_panel_weight:" << is_on_enemy_panel_weight << std::endl;
-	std::cout << "adjacent_agent_weight:" << adjacent_agent_weight << std::endl;
-	std::cout << "average_distance_weght:" << average_distance_weght << std::endl;
+	std::cerr << "move_weight:" << move_weight << std::endl;
+	std::cerr << "state_weight:" << state_weight << std::endl;
+	std::cerr << "heuristic_weight:" << heuristic_weight << std::endl;
+	std::cerr << "value_weight:" << value_weight << std::endl;
+	std::cerr << "is_on_decided_route_weight:" << is_on_decided_route_weight << std::endl;
+	std::cerr << "is_on_mine_panel_weight:" << is_on_mine_panel_weight << std::endl;
+	std::cerr << "is_on_enemy_panel_weight:" << is_on_enemy_panel_weight << std::endl;
+	std::cerr << "adjacent_agent_weight:" << adjacent_agent_weight << std::endl;
+	std::cerr << "average_distance_weght:" << average_distance_weght << std::endl;
 
-	std::cout << "occpancy_weight" << occpancy_weight << std::endl;
-	std::cout << "is_on_decided_weight" << is_on_decided_weight << std::endl;
-	std::cout << "is_angle_weight" << is_angle_weight << std::endl;
-	std::cout << "is_side_weight" << is_side_weight << std::endl;
-	std::cout << "is_inside_closed_weight" << is_inside_closed_weight << std::endl;
+	std::cerr << "occpancy_weight" << occpancy_weight << std::endl;
+	std::cerr << "is_on_decided_weight" << is_on_decided_weight << std::endl;
+	std::cerr << "is_angle_weight" << is_angle_weight << std::endl;
+	std::cerr << "is_side_weight" << is_side_weight << std::endl;
+	std::cerr << "is_inside_closed_weight" << is_inside_closed_weight << std::endl;
 
-	std::cout << "min_agent_distance:" << min_agent_distance << std::endl;
-	std::cout << "min_goal_distance:" << min_goal_distance << std::endl;
-	std::cout << "max_move:" << max_move << std::endl;
-	std::cout << "min_move_cost:" << min_move_cost << std::endl;
-	std::cout << "min_value:" << min_value << std::endl;
+	std::cerr << "min_agent_distance:" << min_agent_distance << std::endl;
+	std::cerr << "min_goal_distance:" << min_goal_distance << std::endl;
+	std::cerr << "max_move:" << max_move << std::endl;
+	std::cerr << "min_move_cost:" << min_move_cost << std::endl;
+	std::cerr << "min_value:" << min_value << std::endl;
 
-	std::cout << "score_weight:" << score_weight << std::endl;
-	std::cout << "goal_weight:" << goal_weight << std::endl;
-	std::cout << "cost_weight:" << cost_weight << std::endl;
+	std::cerr << "score_weight:" << score_weight << std::endl;
+	std::cerr << "goal_weight:" << goal_weight << std::endl;
+	std::cerr << "cost_weight:" << cost_weight << std::endl;
 		
 	astar.init(&field);
 	while(true){
@@ -196,7 +196,7 @@ void move2json(){
 
     std::string type;
 
-    //std::cout << field.agents.size() << std::endl;
+    //std::cerr << field.agents.size() << std::endl;
 
     // forで毎回id,dx,dyのデータを取ってくる必要あり
     for(int i = 0; i < field.agents.size()/2; i++){
@@ -214,7 +214,7 @@ void move2json(){
           dx = nx - x; // xの差をとる
           dy = ny - y; // yの差をとる
           
-          std::cout << "x:" << dx << " " << "y:" << dy << std::endl;
+          std::cerr << "x:" << dx << " " << "y:" << dy << std::endl;
 
         	//id.insert(std::make_pair("data", value(data)));
           
@@ -239,7 +239,7 @@ void move2json(){
     actions.insert(std::make_pair("actions", value(datalist)));
 
     // データ表示
-    std::cout << value(actions) << std::endl;
+    std::cerr << value(actions) << std::endl;
     // データ書き込み
     std::ofstream outputfile("../../action.json");
 
