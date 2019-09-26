@@ -23,7 +23,7 @@
 
 constexpr size_t Dim = 26;
 size_t Np = 8;
-size_t Ng = 150;
+size_t Ng = 10;
 
 // 交叉法
 #define CHIASMA_BLXa
@@ -52,7 +52,7 @@ private:
 		for(size_t i = 0; i < Dim; i++) {
 			dist = std::abs(p->params[i] - params[i]);
 			max = std::max(p->params[i], params[i]) + 0.3 * dist;
-			min = std::min(p->params[i], params[i]) - 0.3 * dist;
+			min = std::max(std::min(p->params[i], params[i]) - 0.3 * dist, 0.0);
 			dist = std::abs(max - min);
 			genParam[i] = min + rand.gend(dist);
 		}
