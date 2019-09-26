@@ -1168,7 +1168,7 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 	
 	std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
 	double time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-	std::cout << time << "milliseconds" << std::endl;
+	std::cerr << time << "milliseconds" << std::endl;
 
 	if(this->tentative_max_score == -INT_MAX)
 		return;
@@ -1402,7 +1402,7 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 
 void Astar::init(const Field* field){
 	this->setAverageScore(*field);
-	std::cout << "average_score:" << this->average_score << std::endl;
+	std::cerr << "average_score:" << this->average_score << std::endl;
 	
 	this->decided_route.clear();
 	this->decided_route.resize(field->agents.size());
@@ -1419,7 +1419,7 @@ void Astar::init(const Field* field){
 
 void Astar::init(const Field& field){
 	this->setAverageScore(field);
-	std::cout << "average_score:" << this->average_score << std::endl;
+	std::cerr << "average_score:" << this->average_score << std::endl;
 		
 	this->decided_route.clear();
 	this->decided_route.resize(field.agents.size());

@@ -21,8 +21,8 @@
 #include <errno.h>
 #include "useful.hpp"
 
-size_t Dim = 10;
-size_t Np = 14;
+constexpr size_t Dim = 26;
+size_t Np = 8;
 size_t Ng = 150;
 
 // 交叉法
@@ -30,7 +30,7 @@ size_t Ng = 150;
 // #define CHIASMA_SPX
 
 // メインプログラムでの評価を行うときの試行回数
-size_t numberOfTrials = 8;
+size_t numberOfTrials = 4;
 
 class Swarm;
 class Individual {
@@ -108,7 +108,7 @@ public:
 	Individual(): rate(0.0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
-		for(size_t i = 0; i < Dim; i++) params.emplace_back(rand.gend());
+		for(size_t i = 0; i < Dim; i++) params.emplace_back(rand.gend(200));
 	}
 
 	void eval() {
@@ -136,8 +136,14 @@ public:
 				dup2(fd[1], 1);
 				close(fd[0]);
 				close(fd[1]);
-				char *const args[] = {"./run", NULL};
+				char *args[Dim + 2] = {"./run"};
+				for(int i = 0; i < Dim; i++) {
+					args[i + 1] = new char[std::to_string(params[i]).size() + 1];
+					std::strcpy(args[i + 1], std::to_string(params[i]).c_str());
+				}
+				args[Dim + 1] = NULL;
 				execv(args[0], args);
+				for(int i = 0; i < Dim; i++) delete[] args[i + 1];
 				break;
 					}
 			default:
@@ -164,8 +170,7 @@ public:
 				*/
 
 				// 得点差による評価
-				int scoreDiff = std::atoi(buf);
-				printf("スコア差: %d\n", scoreDiff);
+				double scoreDiff = std::atof(buf);
 				rate += scoreDiff;
 
 				close(fd[0]);
@@ -181,6 +186,7 @@ public:
 			}
 		}
 		rate /= numberOfTrials;
+		printf("%rate = %lf\n", rate);
 	}
 
 	void print() const {
