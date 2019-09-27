@@ -129,20 +129,19 @@ constexpr double_t adjacent_agent_weight      = 10;
 constexpr double_t average_distance_weght     = 40;
 */
 
-class Node{
-private:
-	
-	static const double_t move_weight = 2;
-	static const double_t state_weight = 55;
-	static const double_t heuristic_weight = 5;
-	static const double_t value_weight = 35;
-	static const double_t is_on_decided_route_weight = 80;
-	static const double_t is_on_mine_panel_weight = 95;
-	static const double_t is_on_enemy_panel_weight = 90;
-	static const double_t adjacent_agent_weight = 10;
-	static const double_t average_distance_weght = 40;
-	
+class Node{	
 public:
+
+	//------------ パラメータ ------------
+	double_t move_weight;
+	double_t state_weight;
+	double_t heuristic_weight;
+	double_t value_weight;
+	double_t is_on_decided_route_weight;
+	double_t is_on_mine_panel_weight;
+	double_t is_on_enemy_panel_weight;
+	double_t adjacent_agent_weight;
+	double_t average_distance_weght;
 
 	enum Status{
 		NONE,
@@ -183,13 +182,15 @@ public:
 
 	Node();
 	~Node();
-
+	
 	const double getScore() const;
 
 };
 
 inline const double Node::getScore() const{
+	
 	return (this->move_cost * this->move_weight) + (this->state_cost * this->state_weight) + (this->heuristic * this->heuristic_weight) + (this->is_on_decided_route * this->is_on_decided_route_weight) - (this->value * this->value_weight) + (this->is_on_mine_panel * this->is_on_mine_panel_weight) + (this->adjacent_agent * this->adjacent_agent_weight) - (this->average_distance * this->average_distance_weght) - (this->is_on_enemy_panel * this->is_on_enemy_panel_weight);
+	
 }
 
 constexpr uint_fast32_t simple_beam_depth = 3;
@@ -262,7 +263,7 @@ constexpr uint_fast32_t grace_time          = 2000;
 
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
-constexpr uint_fast32_t astar_depth        = 25;
+constexpr uint_fast32_t astar_depth        = 20;
 
 
 #define ANGLE_COORD 1
@@ -396,6 +397,7 @@ private:
 
 	//探索関連
 	void initNode(const Field& field, std::vector<Node>& node);
+	void setParams(Node& node);
 	static const bool comp(std::pair<Node*, Field>& lhs, std::pair<Node*, Field>& rhs);
 
 	
@@ -442,7 +444,6 @@ public:
 	
 	Astar(double_t _move_weight, double_t _state_weight, double_t _heuristic_weight, double_t _value_weight, double_t _is_on_decided_route_weight, double_t _is_on_mine_panel_weight, double_t _is_on_enemy_panel_weight, double_t _adjacent_agent_weight, double_t _average_distance_weght, int_fast32_t _min_open_list_value, uint_fast32_t _greedy_count, uint_fast32_t _search_count, double_t _occpancy_weight, double_t _is_on_decided_weight, double_t _is_angle_weight, double_t _is_side_weight, double_t _is_inside_closed_weight, uint_fast32_t _min_agent_distance, uint_fast32_t _min_goal_distance, uint_fast32_t _max_move, uint_fast32_t _min_move_cost, uint_fast32_t _min_value, double_t _score_weight, double_t _goal_weight, double_t _cost_weight);
 
-	const double getScore(Node* node) const;
 	void setParams(double_t _move_weight, double_t _state_weight, double_t _heuristic_weight, double_t _value_weight, double_t _is_on_decided_route_weight, double_t _is_on_mine_panel_weight, double_t _is_on_enemy_panel_weight, double_t _adjacent_agent_weight, double_t _average_distance_weght, int_fast32_t _min_open_list_value, uint_fast32_t _greedy_count, uint_fast32_t _search_count, double_t _occpancy_weight, double_t _is_on_decided_weight, double_t _is_angle_weight, double_t _is_side_weight, double_t _is_inside_closed_weight, uint_fast32_t _min_agent_distance, uint_fast32_t _min_goal_distance, uint_fast32_t _max_move, uint_fast32_t _min_move_cost, uint_fast32_t _min_value, double_t _score_weight, double_t _goal_weight, double_t _cost_weight);
 
 	void init(const Field* field) override;
@@ -450,10 +451,6 @@ public:
 	void move(Field *field, const uint_fast32_t attr) override;
 
 };
-
-inline const double Astar::getScore(Node* node) const{
-	return (node->move_cost * this->move_weight) + (node->state_cost * this->state_weight) + (node->heuristic * this->heuristic_weight) + (node->is_on_decided_route * this->is_on_decided_route_weight) - (node->value * this->value_weight) + (node->is_on_mine_panel * this->is_on_mine_panel_weight) + (node->adjacent_agent * this->adjacent_agent_weight) - (node->average_distance * this->average_distance_weght) - (node->is_on_enemy_panel * this->is_on_enemy_panel_weight);
-}
 
 //マルチスレッド用
 static std::pair<uint_fast32_t, uint_fast32_t> _tentative_goal;
