@@ -55,11 +55,11 @@ int main(int argc, char *argv[]){
 */
 
 int main(int argc, char* argv[]){
-	if(argc <= 26){
+	if(argc < 26){
 		printf("\nparameters error\n");
 		std::exit(0);
 	}
-
+	
 	//---------------------- Node ----------------------
 	double_t _move_weight = std::stof(argv[1]);
 	double_t _state_weight = std::stof(argv[2]);
@@ -72,28 +72,28 @@ int main(int argc, char* argv[]){
 	double_t _average_distance_weght = std::stof(argv[9]);
 
 	//---------------------- Another ----------------------
-	double_t _min_open_list_value = std::stof(argv[23]);
-	double_t _greedy_count = std::stof(argv[24]);
-	double_t _search_count = std::stof(argv[25]);
+	double_t _greedy_count = std::stof(argv[10]);
+	double_t _search_count = std::stof(argv[11]);
+	double_t _min_open_list_value = std::stof(argv[12]);
 
 	//---------------------- Goal ----------------------
-	double_t _occpancy_weight = std::stof(argv[10]);
-	double_t _is_on_decided_weight = std::stof(argv[11]);
-	double_t _is_angle_weight = std::stof(argv[12]);
-	double_t _is_side_weight = std::stof(argv[13]);
-	double_t _is_inside_closed_weight = std::stof(argv[14]);
+	double_t _occpancy_weight = std::stof(argv[13]);
+	double_t _is_on_decided_weight = std::stof(argv[14]);
+	double_t _is_angle_weight = std::stof(argv[15]);
+	double_t _is_side_weight = std::stof(argv[16]);
+	double_t _is_inside_closed_weight = std::stof(argv[17]);
 	
 	//---------------------- Branching ----------------------
-	double_t _min_agent_distance = std::stof(argv[15]);
-	double_t _min_goal_distance = std::stof(argv[16]);
-	double_t _max_move = std::stof(argv[17]);
-	double_t _min_move_cost = std::stof(argv[18]);
-	double_t _min_value = std::stof(argv[19]);
+	double_t _min_agent_distance = std::stof(argv[18]);
+	double_t _min_goal_distance = std::stof(argv[19]);
+	double_t _max_move = std::stof(argv[20]);
+	double_t _min_move_cost = std::stof(argv[21]);
+	double_t _min_value = std::stof(argv[22]);
 
 	//---------------------- Score ----------------------
-	double_t _score_weight = std::stof(argv[20]);
-	double_t _goal_weight = std::stof(argv[21]);
-	double_t _cost_weight = std::stof(argv[22]);
+	double_t _score_weight = std::stof(argv[23]);
+	double_t _goal_weight = std::stof(argv[24]);
+	double_t _cost_weight = std::stof(argv[25]);
 
 	astar.setParams(_move_weight, _state_weight, _heuristic_weight, _value_weight, _is_on_decided_route_weight, _is_on_mine_panel_weight, _is_on_enemy_panel_weight, _adjacent_agent_weight, _average_distance_weght, _min_open_list_value, _greedy_count, _search_count, _occpancy_weight, _is_on_decided_weight, _is_angle_weight, _is_side_weight, _is_inside_closed_weight, _min_agent_distance, _min_goal_distance, _max_move, _min_move_cost, _min_value, _score_weight, _goal_weight, _cost_weight);
 
