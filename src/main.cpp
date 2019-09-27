@@ -15,7 +15,8 @@ Field field;
 
 Greedy greedy;
 BeamSearch beam_search;
-Astar astar;
+Astar astar_mine;
+Astar astar_enemy;
 
 void move2json();
 std::string getType(int nx, int ny, int dx, int dy);
@@ -59,7 +60,7 @@ int main(int argc, char* argv[]){
 		printf("\nparameters error\n");
 		std::exit(0);
 	}
-	
+
 	//---------------------- Node ----------------------
 	double_t _move_weight = std::stof(argv[1]);
 	double_t _state_weight = std::stof(argv[2]);
@@ -95,20 +96,72 @@ int main(int argc, char* argv[]){
 	double_t _goal_weight = std::stof(argv[24]);
 	double_t _cost_weight = std::stof(argv[25]);
 
-	astar.setParams(_move_weight, _state_weight, _heuristic_weight, _value_weight, _is_on_decided_route_weight, _is_on_mine_panel_weight, _is_on_enemy_panel_weight, _adjacent_agent_weight, _average_distance_weght, _min_open_list_value, _greedy_count, _search_count, _occpancy_weight, _is_on_decided_weight, _is_angle_weight, _is_side_weight, _is_inside_closed_weight, _min_agent_distance, _min_goal_distance, _max_move, _min_move_cost, _min_value, _score_weight, _goal_weight, _cost_weight);
+	astar_mine.setParams(_move_weight, _state_weight, _heuristic_weight, _value_weight, _is_on_decided_route_weight, _is_on_mine_panel_weight, _is_on_enemy_panel_weight, _adjacent_agent_weight, _average_distance_weght, _min_open_list_value, _greedy_count, _search_count, _occpancy_weight, _is_on_decided_weight, _is_angle_weight, _is_side_weight, _is_inside_closed_weight, _min_agent_distance, _min_goal_distance, _max_move, _min_move_cost, _min_value, _score_weight, _goal_weight, _cost_weight);
 
+
+	/*
+	if(argc < 51){
+		printf("\nparameters error\n");
+		std::exit(0);
+	}		
+
+	//---------------------- Node ----------------------
+	_move_weight = std::stof(argv[26]);
+	_state_weight = std::stof(argv[27]);
+	_heuristic_weight = std::stof(argv[28]);
+	_value_weight = std::stof(argv[29]);
+	_is_on_decided_route_weight = std::stof(argv[30]);
+	_is_on_mine_panel_weight = std::stof(argv[31]);
+	_is_on_enemy_panel_weight = std::stof(argv[32]);
+	_adjacent_agent_weight = std::stof(argv[33]);
+	_average_distance_weght = std::stof(argv[34]);
+
+	//---------------------- Another ----------------------
+	_greedy_count = std::stof(argv[35]);
+	_search_count = std::stof(argv[36]);
+	_min_open_list_value = std::stof(argv[37]);
+
+	//---------------------- Goal ----------------------
+	_occpancy_weight = std::stof(argv[38]);
+	_is_on_decided_weight = std::stof(argv[39]);
+	_is_angle_weight = std::stof(argv[40]);
+	_is_side_weight = std::stof(argv[41]);
+	_is_inside_closed_weight = std::stof(argv[42]);
+	
+	//---------------------- Branching ----------------------
+	_min_agent_distance = std::stof(argv[43]);
+	_min_goal_distance = std::stof(argv[44]);
+	_max_move = std::stof(argv[45]);
+	_min_move_cost = std::stof(argv[46]);
+	_min_value = std::stof(argv[47]);
+
+	//---------------------- Score ----------------------
+	_score_weight = std::stof(argv[48]);
+	_goal_weight = std::stof(argv[49]);
+	_cost_weight = std::stof(argv[50]);
+
+	astar_enemy.setParams(_move_weight, _state_weight, _heuristic_weight, _value_weight, _is_on_decided_route_weight, _is_on_mine_panel_weight, _is_on_enemy_panel_weight, _adjacent_agent_weight, _average_distance_weght, _min_open_list_value, _greedy_count, _search_count, _occpancy_weight, _is_on_decided_weight, _is_angle_weight, _is_side_weight, _is_inside_closed_weight, _min_agent_distance, _min_goal_distance, _max_move, _min_move_cost, _min_value, _score_weight, _goal_weight, _cost_weight);
+	*/
+
+	
 	field.init();
-	astar.init(&field);
+	astar_mine.init(&field);
+	//astar_enemy.init(&field);
 	
 	while(true){
-		astar.move(&field, MINE_ATTR);
-		//astar.move(&field, ENEMY_ATTR);
+		
+		astar_mine.move(&field, MINE_ATTR);
+		//astar_mine.move(&field, ENEMY_ATTR);
+
+		//astar_enemy.move(&field, MINE_ATTR);
+		//astar_enemy.move(&field, ENEMY_ATTR);
 		
 		//beam_search.move(&field, MINE_ATTR);
 		//beam_search.move(&field, ENEMY_ATTR);
 		
 		//greedy.move(&field, MINE_ATTR);
 		greedy.move(&field, ENEMY_ATTR);
+		
 		field.applyNextAgents();
 		field.print();
 		if(field.checkEnd()){
