@@ -394,7 +394,7 @@ void SimpleMove::greedySingleMove(Field& field, const uint_fast32_t agent, const
 	field.agents.at(agent).move(direction);
 }
 
-const Direction SimpleMove::greedySingleMove(Field& field, const uint_fast32_t agent, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& expect_coord) const{
+const Direction SimpleMove::greedySingleMove(Field& field, const uint_fast32_t agent, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& expect_coord){
 	Direction direction = STOP;
 	int_fast32_t score = -INT_MAX, max_score = -INT_MAX;
 	
@@ -420,7 +420,7 @@ const Direction SimpleMove::greedySingleMove(Field& field, const uint_fast32_t a
 	return direction;
 }
 
-Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const{
+Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth){
 	if(depth == 0 || field->checkEnd())
 		return *field;
 	
@@ -452,7 +452,7 @@ Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast3
 	return fields.at(0).first;
 }
 
-const Direction SimpleMove::beamSearchSingleMove(Field field, const uint_fast32_t agent) const{
+const Direction SimpleMove::beamSearchSingleMove(Field field, const uint_fast32_t agent){
 	const Field current_field = field;
 	Field next_field    = this->beamSearch(&current_field, agent, simple_beam_depth);
 	
@@ -466,7 +466,7 @@ const Direction SimpleMove::beamSearchSingleMove(Field field, const uint_fast32_
 	return STOP;
 }
 
-void SimpleMove::beamSearchMove(Field& field, const uint_fast32_t attr) const{
+void SimpleMove::beamSearchMove(Field& field, const uint_fast32_t attr){
 	Direction direction = STOP;
 	
 	for(size_t i =0; i < field.agents.size(); i++){
@@ -477,7 +477,7 @@ void SimpleMove::beamSearchMove(Field& field, const uint_fast32_t attr) const{
 	}
 }
 
-Field SimpleMove::breadthForceSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const{	
+Field SimpleMove::breadthForceSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth){	
 	if(depth == 0 || field->checkEnd())
 		return *field;
 	
@@ -504,7 +504,7 @@ Field SimpleMove::breadthForceSearch(Field* field, const uint_fast32_t agent, ui
 	return fields.at(0).first;
 }
 
-const Direction SimpleMove::breadthForceSearchSingleMove(Field& field, const uint_fast32_t agent) const{
+const Direction SimpleMove::breadthForceSearchSingleMove(Field& field, const uint_fast32_t agent){
 	const Field current_field = field;
 	Field next_field    = this->breadthForceSearch(&current_field, agent, simple_bfs_depth);
 	
@@ -1129,7 +1129,7 @@ const bool Astar::isPushOpenlist(Field& field, Node* next) const{
 const bool Astar::isTimeOver() const{
 	std::chrono::system_clock::time_point current = std::chrono::system_clock::now();
 	double time    = std::chrono::duration_cast<std::chrono::milliseconds>(current - this->clock).count();
-	if(time > search_time - grace_time)
+	if(time >= search_time - grace_time)
 		return true;
 	
 	return false;
@@ -1197,6 +1197,9 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 
 	for(auto& thread : threads)
 		thread.join();
+
+	if(this->is_time_over)
+		return;
 
 	end = std::chrono::system_clock::now();
 	time = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
@@ -1275,9 +1278,18 @@ const void Astar::printRoute(std::vector<std::pair<uint_fast32_t, uint_fast32_t>
 void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 	const uint_fast32_t x = field.agents.at(agent).getX();
 	const uint_fast32_t y = field.agents.at(agent).getY();
+
+	if(this->is_time_over){
+		Direction direction = this->exceptionMove(field, agent);
+		
+		field.agents.at(agent).move(direction);
+		this->next_coord.push_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
+		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
+		return;
+	}
 		
 	//全探索
-	if(field.getTurn() >= field.getMaxTurn() - beam_depth){
+	if(field.getTurn() >= field.getMaxTurn() - simple_bfs_depth){
 		Direction direction = this->finalPhase(field, agent);
 		
 		field.agents.at(agent).move(direction);
@@ -1297,16 +1309,6 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 	if(this->countAdjacentAgent(field, agent, MINE_ATTR) == 1){
 		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
 		this->singleMove(field, agent);
-		return;
-	}
-
-	//時間処理
-	if(this->is_time_over){
-		Direction direction = this->exceptionMove(field, agent);
-		
-		field.agents.at(agent).move(direction);
-		this->next_coord.push_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
-		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
 		return;
 	}
 	
@@ -1344,7 +1346,7 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	}
 	*/
 
-
+	//---------------------------------------------
 	if(result != this->next_coord.end()){
 		this->searchBestRoute(field, agent);
 		if(this->is_time_over)
@@ -1359,10 +1361,11 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 		if(this->decided_route.at(agent).empty())
 			goto _EXCEPTION_SEARCH;
 	}
+	
 	result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	if(result != this->next_coord.end())
 		goto _EXCEPTION_SEARCH;
-
+	//---------------------------------------------
 	
 	}
 	
@@ -1386,8 +1389,9 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	std::pair<int_fast32_t, std::vector<Node>> condidate;
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	int_fast32_t score;
-	
-	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->decided_route.at(agent).size() + 2);
+
+	//改良必要
+	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->decided_route.at(agent).size() + 3);
 	score     = condidate.first;
 	if(score > 0){
 		route = this->makeRoute(field, condidate.second, agent, this->decided_goal.at(agent));
@@ -1434,6 +1438,7 @@ void Astar::init(const Field& field){
 }
 
 void Astar::move(Field *field, const uint_fast32_t attr){
+	
 	this->clock = std::chrono::system_clock::now();
 	this->is_time_over = false;
 	Field tmp = static_cast<Field> (*field);
@@ -1537,7 +1542,6 @@ void _multiThread(Astar* astar, Field field, const uint_fast32_t agent, std::pai
 	Astar tmp = *astar;
 	condidate = tmp.searchRoute(field, agent, coord, tmp.max_move);
 	score     = condidate.first;
-	
 	if(score > _tentative_max_score){
 		_tentative_max_score = score;
 		_tentative_goal      = coord;

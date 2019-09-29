@@ -194,7 +194,7 @@ inline const double Node::getScore() const{
 }
 
 constexpr uint_fast32_t simple_beam_depth = 3;
-constexpr uint_fast32_t simple_beam_width = 4;
+constexpr uint_fast32_t simple_beam_width = 17;
 constexpr uint_fast32_t simple_bfs_depth  = 4;
 
 class SimpleMove : public AI{
@@ -204,8 +204,8 @@ private:
 
 private:
 
-	Field beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const;
-	Field breadthForceSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const;
+	Field beamSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
+	Field breadthForceSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth);
 
 public:
 
@@ -216,13 +216,13 @@ public:
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& decided_coord);
 	void greedyMove(Field& field, const uint_fast32_t agent);
 	void greedySingleMove(Field& field, const uint_fast32_t agent, const uint_fast32_t attr);
-	const Direction greedySingleMove(Field& field, const uint_fast32_t agent, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& expect_coord) const;
+	const Direction greedySingleMove(Field& field, const uint_fast32_t agent, const std::vector<std::pair<uint_fast32_t, uint_fast32_t>>& expect_coord);
 	
-	const Direction beamSearchSingleMove(Field field, const uint_fast32_t agent) const;
-	void beamSearchMove(Field& field, const uint_fast32_t attr) const;
+	const Direction beamSearchSingleMove(Field field, const uint_fast32_t agent);
+	void beamSearchMove(Field& field, const uint_fast32_t attr);
 
-	const Direction breadthForceSearchSingleMove(Field& field, const uint_fast32_t agent) const;
-	void breadthForceSearchSearchMove(Field& field, const uint_fast32_t attr) const;
+	const Direction breadthForceSearchSingleMove(Field& field, const uint_fast32_t agent);
+	void breadthForceSearchSearchMove(Field& field, const uint_fast32_t attr);
 	
 	void init(const Field* field) override;
 	void init(const Field& field) override;
@@ -256,14 +256,14 @@ constexpr double_t cost_weight             = 0.023;
 constexpr int_fast32_t min_open_list_value  = 8;
 constexpr uint_fast32_t search_time         = 30000;
 constexpr uint_fast32_t grace_time          = 2000;
-*/
 
 constexpr uint_fast32_t search_time         = 30000;
 constexpr uint_fast32_t grace_time          = 2000;
+*/
 
 constexpr uint_fast32_t max_mine_distance  = 20;
 constexpr uint_fast32_t min_mine_distance  = 2;
-constexpr uint_fast32_t astar_depth        = 25;
+constexpr uint_fast32_t astar_depth        = 30;
 
 
 #define ANGLE_COORD 1
@@ -271,6 +271,10 @@ constexpr uint_fast32_t astar_depth        = 25;
 
 class Astar : public AI{
 private:
+
+	//時間管理用
+	uint_fast32_t search_time         = 30000;
+	uint_fast32_t grace_time          = 4000;
 
 	//自己対局用
 	//Node
