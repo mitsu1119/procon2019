@@ -21,7 +21,7 @@
 #include <errno.h>
 #include "useful.hpp"
 
-constexpr size_t Dim = 26;
+constexpr size_t Dim = 25;
 size_t Np = 8;
 size_t Ng = 10;
 

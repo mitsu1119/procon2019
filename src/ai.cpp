@@ -1405,6 +1405,37 @@ void Astar::init(const Field& field){
 }
 
 void Astar::move(Field *field, const uint_fast32_t attr){
+	//パラメータの表示
+	std::cerr << "astar move <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+	std::cerr << "move_weight:" << move_weight << std::endl;
+	std::cerr << "state_weight:" << state_weight << std::endl;
+	std::cerr << "heuristic_weight:" << heuristic_weight << std::endl;
+	std::cerr << "value_weight:" << value_weight << std::endl;
+	std::cerr << "is_on_decided_route_weight:" << is_on_decided_route_weight << std::endl;
+	std::cerr << "is_on_mine_panel_weight:" << is_on_mine_panel_weight << std::endl;
+	std::cerr << "is_on_enemy_panel_weight:" << is_on_enemy_panel_weight << std::endl;
+	std::cerr << "adjacent_agent_weight:" << adjacent_agent_weight << std::endl;
+	std::cerr << "average_distance_weght:" << average_distance_weght << std::endl;
+
+	std::cerr << "occpancy_weight" << occpancy_weight << std::endl;
+	std::cerr << "is_on_decided_weight" << is_on_decided_weight << std::endl;
+	std::cerr << "is_angle_weight" << is_angle_weight << std::endl;
+	std::cerr << "is_side_weight" << is_side_weight << std::endl;
+	std::cerr << "is_inside_closed_weight" << is_inside_closed_weight << std::endl;
+
+	std::cerr << "min_agent_distance:" << min_agent_distance << std::endl;
+	std::cerr << "min_goal_distance:" << min_goal_distance << std::endl;
+	std::cerr << "max_move:" << max_move << std::endl;
+	std::cerr << "min_move_cost:" << min_move_cost << std::endl;
+	std::cerr << "min_value:" << min_value << std::endl;
+
+	std::cerr << "score_weight:" << score_weight << std::endl;
+	std::cerr << "goal_weight:" << goal_weight << std::endl;
+	std::cerr << "cost_weight:" << cost_weight << std::endl;
+
+	std::cerr << "min_open_list_value:" << min_open_list_value << std::endl;
+	std::cerr << "greedy_count:" << greedy_count << std::endl;
+	std::cerr << "search_count:" << search_count << std::endl;
 	this->clock = std::chrono::system_clock::now();
 	this->is_time_over = false;
 	Field tmp = static_cast<Field> (*field);

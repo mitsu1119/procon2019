@@ -55,8 +55,7 @@ int main(int argc, char *argv[]){
 */
 
 int main(int argc, char* argv[]){
-	
-	if(argc <= 26){
+	if(argc < 26){
 		printf("\nparameters error\n");
 		std::exit(0);
 	}
@@ -122,6 +121,10 @@ int main(int argc, char* argv[]){
 	std::cerr << "score_weight:" << score_weight << std::endl;
 	std::cerr << "goal_weight:" << goal_weight << std::endl;
 	std::cerr << "cost_weight:" << cost_weight << std::endl;
+
+	std::cerr << "min_open_list_value:" << min_open_list_value << std::endl;
+	std::cerr << "greedy_count:" << greedy_count << std::endl;
+	std::cerr << "search_count:" << search_count << std::endl;
 		
 	field.init();
 	astar.init(&field);
