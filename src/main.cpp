@@ -56,6 +56,9 @@ int main(int argc, char *argv[]){
 */
 
 int main(int argc, char* argv[]){
+	
+	field.init();
+
 	if(argc < 26){
 		printf("\nparameters error\n");
 		std::exit(0);
@@ -98,8 +101,11 @@ int main(int argc, char* argv[]){
 
 	astar_mine.setParams(_move_weight, _state_weight, _heuristic_weight, _value_weight, _is_on_decided_route_weight, _is_on_mine_panel_weight, _is_on_enemy_panel_weight, _adjacent_agent_weight, _average_distance_weght, _min_open_list_value, _greedy_count, _search_count, _occpancy_weight, _is_on_decided_weight, _is_angle_weight, _is_side_weight, _is_inside_closed_weight, _min_agent_distance, _min_goal_distance, _max_move, _min_move_cost, _min_value, _score_weight, _goal_weight, _cost_weight);
 
+	astar_mine.init(&field);
 
-	/*
+	if(argc == 26)
+		goto _SINGLE_PLAY;
+
 	if(argc < 51){
 		printf("\nparameters error\n");
 		std::exit(0);
@@ -141,12 +147,10 @@ int main(int argc, char* argv[]){
 	_cost_weight = std::stof(argv[50]);
 
 	astar_enemy.setParams(_move_weight, _state_weight, _heuristic_weight, _value_weight, _is_on_decided_route_weight, _is_on_mine_panel_weight, _is_on_enemy_panel_weight, _adjacent_agent_weight, _average_distance_weght, _min_open_list_value, _greedy_count, _search_count, _occpancy_weight, _is_on_decided_weight, _is_angle_weight, _is_side_weight, _is_inside_closed_weight, _min_agent_distance, _min_goal_distance, _max_move, _min_move_cost, _min_value, _score_weight, _goal_weight, _cost_weight);
-	*/
-
 	
-	field.init();
-	astar_mine.init(&field);
-	//astar_enemy.init(&field);
+	astar_enemy.init(&field);
+
+ _SINGLE_PLAY:
 	
 	while(true){
 		

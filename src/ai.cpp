@@ -477,7 +477,7 @@ void SimpleMove::beamSearchMove(Field& field, const uint_fast32_t attr) const{
 	}
 }
 
-Field SimpleMove::breadthForceSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const{
+Field SimpleMove::breadthForceSearch(Field* field, const uint_fast32_t agent, uint_fast32_t depth) const{	
 	if(depth == 0 || field->checkEnd())
 		return *field;
 	
@@ -494,7 +494,7 @@ Field SimpleMove::breadthForceSearch(Field* field, const uint_fast32_t agent, ui
 	}
 	
 	for(size_t i = 0; i < fields.size(); i++)
-		fields.at(i).second = this->beamSearch(&fields.at(i).first, agent, depth - 1);
+		fields.at(i).second = this->breadthForceSearch(&fields.at(i).first, agent, depth - 1);
 
 	if(field->agents.at(agent).getAttr() == MINE_ATTR)
 		std::sort(fields.begin(), fields.end(), MineComp);
@@ -518,6 +518,7 @@ const Direction SimpleMove::breadthForceSearchSingleMove(Field& field, const uin
 	return STOP;
 }
 
+/*
 void SimpleMove::breadthForceSearchSearchMove(Field& field, const uint_fast32_t attr) const{
 	Direction direction = STOP;
 	
@@ -528,6 +529,7 @@ void SimpleMove::breadthForceSearchSearchMove(Field& field, const uint_fast32_t 
 		}
 	}
 }
+*/
 
 void SimpleMove::init(const Field* field){
 }
@@ -1335,13 +1337,14 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 
 	{
 	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
-	
+
+	/*
 	if(result != this->next_coord.end()){
 		goto _EXCEPTION_SEARCH;
 	}
+	*/
 
-	
-	/*
+
 	if(result != this->next_coord.end()){
 		this->searchBestRoute(field, agent);
 		if(this->is_time_over)
@@ -1359,7 +1362,6 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	if(result != this->next_coord.end())
 		goto _EXCEPTION_SEARCH;
-	*/
 
 	
 	}
@@ -1385,7 +1387,7 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	int_fast32_t score;
 	
-	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->decided_route.at(agent).size() + 3);
+	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->decided_route.at(agent).size() + 2);
 	score     = condidate.first;
 	if(score > 0){
 		route = this->makeRoute(field, condidate.second, agent, this->decided_goal.at(agent));

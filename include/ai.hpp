@@ -74,7 +74,7 @@ public:
 
 };
 
-constexpr uint_fast32_t beam_depth = 1;
+constexpr uint_fast32_t beam_depth = 3;
 constexpr uint_fast32_t beam_width = 3;
 
 class BeamSearch : public AI{
@@ -194,8 +194,8 @@ inline const double Node::getScore() const{
 }
 
 constexpr uint_fast32_t simple_beam_depth = 3;
-constexpr uint_fast32_t simple_beam_width = 3;
-constexpr uint_fast32_t simple_bfs_depth  = 3;
+constexpr uint_fast32_t simple_beam_width = 4;
+constexpr uint_fast32_t simple_bfs_depth  = 4;
 
 class SimpleMove : public AI{
 private:
