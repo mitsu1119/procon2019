@@ -1390,7 +1390,7 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	int_fast32_t score;
 
-	//改良必要
+	//改良必要 nodeのmove_numを使う
 	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->decided_route.at(agent).size() + 3);
 	score     = condidate.first;
 	if(score > 0){
