@@ -554,8 +554,8 @@ Astar::Astar(double_t _move_weight, double_t _state_weight, double_t _heuristic_
 Astar::~Astar(){
 }
 
-void Astar::greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_num){
-	if(move_num > greedy_count){
+void Astar::greedyMove(Field& field, const uint_fast32_t agent, const uint_fast32_t move_count){
+	if(move_count > greedy_count){
 		if(field.agents.at(field.agents.size() - 1).getAttr() != field.agents.at(agent).getAttr())
 			field.agents.erase(field.agents.begin() + field.agents.size() / 2, field.agents.end());
 		return;
@@ -1016,13 +1016,13 @@ std::pair<double, std::vector<Node>> Astar::searchRoute(Field field, const uint_
 			if(current_field.canMove(current_field.agents.at(agent), (Direction)i)){
 				next_field = current_field;
 				next_field.agents.at(agent).move((Direction)i);
-				this->greedyMove(next_field, agent, current->move_num);
+				this->greedyMove(next_field, agent, current->move_count);
 				this->decidedMove(next_field, agent,  next_field.decided_route);
 				next =& node.at(next_field.agents.at(agent).getY() * field.getWidth() + next_field.agents.at(agent).getX());
 				
 				if(current->coord == next->coord){
 					next_field.agents.at(agent).move((Direction)i);
-					this->greedyMove(next_field, agent, current->move_num + 1);
+					this->greedyMove(next_field, agent, current->move_count + 1);
 				  this->decidedMove(next_field, agent,  next_field.decided_route);
 					next =& node.at(next_field.agents.at(agent).getY() * field.getWidth() + next_field.agents.at(agent).getX());
 
@@ -1064,7 +1064,7 @@ void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pai
 	start->is_on_enemy_panel   = 0;
 	start->adjacent_agent      = 0;
 	start->average_distance    = 0;
-	start->move_num            = 0;
+	start->move_count            = 0;
 	start->state_cost          = 0;
 	start->value               = 0;
 }
@@ -1075,7 +1075,7 @@ void Astar::setNextNode(Field& field, const uint_fast32_t agent, const std::pair
 	next->is_on_decided_route  = this->isOnDecidedRoute(field, agent, next->coord);
 	next->adjacent_agent       = this->countAdjacentAgent(field, agent, MINE_ATTR);
 	next->average_distance     = this->averageDistanceAgent(field, agent, MINE_ATTR);
-	next->move_num             = current->move_num + 1;
+	next->move_count             = current->move_count + 1;
 	next->parent               = current;
 
 	if(field.agents.at(agent).getAttr() == MINE_ATTR)
@@ -1340,13 +1340,7 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	{
 	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 
-	/*
-	if(result != this->next_coord.end()){
-		goto _EXCEPTION_SEARCH;
-	}
-	*/
-
-	//---------------------------------------------
+	//もう１度探索をかける
 	if(result != this->next_coord.end()){
 		this->searchBestRoute(field, agent);
 		if(this->is_time_over)
@@ -1365,7 +1359,6 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	if(result != this->next_coord.end())
 		goto _EXCEPTION_SEARCH;
-	//---------------------------------------------
 	
 	}
 	
@@ -1390,7 +1383,7 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	int_fast32_t score;
 
-	//改良必要 nodeのmove_numを使う
+	//改良必要 nodeのmove_countを使う
 	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->decided_route.at(agent).size() + 3);
 	score     = condidate.first;
 	if(score > 0){
