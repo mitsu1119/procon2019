@@ -338,7 +338,7 @@ private:
 
 	//カウンター
 	std::vector<uint_fast32_t> counter;
-	//std::vector<uint_fast32_t> move_num_list;
+	std::vector<uint_fast32_t> move_count_list;
 
 	//時間管理
 	std::chrono::system_clock::time_point clock;
@@ -460,5 +460,7 @@ public:
 static std::pair<uint_fast32_t, uint_fast32_t> _tentative_goal;
 static std::vector<std::pair<uint_fast32_t, uint_fast32_t>> _tentative_route;
 static double _tentative_max_score;
+
+static uint_fast32_t _tentative_move_count;
 
 void _multiThread(Astar* astar, Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);

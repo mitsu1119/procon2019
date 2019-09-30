@@ -1183,6 +1183,8 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 
 
 	_tentative_max_score = - INT_MAX;
+	_tentative_move_count = 0;
+	
 	_tentative_route.clear();
 
 	std::vector<std::thread> threads;
@@ -1212,6 +1214,9 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 
 	this->decided_route.at(agent) = _tentative_route;
 	this->decided_goal.at(agent)  = _tentative_goal;
+	
+	this->move_count_list.at(agent) = _tentative_move_count;
+		
 	this->setDecidedCoord(_tentative_route);
 	this->printRoute(_tentative_route);
 	this->counter.at(agent) = 0;
@@ -1230,6 +1235,9 @@ const std::vector<std::pair<uint_fast32_t, uint_fast32_t>> Astar::makeRoute(Fiel
 
 	route.push_back(goal);
 	from = node.at(goal.second * field.getWidth() + goal.first).parent->coord;
+	
+	_tentative_move_count = node.at(goal.second * field.getWidth() + goal.first).move_count;
+	
 	route.emplace_back(from);
 
 	while(true){
@@ -1369,6 +1377,8 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	if(field.canMove(field.agents.at(agent), direction)){
 		field.agents.at(agent).move(direction);
 		this->counter.at(agent)++;
+		//-------------------------------------------------------------------------------------------
+		this->move_count_list.at(agent)--;
 		return;
 	}
 
@@ -1384,8 +1394,7 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	int_fast32_t score;
 
-	//改良必要 Nodeのmove_countを使う
-	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->decided_route.at(agent).size() + 3);
+	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->move_count_list.at(agent) + 2);
 	score     = condidate.first;
 	if(score > 0){
 		route = this->makeRoute(field, condidate.second, agent, this->decided_goal.at(agent));
@@ -1412,6 +1421,9 @@ void Astar::init(const Field* field){
 	
 	this->current_score.clear();
 	this->current_score.resize(field->agents.size());
+
+	this->move_count_list.clear();
+	this->move_count_list.resize(field->agents.size());
 }
 
 void Astar::init(const Field& field){
@@ -1429,6 +1441,9 @@ void Astar::init(const Field& field){
 	
 	this->current_score.clear();
 	this->current_score.resize(field.agents.size());
+
+	this->move_count_list.clear();
+	this->move_count_list.resize(field.agents.size());
 }
 
 void Astar::move(Field *field, const uint_fast32_t attr){
