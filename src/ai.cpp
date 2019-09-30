@@ -1340,7 +1340,7 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	{
 	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 
-	//もう１度探索をかける
+	//---------- もう１度探索をかける ----------
 	if(result != this->next_coord.end()){
 		this->searchBestRoute(field, agent);
 		if(this->is_time_over)
@@ -1359,6 +1359,7 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	if(result != this->next_coord.end())
 		goto _EXCEPTION_SEARCH;
+	//------------------------------------------
 	
 	}
 	
@@ -1383,7 +1384,7 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	int_fast32_t score;
 
-	//改良必要 nodeのmove_countを使う
+	//改良必要 Nodeのmove_countを使う
 	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->decided_route.at(agent).size() + 3);
 	score     = condidate.first;
 	if(score > 0){
