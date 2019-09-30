@@ -630,7 +630,9 @@ const bool Astar::_comp(std::pair<double, std::pair<uint_fast32_t, uint_fast32_t
 const double Astar::goalEvaluation(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord){
 	if(this->expectTarget(field, agent, coord))
 		return false;
-	return field.at(coord.first, coord.second)->getValue() + (this->occupancyRate(field, agent, coord) * occpancy_weight) - (this->isOnDecidedRoute(field, agent, coord) * is_on_decided_weight) - (isAngleCoord(field, coord) * is_angle_weight) - (isSideCoord(field, coord) * is_side_weight) - (isInsideClosed(field, agent, coord) * is_inside_closed_weight);
+	
+	//パラメーター化したい
+	return (field.at(coord.first, coord.second)->getValue() + (this->occupancyRate(field, agent, coord) * occpancy_weight) - (this->isOnDecidedRoute(field, agent, coord) * is_on_decided_weight) - (isAngleCoord(field, coord) * is_angle_weight) - (isSideCoord(field, coord) * is_side_weight) - (isInsideClosed(field, agent, coord) * is_inside_closed_weight));
 }
 
 const int_fast32_t Astar::occupancyRate(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
@@ -1084,15 +1086,15 @@ void Astar::setNextNode(Field& field, const uint_fast32_t agent, const std::pair
 		next->state_cost         = field.calcScore(MINE_ATTR) - field.calcScore(ENEMY_ATTR);
 
 	next->is_on_mine_panel     = false;
-	if(field.agents.at(agent).getAttr() == MINE_ATTR && field.at(next->coord.first, next->coord.second)->isMyPanel())
+	if(field.agents.at(agent).getAttr() == MINE_ATTR && field.at(next->coord.first, next->coord.second)->isMyPanel() == true)
 		next->is_on_mine_panel   = true;
-	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(next->coord.first, next->coord.second)->isEnemyPanel())
+	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(next->coord.first, next->coord.second)->isEnemyPanel() == true)
 		next->is_on_mine_panel   = true;
 
 	next->is_on_enemy_panel    = false;
-	if(field.agents.at(agent).getAttr() == MINE_ATTR && field.at(next->coord.first, next->coord.second)->isEnemyPanel())
+	if(field.agents.at(agent).getAttr() == MINE_ATTR && field.at(next->coord.first, next->coord.second)->isEnemyPanel() == true)
 		next->is_on_enemy_panel  = true;
-	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(next->coord.first, next->coord.second)->isMyPanel())
+	if(field.agents.at(agent).getAttr() == ENEMY_ATTR && field.at(next->coord.first, next->coord.second)->isMyPanel() == true)
 		next->is_on_enemy_panel  = true;
 
 	if(field.agents.at(agent).getAttr() != field.at(next->coord.first, next->coord.second)->getAttr())
@@ -1297,7 +1299,7 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 	}
 		
 	//全探索
-	if(field.getTurn() >= field.getMaxTurn() - simple_bfs_depth){
+	if(field.getTurn() >= (field.getMaxTurn() - simple_bfs_depth - 2)){
 		Direction direction = this->finalPhase(field, agent);
 		
 		field.agents.at(agent).move(direction);
@@ -1368,7 +1370,7 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	if(result != this->next_coord.end())
 		goto _EXCEPTION_SEARCH;
 	//------------------------------------------
-	
+
 	}
 	
 	this->next_coord.push_back(std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
@@ -1377,7 +1379,6 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	if(field.canMove(field.agents.at(agent), direction)){
 		field.agents.at(agent).move(direction);
 		this->counter.at(agent)++;
-		//-------------------------------------------------------------------------------------------
 		this->move_count_list.at(agent)--;
 		return;
 	}
@@ -1394,7 +1395,7 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	int_fast32_t score;
 
-	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->move_count_list.at(agent) + 2);
+	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->move_count_list.at(agent) + 5);
 	score     = condidate.first;
 	if(score > 0){
 		route = this->makeRoute(field, condidate.second, agent, this->decided_goal.at(agent));

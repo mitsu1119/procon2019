@@ -189,7 +189,7 @@ public:
 
 inline const double Node::getScore() const{
 	
-	return (this->move_cost * this->move_weight) + (this->state_cost * this->state_weight) + (this->heuristic * this->heuristic_weight) + (this->is_on_decided_route * this->is_on_decided_route_weight) - (this->value * this->value_weight) + (this->is_on_mine_panel * this->is_on_mine_panel_weight) + (this->adjacent_agent * this->adjacent_agent_weight) - (this->average_distance * this->average_distance_weght) - (this->is_on_enemy_panel * this->is_on_enemy_panel_weight);
+	return ((this->move_cost * this->move_weight) + (this->state_cost * this->state_weight) + (this->heuristic * this->heuristic_weight) + (this->is_on_decided_route * this->is_on_decided_route_weight) - (this->value * this->value_weight) + (this->is_on_mine_panel * this->is_on_mine_panel_weight) + (this->adjacent_agent * this->adjacent_agent_weight) - (this->average_distance * this->average_distance_weght) - (this->is_on_enemy_panel * this->is_on_enemy_panel_weight));
 	
 }
 
@@ -261,9 +261,9 @@ constexpr uint_fast32_t search_time         = 30000;
 constexpr uint_fast32_t grace_time          = 2000;
 */
 
-constexpr uint_fast32_t max_mine_distance  = 20;
-constexpr uint_fast32_t min_mine_distance  = 2;
-constexpr uint_fast32_t astar_depth        = 30;
+constexpr double_t max_mine_distance  = 16;
+constexpr double_t min_mine_distance  = 2;
+constexpr uint_fast32_t astar_depth   = 37;
 
 
 #define ANGLE_COORD 1
@@ -278,36 +278,36 @@ private:
 
 	//自己対局用
 	//Node
-	double_t move_weight = 2;
-	double_t state_weight = 55;
+	double_t move_weight = 2.5;
+	double_t state_weight = 65;
 	double_t heuristic_weight = 5;
-	double_t value_weight = 35;
+	double_t value_weight = 22;
 	double_t is_on_decided_route_weight = 80;
-	double_t is_on_mine_panel_weight = 95;
-	double_t is_on_enemy_panel_weight = 90;
-	double_t adjacent_agent_weight = 10;
-	double_t average_distance_weght = 40;
+	double_t is_on_mine_panel_weight = 160;
+	double_t is_on_enemy_panel_weight = 150;
+	double_t adjacent_agent_weight = 15;
+	double_t average_distance_weght = 47;
 
 	//A*パラメータ
-	uint_fast32_t greedy_count = 8;
+	uint_fast32_t greedy_count = 7;
 	uint_fast32_t search_count = 16;
-	int_fast32_t min_open_list_value = 8;
+	int_fast32_t min_open_list_value = 5;
 
-	double_t occpancy_weight = 50;
+	double_t occpancy_weight = 20;
 	double_t is_on_decided_weight = 20;
 	double_t is_angle_weight = 2;
 	double_t is_side_weight = 2;
-	double_t is_inside_closed_weight = 10;
+	double_t is_inside_closed_weight = 15;
 
-	uint_fast32_t min_agent_distance = 2;
-	uint_fast32_t min_goal_distance = 2;
-	uint_fast32_t max_move = 30;
-	uint_fast32_t min_move_cost = 2;
-	int_fast32_t min_value = 10;
+	uint_fast32_t min_agent_distance = 1;
+	uint_fast32_t min_goal_distance = 3;
+	uint_fast32_t max_move = 10;
+	uint_fast32_t min_move_cost = 0;
+	int_fast32_t  min_value = 5;
 
-	double_t score_weight = 1.1;
-	double_t goal_weight = 8;
-	double_t cost_weight = 0.023;
+	double_t score_weight = 1.5;
+	double_t goal_weight = 10;
+	double_t cost_weight = 0.028;
 	
 private:
 	
