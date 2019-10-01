@@ -15,12 +15,12 @@ Field field;
 
 Greedy greedy;
 BeamSearch beam_search;
-Astar astar;
+Astar astar_mine;
+Astar astar_enemy;
 
 void move2json();
 std::string getType(int nx, int ny, int dx, int dy);
 
-/*
 int main(int argc, char *argv[]) {
 	field.init();
 
@@ -32,7 +32,6 @@ int main(int argc, char *argv[]) {
 
 	return 0;	
 }
-*/
 
 /*
 int main(int argc, char *argv[]){
@@ -54,90 +53,126 @@ int main(int argc, char *argv[]){
 }
 */
 
+/*
 int main(int argc, char* argv[]){
+	
+	field.init();
+
 	if(argc < 26){
 		printf("\nparameters error\n");
 		std::exit(0);
 	}
-	
+
 	//---------------------- Node ----------------------
-	move_weight = std::stof(argv[1]);
-	state_weight = std::stof(argv[2]);
-	heuristic_weight = std::stof(argv[3]);
-	value_weight = std::stof(argv[4]);
-	is_on_decided_route_weight = std::stof(argv[5]);
-	is_on_mine_panel_weight = std::stof(argv[6]);
-	is_on_enemy_panel_weight = std::stof(argv[7]);
-	adjacent_agent_weight = std::stof(argv[8]);
-	average_distance_weght = std::stof(argv[9]);
-
-	//---------------------- Goal ----------------------
-	occpancy_weight = std::stof(argv[10]);
-	is_on_decided_weight = std::stof(argv[11]);
-	is_angle_weight = std::stof(argv[12]);
-	is_side_weight = std::stof(argv[13]);
-	is_inside_closed_weight = std::stof(argv[14]);
-	
-	//---------------------- Branching ----------------------
-	min_agent_distance = std::stof(argv[15]);
-	min_goal_distance = std::stof(argv[16]);
-	max_move = std::stof(argv[17]);
-	min_move_cost = std::stof(argv[18]);
-	min_value = std::stof(argv[19]);
-
-	//---------------------- Score ----------------------
-	score_weight = std::stof(argv[20]);
-	goal_weight = std::stof(argv[21]);
-	cost_weight = std::stof(argv[22]);
+	double_t _move_weight = std::stof(argv[1]);
+	double_t _state_weight = std::stof(argv[2]);
+	double_t _heuristic_weight = std::stof(argv[3]);
+	double_t _value_weight = std::stof(argv[4]);
+	double_t _is_on_decided_route_weight = std::stof(argv[5]);
+	double_t _is_on_mine_panel_weight = std::stof(argv[6]);
+	double_t _is_on_enemy_panel_weight = std::stof(argv[7]);
+	double_t _adjacent_agent_weight = std::stof(argv[8]);
+	double_t _average_distance_weght = std::stof(argv[9]);
 
 	//---------------------- Another ----------------------
-	min_open_list_value = std::stof(argv[23]);
-	greedy_count = std::stof(argv[24]);
-	search_count = std::stof(argv[25]);
+	double_t _greedy_count = std::stof(argv[10]);
+	double_t _search_count = std::stof(argv[11]);
+	double_t _min_open_list_value = std::stof(argv[12]);
 
-	//パラメータの表示
-	std::cerr << "move_weight:" << move_weight << std::endl;
-	std::cerr << "state_weight:" << state_weight << std::endl;
-	std::cerr << "heuristic_weight:" << heuristic_weight << std::endl;
-	std::cerr << "value_weight:" << value_weight << std::endl;
-	std::cerr << "is_on_decided_route_weight:" << is_on_decided_route_weight << std::endl;
-	std::cerr << "is_on_mine_panel_weight:" << is_on_mine_panel_weight << std::endl;
-	std::cerr << "is_on_enemy_panel_weight:" << is_on_enemy_panel_weight << std::endl;
-	std::cerr << "adjacent_agent_weight:" << adjacent_agent_weight << std::endl;
-	std::cerr << "average_distance_weght:" << average_distance_weght << std::endl;
+	//---------------------- Goal ----------------------
+	double_t _occpancy_weight = std::stof(argv[13]);
+	double_t _is_on_decided_weight = std::stof(argv[14]);
+	double_t _is_angle_weight = std::stof(argv[15]);
+	double_t _is_side_weight = std::stof(argv[16]);
+	double_t _is_inside_closed_weight = std::stof(argv[17]);
+	
+	//---------------------- Branching ----------------------
+	double_t _min_agent_distance = std::stof(argv[18]);
+	double_t _min_goal_distance = std::stof(argv[19]);
+	double_t _max_move = std::stof(argv[20]);
+	double_t _min_move_cost = std::stof(argv[21]);
+	double_t _min_value = std::stof(argv[22]);
 
-	std::cerr << "occpancy_weight" << occpancy_weight << std::endl;
-	std::cerr << "is_on_decided_weight" << is_on_decided_weight << std::endl;
-	std::cerr << "is_angle_weight" << is_angle_weight << std::endl;
-	std::cerr << "is_side_weight" << is_side_weight << std::endl;
-	std::cerr << "is_inside_closed_weight" << is_inside_closed_weight << std::endl;
+	//---------------------- Score ----------------------
+	double_t _score_weight = std::stof(argv[23]);
+	double_t _goal_weight = std::stof(argv[24]);
+	double_t _cost_weight = std::stof(argv[25]);
 
-	std::cerr << "min_agent_distance:" << min_agent_distance << std::endl;
-	std::cerr << "min_goal_distance:" << min_goal_distance << std::endl;
-	std::cerr << "max_move:" << max_move << std::endl;
-	std::cerr << "min_move_cost:" << min_move_cost << std::endl;
-	std::cerr << "min_value:" << min_value << std::endl;
+	astar_mine.setParams(_move_weight, _state_weight, _heuristic_weight, _value_weight, _is_on_decided_route_weight, _is_on_mine_panel_weight, _is_on_enemy_panel_weight, _adjacent_agent_weight, _average_distance_weght, _min_open_list_value, _greedy_count, _search_count, _occpancy_weight, _is_on_decided_weight, _is_angle_weight, _is_side_weight, _is_inside_closed_weight, _min_agent_distance, _min_goal_distance, _max_move, _min_move_cost, _min_value, _score_weight, _goal_weight, _cost_weight);
 
-	std::cerr << "score_weight:" << score_weight << std::endl;
-	std::cerr << "goal_weight:" << goal_weight << std::endl;
-	std::cerr << "cost_weight:" << cost_weight << std::endl;
+	astar_mine.init(&field);
 
-	std::cerr << "min_open_list_value:" << min_open_list_value << std::endl;
-	std::cerr << "greedy_count:" << greedy_count << std::endl;
-	std::cerr << "search_count:" << search_count << std::endl;
+	if(argc == 26)
+		goto _SINGLE_PLAY;
+
+	if(argc < 51){
+		printf("\nparameters error\n");
+		std::exit(0);
+	}		
+
+	//---------------------- Node ----------------------
+	_move_weight = std::stof(argv[26]);
+	_state_weight = std::stof(argv[27]);
+	_heuristic_weight = std::stof(argv[28]);
+	_value_weight = std::stof(argv[29]);
+	_is_on_decided_route_weight = std::stof(argv[30]);
+	_is_on_mine_panel_weight = std::stof(argv[31]);
+	_is_on_enemy_panel_weight = std::stof(argv[32]);
+	_adjacent_agent_weight = std::stof(argv[33]);
+	_average_distance_weght = std::stof(argv[34]);
+
+	//---------------------- Another ----------------------
 		
-	field.init();
-	astar.init(&field);
+	_greedy_count = std::stof(argv[35]);
+	_search_count = std::stof(argv[36]);
+	_min_open_list_value = std::stof(argv[37]);
+
+	//---------------------- Goal ----------------------
+	_occpancy_weight = std::stof(argv[38]);
+	_is_on_decided_weight = std::stof(argv[39]);
+	_is_angle_weight = std::stof(argv[40]);
+	_is_side_weight = std::stof(argv[41]);
+	_is_inside_closed_weight = std::stof(argv[42]);
+	
+	//---------------------- Branching ----------------------
+	_min_agent_distance = std::stof(argv[43]);
+	_min_goal_distance = std::stof(argv[44]);
+	_max_move = std::stof(argv[45]);
+	_min_move_cost = std::stof(argv[46]);
+	_min_value = std::stof(argv[47]);
+
+	//---------------------- Score ----------------------
+	_score_weight = std::stof(argv[48]);
+	_goal_weight = std::stof(argv[49]);
+	_cost_weight = std::stof(argv[50]);
+
+	astar_enemy.setParams(_move_weight, _state_weight, _heuristic_weight, _value_weight, _is_on_decided_route_weight, _is_on_mine_panel_weight, _is_on_enemy_panel_weight, _adjacent_agent_weight, _average_distance_weght, _min_open_list_value, _greedy_count, _search_count, _occpancy_weight, _is_on_decided_weight, _is_angle_weight, _is_side_weight, _is_inside_closed_weight, _min_agent_distance, _min_goal_distance, _max_move, _min_move_cost, _min_value, _score_weight, _goal_weight, _cost_weight);
+	
+	astar_enemy.init(&field);
+
+ _SINGLE_PLAY:
+	
 	while(true){
-		astar.move(&field, MINE_ATTR);
-		//astar.move(&field, ENEMY_ATTR);
+		
+		astar_mine.move(&field, MINE_ATTR);
+		//astar_enemy.move(&field, ENEMY_ATTR);
 		
 		//beam_search.move(&field, MINE_ATTR);
 		//beam_search.move(&field, ENEMY_ATTR);
 		
 		//greedy.move(&field, MINE_ATTR);
 		greedy.move(&field, ENEMY_ATTR);
+
+		
+		//---------------------------------------
+		move2json();
+    char *command = "python ../../test.py";
+    int req;
+    req = system(command);
+    //---------------------------------------
+		
 		field.applyNextAgents();
+		
 		field.print();
 		if(field.checkEnd()){
 			field.judgeWinner();
@@ -146,6 +181,7 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
+*/
 
 /*
 int main(int argc, char *argv[]) {
