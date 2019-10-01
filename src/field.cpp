@@ -799,7 +799,7 @@ void Field::init(){
 		}
 	}
 
-	std::cout << "agents:" << agent_num << std::endl;
+	std::cerr << "agents:" << agent_num << std::endl;
 	// Debug -----------------------------------------
   // TODO: 汎用的な実装にする(agentIDとATTR)
   // このままだと自チームが敵側の場合OUT
@@ -818,7 +818,7 @@ void Field::init(){
 
 	// 終了ターン
 	this->max_turn = (int)matches.get<object>()["turns"].get<double>();
-	//this->max_turn = 2;
+	this->max_turn = 2;
 	std::cerr << "max_turn:" << this->max_turn << std::endl;
 	
 	//シード値設定
@@ -1002,7 +1002,7 @@ void Field::update(){
 		}
 	}
 
-	std::cout << "agents:" << agent_num << std::endl;
+	std::cerr << "agents:" << agent_num << std::endl;
 	// Debug -----------------------------------------
   // TODO: 汎用的な実装にする(agentIDとATTR)
   // このままだと自チームが敵側の場合OUT

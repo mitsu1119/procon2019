@@ -1207,7 +1207,7 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 
 	end = std::chrono::system_clock::now();
 	time = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
-	std::cout << time << "milliseconds" << std::endl;
+	std::cerr << time << "milliseconds" << std::endl;
 
 	if(this->tentative_max_score == -INT_MAX){
 		this->decided_route.at(agent).clear();

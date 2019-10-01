@@ -22,15 +22,15 @@
 #include "useful.hpp"
 
 constexpr size_t Dim = 25;
-size_t Np = 8;
-size_t Ng = 10;
+size_t Np = 10;
+size_t Ng = 150;
 
 // 交叉法
 #define CHIASMA_BLXa
 // #define CHIASMA_SPX
 
 // メインプログラムでの評価を行うときの試行回数
-size_t numberOfTrials = 4;
+size_t numberOfTrials = 1;
 
 class Swarm;
 class Individual {
@@ -105,34 +105,40 @@ private:
 	}
 
 public:
-	Individual(): rate(0.0) {
+	Individual(bool isBias = true): rate(0.0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
-		params.emplace_back(2);
-		params.emplace_back(55);
-		params.emplace_back(5);
-		params.emplace_back(35);
-		params.emplace_back(80);
-		params.emplace_back(95);
-		params.emplace_back(90);
-		params.emplace_back(10);
-		params.emplace_back(40);
-		params.emplace_back(50);
-		params.emplace_back(20);
-		params.emplace_back(2);
-		params.emplace_back(2);
-		params.emplace_back(10);
-		params.emplace_back(2);
-		params.emplace_back(2);
-		params.emplace_back(30);
-		params.emplace_back(2);
-		params.emplace_back(10);
-		params.emplace_back(1.1);
-		params.emplace_back(8);
-		params.emplace_back(0.023);
-		params.emplace_back(8);
-		params.emplace_back(8);
-		params.emplace_back(16);
+		if(isBias) {
+			params.emplace_back(2);
+			params.emplace_back(55);
+			params.emplace_back(5);
+			params.emplace_back(35);
+			params.emplace_back(80);
+			params.emplace_back(95);
+			params.emplace_back(90);
+			params.emplace_back(10);
+			params.emplace_back(40);
+			params.emplace_back(50);
+			params.emplace_back(20);
+			params.emplace_back(2);
+			params.emplace_back(2);
+			params.emplace_back(10);
+			params.emplace_back(2);
+			params.emplace_back(2);
+			params.emplace_back(30);
+			params.emplace_back(2);
+			params.emplace_back(10);
+			params.emplace_back(1.1);
+			params.emplace_back(8);
+			params.emplace_back(0.023);
+			params.emplace_back(8);
+			params.emplace_back(8);
+			params.emplace_back(16);
+		} else {
+			for(size_t i = 0; i < Dim; i++) {
+				params.emplace_back(rand(200));
+			}
+		}
 	}
 
 	void eval() {
@@ -194,6 +200,7 @@ public:
 				*/
 
 				// 得点差による評価
+				printf("are %s\n", buf);
 				double scoreDiff = std::atof(buf);
 				rate += scoreDiff;
 
@@ -263,11 +270,16 @@ private:
 
 public:
 	Swarm(size_t size): cumulativeSum(0) {
-		swarm = std::vector<Individual *>(size, nullptr);
-		for(size_t i = 0; i < size; i++) swarm[i] = new Individual();
-
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
+
+		swarm = std::vector<Individual *>(size, nullptr);
+		double rou;
+		for(size_t i = 0; i < size; i++) {
+			rou = rand.gend();
+			if(rou < 0.5) swarm[i] = new Individual();
+			else swarm[i] = new Individual(false);
+		}
 	}
 	
 	Swarm() {
@@ -374,6 +386,6 @@ int main(int argc, char *argv[]) {
 		swarm = nextSwarm;
 	}
 
-	fclose(fp);
+	if(fp) fclose(fp);
 }
 
