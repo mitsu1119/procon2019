@@ -39,6 +39,7 @@ private:
 	XorOshiro128p rand;
 	double rate;
 	std::vector<double> params;
+	std::vector<double> enemParams;
 	
 	Individual(std::vector<double> parameters): rate(0.0) {
 		std::random_device seed;
@@ -136,9 +137,34 @@ public:
 			params.emplace_back(16);
 		} else {
 			for(size_t i = 0; i < Dim; i++) {
-				params.emplace_back(rand(200));
+				params.emplace_back(rand.gend(200));
 			}
 		}
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(55);
+		enemParams.emplace_back(5);
+		enemParams.emplace_back(35);
+		enemParams.emplace_back(80);
+		enemParams.emplace_back(95);
+		enemParams.emplace_back(90);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(40);
+		enemParams.emplace_back(50);
+		enemParams.emplace_back(20);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(30);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(1.1);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(0.023);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(16);
 	}
 
 	void eval() {
@@ -166,10 +192,12 @@ public:
 				dup2(fd[1], 1);
 				close(fd[0]);
 				close(fd[1]);
-				char *args[Dim + 2] = {"./run"};
+				char *args[Dim * 2 + 2] = {"./run"};
 				for(int i = 0; i < Dim; i++) {
 					args[i + 1] = new char[std::to_string(params[i]).size() + 1];
+					args[Dim + 1 + i] = new char[std::to_string(params[i]).size() + 1];
 					std::strcpy(args[i + 1], std::to_string(params[i]).c_str());
+					std::strcpy(args[Dim + 1 + i], std::to_string(enemParams[i]).c_str());
 				}
 				args[Dim + 1] = NULL;
 				execv(args[0], args);
