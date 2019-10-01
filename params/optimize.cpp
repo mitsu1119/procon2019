@@ -30,7 +30,7 @@ size_t Ng = 150;
 // #define CHIASMA_SPX
 
 // メインプログラムでの評価を行うときの試行回数
-size_t numberOfTrials = 1;
+size_t numberOfTrials = 4;
 
 class Swarm;
 class Individual {
