@@ -290,8 +290,8 @@ private:
 
 	//A*パラメータ
 	uint_fast32_t greedy_count = 7;
-	uint_fast32_t search_count = 16;
-	int_fast32_t min_open_list_value = 5;
+	uint_fast32_t search_count = 8;
+	int_fast32_t min_open_list_value = 4;
 
 	double_t occpancy_weight = 20;
 	double_t is_on_decided_weight = 20;
@@ -300,14 +300,20 @@ private:
 	double_t is_inside_closed_weight = 15;
 
 	uint_fast32_t min_agent_distance = 1;
-	uint_fast32_t min_goal_distance = 3;
-	uint_fast32_t max_move = 10;
+	uint_fast32_t min_goal_distance = 2;
+	uint_fast32_t max_move = 11;
 	uint_fast32_t min_move_cost = 0;
 	int_fast32_t  min_value = 5;
 
 	double_t score_weight = 1.5;
 	double_t goal_weight = 10;
 	double_t cost_weight = 0.028;
+
+	//定数パラメータ
+	int_fast32_t minus_average_score = 6;
+	int_fast32_t occupancy_mine = 6;
+	int_fast32_t plus_route_size = 4;
+	int_fast32_t plus_breadth_force_search = 2;
 	
 private:
 	
@@ -460,7 +466,6 @@ public:
 static std::pair<uint_fast32_t, uint_fast32_t> _tentative_goal;
 static std::vector<std::pair<uint_fast32_t, uint_fast32_t>> _tentative_route;
 static double _tentative_max_score;
-
 static uint_fast32_t _tentative_move_count;
 
 void _multiThread(Astar* astar, Field field, const uint_fast32_t agent, std::pair<uint_fast32_t, uint_fast32_t> coord);

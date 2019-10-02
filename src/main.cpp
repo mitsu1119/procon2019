@@ -21,7 +21,6 @@ Astar astar_enemy;
 void move2json();
 std::string getType(int nx, int ny, int dx, int dy);
 
-/*
 int main(int argc, char *argv[]) {
 	field.init();
 
@@ -33,17 +32,25 @@ int main(int argc, char *argv[]) {
 
 	return 0;	
 }
-*/
 
 /*
 int main(int argc, char *argv[]){
+	
 	field.init();
-	astar.init(&field);
+	astar_mine.init(&field);
+	astar_enemy.init(&field);
+	
 	while(true){
-		beam_search.move(&field, MINE_ATTR);
-		//astar.move(&field, MINE_ATTR);
+		
+		astar_mine.move(&field, MINE_ATTR);
+		//astar_enemy.move(&field, ENEMY_ATTR);
+		
+		//beam_search.move(&field, MINE_ATTR);
+		//beam_search.move(&field, ENEMY_ATTR);
+		
 		//greedy.move(&field, MINE_ATTR);
 		greedy.move(&field, ENEMY_ATTR);
+		
 		field.applyNextAgents();
 		field.print();
 		if(field.checkEnd()){
@@ -55,6 +62,7 @@ int main(int argc, char *argv[]){
 }
 */
 
+/*
 int main(int argc, char* argv[]){
 	
 	field.init();
@@ -154,15 +162,17 @@ int main(int argc, char* argv[]){
  _SINGLE_PLAY:
 	
 	while(true){
-		
+
+		std::cerr << "---------- MINE ----------" << std::endl;
 		astar_mine.move(&field, MINE_ATTR);
-		//astar_enemy.move(&field, ENEMY_ATTR);
+		std::cerr << "---------- ENEMY ----------" << std::endl;
+		astar_enemy.move(&field, ENEMY_ATTR);
 		
 		//beam_search.move(&field, MINE_ATTR);
 		//beam_search.move(&field, ENEMY_ATTR);
 		
 		//greedy.move(&field, MINE_ATTR);
-		greedy.move(&field, ENEMY_ATTR);
+		//greedy.move(&field, ENEMY_ATTR);
 
 		
 		//---------------------------------------
@@ -182,6 +192,7 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
+*/
 
 /*
 int main(int argc, char *argv[]) {

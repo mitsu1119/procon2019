@@ -620,6 +620,7 @@ void Astar::setSearchTarget(Field& field, const uint_fast32_t agent){
 			break;
 		this->search_target.emplace_back(condidate.at(i).second);
 	}
+	std::cerr << "search_target:" << this->search_target.size() << std::endl;
 }
 
 const bool Astar::_comp(std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& lhs ,std::pair<double, std::pair<uint_fast32_t, uint_fast32_t>>& rhs){
@@ -631,7 +632,6 @@ const double Astar::goalEvaluation(Field& field, const uint_fast32_t agent, cons
 	if(this->expectTarget(field, agent, coord))
 		return false;
 	
-	//パラメーター化したい
 	return (field.at(coord.first, coord.second)->getValue() + (this->occupancyRate(field, agent, coord) * occpancy_weight) - (this->isOnDecidedRoute(field, agent, coord) * is_on_decided_weight) - (isAngleCoord(field, coord) * is_angle_weight) - (isSideCoord(field, coord) * is_side_weight) - (isInsideClosed(field, agent, coord) * is_inside_closed_weight));
 }
 
@@ -716,7 +716,7 @@ const bool Astar::isSideCoord(Field& field, const std::pair<uint_fast32_t, uint_
 const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const std::pair<uint_fast32_t, uint_fast32_t>& coord) const{
 	if(field.agents.at(agent).getX() == coord.first && field.agents.at(agent).getY() == coord.second)
 		return true;
-	if(field.at(coord.first, coord.second)->getValue() <= this->average_score)
+	if(field.at(coord.first, coord.second)->getValue() <= this->average_score - this->minus_average_score)
 		return true;
 	if(this->anotherAgentDistance(field, agent, coord))
 		return true;
@@ -726,7 +726,7 @@ const bool Astar::expectTarget(Field& field, const uint_fast32_t agent, const st
 		return true;
 	if(this->isMyPannel(field, agent, coord))
 		return true;
-	if(this->occupancyMineRate(field, agent, coord) == 3)
+	if(this->occupancyMineRate(field, agent, coord) >= this->occupancy_mine)
 		return true;
 		
 	return false;
@@ -1066,7 +1066,7 @@ void Astar::setStartNode(Field& field, const uint_fast32_t agent, const std::pai
 	start->is_on_enemy_panel   = 0;
 	start->adjacent_agent      = 0;
 	start->average_distance    = 0;
-	start->move_count            = 0;
+	start->move_count          = 0;
 	start->state_cost          = 0;
 	start->value               = 0;
 }
@@ -1299,7 +1299,7 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 	}
 		
 	//全探索
-	if(field.getTurn() >= (field.getMaxTurn() - simple_bfs_depth - 2)){
+	if(field.getTurn() >= (field.getMaxTurn() - simple_bfs_depth - this->plus_breadth_force_search)){
 		Direction direction = this->finalPhase(field, agent);
 		
 		field.agents.at(agent).move(direction);
@@ -1316,7 +1316,7 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 	}
 
 	//味方Agentが接近している場合
-	if(this->countAdjacentAgent(field, agent, MINE_ATTR) == 1){
+	if(this->countAdjacentAgent(field, agent, MINE_ATTR) == 2){
 		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
 		this->singleMove(field, agent);
 		return;
@@ -1395,7 +1395,7 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	int_fast32_t score;
 
-	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->move_count_list.at(agent) + 5);
+	condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->move_count_list.at(agent) + this->plus_route_size);
 	score     = condidate.first;
 	if(score > 0){
 		route = this->makeRoute(field, condidate.second, agent, this->decided_goal.at(agent));
@@ -1555,5 +1555,6 @@ void _multiThread(Astar* astar, Field field, const uint_fast32_t agent, std::pai
 		_tentative_max_score = score;
 		_tentative_goal      = coord;
 		_tentative_route     = tmp.makeRoute(field, condidate.second, agent, coord);
+		astar->move_count_list.at(agent) = _tentative_move_count;
 	}
 }
