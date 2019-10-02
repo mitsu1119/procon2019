@@ -20,6 +20,7 @@
 #include <err.h>
 #include <errno.h>
 #include "useful.hpp"
+#include <iostream>
 
 constexpr size_t Dim = 25;
 size_t Np = 10;
@@ -45,6 +46,32 @@ private:
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
 		params = parameters;
+
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(55);
+		enemParams.emplace_back(5);
+		enemParams.emplace_back(35);
+		enemParams.emplace_back(80);
+		enemParams.emplace_back(95);
+		enemParams.emplace_back(90);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(40);
+		enemParams.emplace_back(50);
+		enemParams.emplace_back(20);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(30);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(1.1);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(0.023);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(16);
 	}
 
 	Individual *makeNewIndividual_BLXa(const Individual *p) {
@@ -199,7 +226,7 @@ public:
 					std::strcpy(args[i + 1], std::to_string(params[i]).c_str());
 					std::strcpy(args[Dim + 1 + i], std::to_string(enemParams[i]).c_str());
 				}
-				args[Dim + 1] = NULL;
+				args[Dim * 2 + 1] = NULL;
 				execv(args[0], args);
 				for(int i = 0; i < Dim; i++) delete[] args[i + 1];
 				break;
@@ -401,6 +428,8 @@ int main(int argc, char *argv[]) {
 		if(i == Ng) {
 			fprintf(stderr, "------ Final --------------------------\n");
 		}
+
+		swarm->print();
 
 		nextSwarm = swarm->makeNextSwarm();
 

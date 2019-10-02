@@ -156,13 +156,13 @@ int main(int argc, char* argv[]){
 	while(true){
 		
 		astar_mine.move(&field, MINE_ATTR);
-		//astar_enemy.move(&field, ENEMY_ATTR);
+		astar_enemy.move(&field, ENEMY_ATTR);
 		
 		//beam_search.move(&field, MINE_ATTR);
 		//beam_search.move(&field, ENEMY_ATTR);
 		
 		//greedy.move(&field, MINE_ATTR);
-		greedy.move(&field, ENEMY_ATTR);
+		//greedy.move(&field, ENEMY_ATTR);
 
 		
 		//---------------------------------------
