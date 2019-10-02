@@ -330,7 +330,7 @@ std::string getType(int nx, int ny, int dx, int dy){
 }
 
 void time_process(){
-  int turnMillis     = 25; // 作戦時間
+  int turnMillis     = 30; // 作戦時間
   int intervalMillis = 5;  // 遷移時間
 
   manage_time += turnMillis; // 作戦時間を加算しておく
