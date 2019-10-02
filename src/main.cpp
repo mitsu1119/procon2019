@@ -26,6 +26,7 @@ void move2json();
 std::string getType(int nx, int ny, int dx, int dy);
 void time_process();
 
+/*
 int main(int argc, char *argv[]) {
   manage_time = time(NULL); // とりあえず開始時の時刻を入れとく
 
@@ -39,9 +40,11 @@ int main(int argc, char *argv[]) {
 
 	return 0;	
 }
+*/
 
-/*
+
 int main(int argc, char *argv[]){
+  manage_time = time(NULL); // とりあえず開始時の時刻を入れとく
 	
 	field.init();
 	astar_mine.init(&field);
@@ -64,10 +67,11 @@ int main(int argc, char *argv[]){
 			field.judgeWinner();
 			break;
 		}
-	}
+    time_process(); // 時間処理(仮) 
+  }
 	return 0;
 }
-*/
+
 
 /*
 int main(int argc, char* argv[]){
@@ -203,6 +207,8 @@ int main(int argc, char* argv[]){
 
 /*
 int main(int argc, char *argv[]) {
+  manage_time = time(NULL); // 開始時間を設定
+  
 	astar.init(&field);
 	field.init();
 
@@ -233,6 +239,8 @@ int main(int argc, char *argv[]) {
 			//std::this_thread::sleep_for(std::chrono::minutes(1));
 			break;
 		}
+
+    time_process(); // 時間処理
 	}
 	
 	
@@ -240,6 +248,7 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 */
+
 
 void move2json(){
     object actions;
@@ -321,19 +330,21 @@ std::string getType(int nx, int ny, int dx, int dy){
 }
 
 void time_process(){
-  int turnMillis     = 20; // 作戦時間
+  int turnMillis     = 25; // 作戦時間
   int intervalMillis = 5;  // 遷移時間
 
   manage_time += turnMillis; // 作戦時間を加算しておく
 
+  std::cerr << "[*] turn: " << manage_time - time(NULL) << " seconds left" <<std::endl;
   while(time(NULL) < manage_time){
-    std::cerr << "[*] turn: " << manage_time - time(NULL) << "[s]" << std::endl;
+    if(manage_time - time(NULL) <= 5)
+      std::cerr << "[*] turn: " << manage_time - time(NULL) << " seconds left" << std::endl;
     sleep(1);
   }
   
   manage_time += intervalMillis; // 遷移時間を加算
   
-  std::cerr << "[*] interval: " << intervalMillis << "[s]" << std::endl;
+  std::cerr << "[*] interval: " << intervalMillis << " seconds left" << std::endl;
   sleep(intervalMillis); // 遷移時間はsleepで待機
 
 }
