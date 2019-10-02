@@ -3,12 +3,16 @@
 #include <string>
 #include <stdlib.h>
 #include <cstdlib>
+#include <time.h>
+#include <unistd.h>
 #include <typeinfo>
 #include "field.hpp"
 #include "useful.hpp"
 #include "disp.hpp"
 
 using namespace picojson;
+
+time_t manage_time; // ゲーム管理用の時間
 
 //Field field(16, 16);
 Field field;
@@ -20,8 +24,11 @@ Astar astar_enemy;
 
 void move2json();
 std::string getType(int nx, int ny, int dx, int dy);
+void time_process();
 
 int main(int argc, char *argv[]) {
+  manage_time = time(NULL); // とりあえず開始時の時刻を入れとく
+
 	field.init();
 
 	DisplayWrapper* framework = new Display();
@@ -311,4 +318,21 @@ std::string getType(int nx, int ny, int dx, int dy){
       else
         return "move";
     }
+}
+
+void time_process(){
+  int turnMillis     = 20; // 作戦時間
+  int intervalMillis = 5;  // 遷移時間
+
+  manage_time += turnMillis; // 作戦時間を加算しておく
+
+  while(time(NULL) < manage_time){
+    std::cerr << "[*] turn: " << manage_time - time(NULL) << "[s]" << std::endl;
+    sleep(1);
+  }
+  
+  manage_time += intervalMillis; // 遷移時間を加算
+
+  sleep(intervalMillis); // 遷移時間はsleepで待機
+
 }
