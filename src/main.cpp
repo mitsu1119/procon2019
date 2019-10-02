@@ -332,7 +332,8 @@ void time_process(){
   }
   
   manage_time += intervalMillis; // 遷移時間を加算
-
+  
+  std::cerr << "[*] interval: " << intervalMillis << "[s]" << std::endl;
   sleep(intervalMillis); // 遷移時間はsleepで待機
 
 }
