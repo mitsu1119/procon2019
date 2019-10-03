@@ -630,8 +630,8 @@ void Field::init(){
 	int agent_num = 0;
 
   // 制御用時間情報
-  int turnMillis;     // 作戦時間
-  int intervalMillis; // 遷移時間
+  //int turnMillis;     // 作戦時間
+  //int intervalMillis; // 遷移時間
 
   int my_attr_tmp; // TeamID用のjson添字
   int en_attr_tmp;
@@ -657,8 +657,11 @@ void Field::init(){
     stream.close();
   }
 
-  turnMillis = (int)matches.get<object>()["turnMillis"].get<double>();
-  intervalMillis = (int)matches.get<object>()["intervalMillis"].get<double>();
+  this->turnMillis = (int)matches.get<object>()["turnMillis"].get<double>();
+  this->intervalMillis = (int)matches.get<object>()["intervalMillis"].get<double>();
+  
+  // 探索時間
+  //this->search_time = (uint_fast32_t)turnMillis;
 
 	this->height = (int)maps.get<object>()["height"].get<double>();
 	this->width  = (int)maps.get<object>()["width"].get<double>();

@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 }
 */
 
-/*
+
 int main(int argc, char *argv[]){
   manage_time = time(NULL); // とりあえず開始時の時刻を入れとく
 	
@@ -71,10 +71,12 @@ int main(int argc, char *argv[]){
   }
 	return 0;
 }
-*/
 
+
+/*
 int main(int argc, char* argv[]){
-	
+	//manage_time = time(NULL); // とりあえず開始時刻を設定
+
 	field.init();
 
 	if(argc < 26){
@@ -197,6 +199,7 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
+*/
 
 void move2json(){
     object actions;
@@ -278,8 +281,8 @@ std::string getType(int nx, int ny, int dx, int dy){
 }
 
 void time_process(){
-  int turnMillis     = 30; // 作戦時間
-  int intervalMillis = 5;  // 遷移時間
+  int turnMillis     = (int)(field.getTurnMillis()/1000);      // 作戦時間
+  int intervalMillis = (int)(field.getIntervalMillis()/1000);  // 遷移時間
 
   manage_time += turnMillis; // 作戦時間を加算しておく
 
