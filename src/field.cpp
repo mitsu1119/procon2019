@@ -1,6 +1,7 @@
 #include "field.hpp"
 #include <fstream>
 #include <cassert>
+#include <stdlib.h>
 
 using namespace picojson;
 
@@ -622,6 +623,11 @@ void Field::judgeWinner(){
 }
 
 void Field::init(){
+  // python 呼び出し
+  system("python ../../test.py"); // matches
+
+  system("python ../../test.py"); // maps
+  
 	// agetn情報
 	int agent_data[30][3];
   
@@ -886,6 +892,9 @@ void Field::setPanels(const std::vector<std::vector<std::pair<uint_fast32_t, uin
 }
 
 void Field::update(){
+  // python 呼び出し
+  system("python ../../test.py");
+
 	// agetn情報
 	int agent_data[30][3];
   

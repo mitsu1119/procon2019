@@ -60,6 +60,9 @@ int main(int argc, char *argv[]){
 		
 		//greedy.move(&field, MINE_ATTR);
 		greedy.move(&field, ENEMY_ATTR);
+
+    move2json();
+    system("python ../../test.py");
 		
 		field.applyNextAgents();
 		field.print();
@@ -297,5 +300,7 @@ void time_process(){
   
   std::cerr << "[*] interval: " << intervalMillis << " seconds left" << std::endl;
   sleep(intervalMillis); // 遷移時間はsleepで待機
+
+  std::cerr << "[*] done" << std::endl;
 
 }
