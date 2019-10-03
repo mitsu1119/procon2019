@@ -158,9 +158,8 @@ int main(int argc, char* argv[]){
 
 	astar_enemy.setParams(_move_weight, _state_weight, _heuristic_weight, _value_weight, _is_on_decided_route_weight, _is_on_mine_panel_weight, _is_on_enemy_panel_weight, _adjacent_agent_weight, _average_distance_weght, _min_open_list_value, _greedy_count, _search_count, _occpancy_weight, _is_on_decided_weight, _is_angle_weight, _is_side_weight, _is_inside_closed_weight, _min_agent_distance, _min_goal_distance, _max_move, _min_move_cost, _min_value, _score_weight, _goal_weight, _cost_weight);
 	
-	astar_enemy.init(&field);
-
  _SINGLE_PLAY:
+	astar_enemy.init(&field);
 	
 	while(true){
 
@@ -175,16 +174,12 @@ int main(int argc, char* argv[]){
 		//greedy.move(&field, MINE_ATTR);
 		//greedy.move(&field, ENEMY_ATTR);
 
-		
-		//---------------------------------------
 		move2json();
     char *command = "python ../../test.py";
     int req;
     req = system(command);
-    //---------------------------------------
 		
 		field.applyNextAgents();
-		
 		field.print();
 		if(field.checkEnd()){
 			field.judgeWinner();
@@ -193,46 +188,6 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
-
-/*
-int main(int argc, char *argv[]) {
-	astar.init(&field);
-	field.init();
-
-	while(true){
-		
-		//astar.move(&field, MINE_ATTR);
-		greedy.move(&field, MINE_ATTR);
-		greedy.move(&field, ENEMY_ATTR);
-		
-		// Debug ---------------------------------------
-		move2json();
-
-    // Debug ---------------------
-    char *command = "python ../../test.py";
-    int req;
-
-    req = system(command);
-
-    // ----------------------------
-
-		field.applyNextAgents();
-
-		field.print();
-
-		if(field.checkEnd()){
-			field.judgeWinner();
-			//move2json();
-			//std::this_thread::sleep_for(std::chrono::minutes(1));
-			break;
-		}
-	}
-	
-	
-	
-	return 0;
-}
-*/
 
 void move2json(){
     object actions;

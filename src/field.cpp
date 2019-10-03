@@ -592,6 +592,14 @@ const uint_fast32_t Field::getMaxTurn() const{
 	return this->max_turn;
 }
 
+const uint_fast32_t Field::getIntervalMillis() const{
+	return this->intervalMillis;
+}
+
+const uint_fast32_t Field::getTurnMillis() const{
+	return this->turnMillis;
+}
+
 const bool Field::checkEnd() const{
 	return (this->turn == (uint_fast32_t)this->max_turn);
 }

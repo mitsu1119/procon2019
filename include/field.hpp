@@ -77,6 +77,10 @@ class Field {
 
 private:
 
+	//時間処理
+	uint_fast32_t intervalMillis;
+	uint_fast32_t turnMillis;
+
   //ターン数
 	uint_fast32_t turn;
 
@@ -172,6 +176,10 @@ public:
 
 	//max_turnを外部から所得
 	const uint_fast32_t getMaxTurn() const;
+
+	//時間処理
+	const uint_fast32_t getIntervalMillis() const;
+	const uint_fast32_t getTurnMillis() const;
 
 	//終了条件
 	const bool checkEnd() const;

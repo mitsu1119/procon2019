@@ -117,18 +117,6 @@ public:
 
 };
 
-/*
-constexpr double_t move_weight                = 2;
-constexpr double_t state_weight               = 55;
-constexpr double_t heuristic_weight           = 5;
-constexpr double_t value_weight               = 35;
-constexpr double_t is_on_decided_route_weight = 80;
-constexpr double_t is_on_mine_panel_weight    = 95;
-constexpr double_t is_on_enemy_panel_weight   = 90;
-constexpr double_t adjacent_agent_weight      = 10;
-constexpr double_t average_distance_weght     = 40;
-*/
-
 class Node{	
 public:
 
@@ -230,38 +218,6 @@ public:
 	
 };
 
-
-/*
-constexpr uint_fast32_t greedy_count       = 8;
-constexpr uint_fast32_t search_count       = 16;
-constexpr uint_fast32_t astar_depth        = 10;
-
-constexpr double_t occpancy_weight         = 50;
-constexpr double_t is_on_decided_weight    = 20;
-constexpr double_t is_angle_weight         = 2;
-constexpr double_t is_side_weight          = 2;
-constexpr double_t is_inside_closed_weight = 10;
-
-constexpr uint_fast32_t max_mine_distance  = 20;
-constexpr uint_fast32_t min_mine_distance  = 2;
-constexpr uint_fast32_t min_agent_distance = 2;
-constexpr uint_fast32_t min_goal_distance  = 2;
-constexpr uint_fast32_t max_move           = 30;
-constexpr uint_fast32_t min_move_cost      = 2;
-constexpr int_fast32_t min_value          = 10;
-
-constexpr double_t score_weight            = 1.1;
-constexpr double_t goal_weight             = 8;
-constexpr double_t cost_weight             = 0.023;
-
-constexpr int_fast32_t min_open_list_value  = 8;
-constexpr uint_fast32_t search_time         = 30000;
-constexpr uint_fast32_t grace_time          = 2000;
-
-constexpr uint_fast32_t search_time         = 30000;
-constexpr uint_fast32_t grace_time          = 2000;
-*/
-
 constexpr double_t max_mine_distance  = 16;
 constexpr double_t min_mine_distance  = 2;
 constexpr uint_fast32_t astar_depth   = 37;
@@ -273,9 +229,10 @@ class Astar : public AI{
 private:
 
 	//時間管理用
-	uint_fast32_t search_time         = 30000;
-	uint_fast32_t grace_time          = 4000;
+	uint_fast32_t search_time         = 35000;
+	uint_fast32_t grace_time          = 2500;
 
+	/*
 	//自己対局用
 	//Node
 	double_t move_weight = 2.5;
@@ -311,6 +268,48 @@ private:
 
 	//定数パラメータ
 	int_fast32_t minus_average_score = 6;
+	int_fast32_t occupancy_mine = 6;
+	int_fast32_t plus_route_size = 4;
+	int_fast32_t plus_breadth_force_search = 2;
+	*/
+	
+	//自己対局用
+	//Node
+	double_t move_weight = 2.5;
+	double_t state_weight = 71;
+	double_t heuristic_weight = 5;
+	double_t value_weight = 16;
+	double_t is_on_decided_route_weight = 110;
+	double_t is_on_mine_panel_weight = 180;
+	double_t is_on_enemy_panel_weight = 185;
+	//double_t is_on_enemy_panel_weight = 170;
+	double_t adjacent_agent_weight = 32;
+	double_t average_distance_weght = 48;
+
+	//A*パラメータ
+	uint_fast32_t greedy_count = 6;
+	uint_fast32_t search_count = 8;
+	//int_fast32_t min_open_list_value = 2;
+	int_fast32_t min_open_list_value = 0;
+
+	double_t occpancy_weight = 20;
+	double_t is_on_decided_weight = 20;
+	double_t is_angle_weight = 2;
+	double_t is_side_weight = 2;
+	double_t is_inside_closed_weight = 15;
+
+	uint_fast32_t min_agent_distance = 1;
+	uint_fast32_t min_goal_distance = 2;
+	uint_fast32_t max_move = 11;
+	uint_fast32_t min_move_cost = 0;
+	int_fast32_t  min_value = 5;
+
+	double_t score_weight = 1.5;
+	double_t goal_weight = 10;
+	double_t cost_weight = 0.028;
+
+	//定数パラメータ
+	int_fast32_t minus_average_score = 7;
 	int_fast32_t occupancy_mine = 6;
 	int_fast32_t plus_route_size = 4;
 	int_fast32_t plus_breadth_force_search = 2;
@@ -420,6 +419,7 @@ private:
 	const bool branchingCondition(Field& field, const uint_fast32_t agent, Node* current, const uint_fast32_t max_move_cost);
 	const bool endCondition(Node* current) const;
 	const bool isPushOpenlist(Field& field, Node* next) const;
+	const bool isPushOpenlist(Field& field, const uint_fast32_t agent, Node* next) const;
 
 	
 	//時間管理

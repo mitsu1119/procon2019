@@ -1032,6 +1032,7 @@ std::pair<double, std::vector<Node>> Astar::searchRoute(Field field, const uint_
 						continue;
 					
 					if(this->isPushOpenlist(next_field, next) && next->coord != current->coord){
+					//if(this->isPushOpenlist(next_field, agent, next) && next->coord != current->coord){
 						
 						this->setNextNode(next_field, agent, goal, current, next);
 						next->move_cost = current->move_cost + 2;
@@ -1040,6 +1041,7 @@ std::pair<double, std::vector<Node>> Astar::searchRoute(Field field, const uint_
 				}
 				else{
 					if(this->isPushOpenlist(next_field, next)){
+					//if(this->isPushOpenlist(next_field, agent, next)){
 						
 						this->setNextNode(next_field, agent, goal, current, next);
 						next->move_cost = current->move_cost + 1;
@@ -1125,6 +1127,16 @@ const bool Astar::isPushOpenlist(Field& field, Node* next) const{
 	if(next->status == Node::OPEN)
 		if(field.at(next->coord.first, next->coord.second)->getValue() >= min_open_list_value)
 			return true;
+	return false;
+}
+
+const bool Astar::isPushOpenlist(Field& field, const uint_fast32_t agent, Node* next) const{
+	if(next->status == Node::NONE)
+		return true;
+	if(next->status == Node::OPEN)
+		if(field.at(next->coord.first, next->coord.second)->getAttr() != field.agents.at(agent).getAttr())
+			if(field.at(next->coord.first, next->coord.second)->getValue() >= min_open_list_value)
+				return true;
 	return false;
 }
 
