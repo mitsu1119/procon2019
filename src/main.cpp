@@ -3,12 +3,16 @@
 #include <string>
 #include <stdlib.h>
 #include <cstdlib>
+#include <time.h>
+#include <unistd.h>
 #include <typeinfo>
 #include "field.hpp"
 #include "useful.hpp"
 #include "disp.hpp"
 
 using namespace picojson;
+
+time_t manage_time; // ゲーム管理用の時間
 
 //Field field(16, 16);
 Field field;
@@ -19,10 +23,13 @@ Astar astar_mine;
 Astar astar_enemy;
 
 void move2json();
+void time_process();
 std::string getType(int nx, int ny, int dx, int dy);
 
 /*
 int main(int argc, char *argv[]) {
+  manage_time = time(NULL); // とりあえず開始時の時刻を入れとく
+
 	field.init();
 
 	DisplayWrapper* framework = new Display();
@@ -37,6 +44,7 @@ int main(int argc, char *argv[]) {
 
 /*
 int main(int argc, char *argv[]){
+  manage_time = time(NULL); // とりあえず開始時の時刻を入れとく
 	
 	field.init();
 	astar_mine.init(&field);
@@ -59,7 +67,8 @@ int main(int argc, char *argv[]){
 			field.judgeWinner();
 			break;
 		}
-	}
+    time_process(); // 時間処理(仮) 
+  }
 	return 0;
 }
 */
@@ -266,4 +275,24 @@ std::string getType(int nx, int ny, int dx, int dy){
       else
         return "move";
     }
+}
+
+void time_process(){
+  int turnMillis     = 30; // 作戦時間
+  int intervalMillis = 5;  // 遷移時間
+
+  manage_time += turnMillis; // 作戦時間を加算しておく
+
+  std::cerr << "[*] turn: " << manage_time - time(NULL) << " seconds left" <<std::endl;
+  while(time(NULL) < manage_time){
+    if(manage_time - time(NULL) <= 5)
+      std::cerr << "[*] turn: " << manage_time - time(NULL) << " seconds left" << std::endl;
+    sleep(1);
+  }
+  
+  manage_time += intervalMillis; // 遷移時間を加算
+  
+  std::cerr << "[*] interval: " << intervalMillis << " seconds left" << std::endl;
+  sleep(intervalMillis); // 遷移時間はsleepで待機
+
 }

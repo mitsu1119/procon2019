@@ -281,16 +281,14 @@ private:
 	double_t value_weight = 16;
 	double_t is_on_decided_route_weight = 110;
 	double_t is_on_mine_panel_weight = 180;
-	double_t is_on_enemy_panel_weight = 185;
-	//double_t is_on_enemy_panel_weight = 170;
+	double_t is_on_enemy_panel_weight = 170;
 	double_t adjacent_agent_weight = 32;
 	double_t average_distance_weght = 48;
 
 	//A*パラメータ
 	uint_fast32_t greedy_count = 6;
 	uint_fast32_t search_count = 8;
-	//int_fast32_t min_open_list_value = 2;
-	int_fast32_t min_open_list_value = 0;
+	int_fast32_t min_open_list_value = 2;
 
 	double_t occpancy_weight = 20;
 	double_t is_on_decided_weight = 20;
