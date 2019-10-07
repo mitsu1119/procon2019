@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
 		greedy.move(&field, ENEMY_ATTR);
 
     move2json();
-    system("python ../../test.py");
+    system("python ../../post.py");
 		
 		field.applyNextAgents();
 		field.print();
@@ -293,6 +293,7 @@ void time_process(){
   while(time(NULL) < manage_time){
     if(manage_time - time(NULL) <= 5)
       std::cerr << "[*] turn: " << manage_time - time(NULL) << " seconds left" << std::endl;
+    system("python ../../post.py");
     sleep(1);
   }
   
@@ -301,6 +302,6 @@ void time_process(){
   std::cerr << "[*] interval: " << intervalMillis << " seconds left" << std::endl;
   sleep(intervalMillis); // 遷移時間はsleepで待機
 
-  std::cerr << "[*] done" << std::endl;
+  std::cerr << "----- done -----" << std::endl;
 
 }
