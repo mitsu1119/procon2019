@@ -489,10 +489,10 @@ void Display::keyboard(unsigned char key, int x, int y){
 		//this->moveNext();
 
 		//this->greedy->move(this->field, MINE_ATTR);
-		this->greedy->move(this->field, ENEMY_ATTR);
+		//this->greedy->move(this->field, ENEMY_ATTR);
 
 		//this->beam_search->move(this->field, MINE_ATTR);
-		//this->beam_search->move(this->field, ENEMY_ATTR);
+		this->beam_search->move(this->field, ENEMY_ATTR);
 		
 		//this->random->move(this->field, ENEMY_ATTR);
 		//this->random->move(this->field, MINE_ATTR);
