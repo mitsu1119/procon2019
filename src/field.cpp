@@ -842,6 +842,7 @@ void Field::init(){
 
 	// 終了ターン
 	this->max_turn = (int)matches.get<object>()["turns"].get<double>();
+	// this->max_turn = 2;
 	std::cerr << "max_turn:" << this->max_turn << std::endl;
 	
 	//シード値設定

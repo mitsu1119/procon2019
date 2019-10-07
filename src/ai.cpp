@@ -1248,6 +1248,7 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 
 	start = std::chrono::system_clock::now();
 	this->setSearchTarget(field, agent);
+
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
 			threads.emplace_back(std::thread(_multiThread, this, std::ref(field), agent, std::ref(coord)));
 		});
@@ -1375,6 +1376,10 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		return;
 	}
 
+<<<<<<< HEAD
+=======
+	std::cerr << "----------A*----------" << std::endl;
+>>>>>>> master
 	this->singleMove(field, agent);
 }
 
