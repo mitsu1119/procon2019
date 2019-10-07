@@ -601,6 +601,10 @@ const uint_fast32_t Field::getTurnMillis() const{
 	return this->turnMillis;
 }
 
+int_fast32_t Field::getStartUnixTime(){
+  return this->startUnixTime;
+}
+
 const bool Field::checkEnd() const{
 	return (this->turn == (uint_fast32_t)this->max_turn);
 }
@@ -665,6 +669,10 @@ void Field::init(){
 
   this->turnMillis = (int)matches.get<object>()["turnMillis"].get<double>();
   this->intervalMillis = (int)matches.get<object>()["intervalMillis"].get<double>();
+  this->startUnixTime = (int_fast32_t)maps.get<object>()["startedAtUnixTime"].get<double>();
+  // Debug ---------
+  std::cerr << "[*] startedAtUnixTime: " << maps.get<object>()["startedAtUnixTime"].get<double>();
+
   
   // 探索時間
   //this->search_time = (uint_fast32_t)turnMillis;
@@ -932,7 +940,9 @@ void Field::update(){
 	buff = std::log2(this->width);
 	this->yShiftOffset = (uint_fast32_t)(buff + ((std::ceil(buff) == std::floor(buff)) ? 0 : 1));
 	sizee = this->height << this->yShiftOffset;
-
+  
+  // 開始時間
+  this->startUnixTime = (int_fast32_t)maps.get<object>()["startedAtUnixTime"].get<double>();
 	// マップ生成
 	value::array tile = maps.get<object>()["tiled"].get<value::array>();
 	for(int i = 0; i < height; i++){
