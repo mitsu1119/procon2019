@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 }
 */
 
-/*
+
 int main(int argc, char *argv[]){
   manage_time = time(NULL); // とりあえず開始時の時刻を入れとく
 	
@@ -60,6 +60,9 @@ int main(int argc, char *argv[]){
 		
 		//greedy.move(&field, MINE_ATTR);
 		greedy.move(&field, ENEMY_ATTR);
+
+    move2json();
+    system("python ../../post.py");
 		
 		field.applyNextAgents();
 		field.print();
@@ -71,10 +74,12 @@ int main(int argc, char *argv[]){
   }
 	return 0;
 }
-*/
 
+
+/*
 int main(int argc, char* argv[]){
-	
+	//manage_time = time(NULL); // とりあえず開始時刻を設定
+
 	field.init();
 
 	if(argc < 26){
@@ -196,6 +201,7 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
+*/
 
 void move2json(){
     object actions;
@@ -277,8 +283,8 @@ std::string getType(int nx, int ny, int dx, int dy){
 }
 
 void time_process(){
-  int turnMillis     = 30; // 作戦時間
-  int intervalMillis = 5;  // 遷移時間
+  int turnMillis     = (int)(field.getTurnMillis()/1000);      // 作戦時間
+  int intervalMillis = (int)(field.getIntervalMillis()/1000);  // 遷移時間
 
   manage_time += turnMillis; // 作戦時間を加算しておく
 
@@ -286,6 +292,7 @@ void time_process(){
   while(time(NULL) < manage_time){
     if(manage_time - time(NULL) <= 5)
       std::cerr << "[*] turn: " << manage_time - time(NULL) << " seconds left" << std::endl;
+    system("python ../../post.py");
     sleep(1);
   }
   
@@ -293,5 +300,7 @@ void time_process(){
   
   std::cerr << "[*] interval: " << intervalMillis << " seconds left" << std::endl;
   sleep(intervalMillis); // 遷移時間はsleepで待機
+
+  std::cerr << "----- done -----" << std::endl;
 
 }

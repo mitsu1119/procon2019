@@ -1,8 +1,10 @@
+import sys
 import json
 import requests
 
+print("[*] POST: action data...", file=sys.stderr)
 
-f = open('action.json','r')
+f = open('../../action.json','r')
 post_data = json.load(f)
 
 f.close()
@@ -32,6 +34,8 @@ data = json.dumps(post_data).encode("utf-8")
 # 本戦用URLを入れる
 response = requests.post('http://172.16.18.243:80/index.php', headers=headers, data=data)
 
-print(response.text)
+#print(response.text, file=sys.stderr)
+
+print("[*] done", file=sys.stderr)
 
 

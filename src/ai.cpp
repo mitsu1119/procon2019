@@ -1484,6 +1484,8 @@ void Astar::init(const Field* field){
 
 	this->move_count_list.clear();
 	this->move_count_list.resize(field->agents.size());
+
+  this->search_time = field->getTurnMillis();
 }
 
 void Astar::init(const Field& field){
@@ -1504,6 +1506,8 @@ void Astar::init(const Field& field){
 
 	this->move_count_list.clear();
 	this->move_count_list.resize(field.agents.size());
+
+  this->search_time = field.getTurnMillis();
 }
 
 void Astar::move(Field *field, const uint_fast32_t attr){

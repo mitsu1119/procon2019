@@ -1,6 +1,7 @@
 #include "field.hpp"
 #include <fstream>
 #include <cassert>
+#include <stdlib.h>
 
 using namespace picojson;
 
@@ -622,6 +623,11 @@ void Field::judgeWinner(){
 }
 
 void Field::init(){
+  // python 呼び出し
+  system("python ../../test.py"); // matches
+
+  system("python ../../test.py"); // maps
+  
 	// agetn情報
 	int agent_data[30][3];
   
@@ -630,8 +636,8 @@ void Field::init(){
 	int agent_num = 0;
 
   // 制御用時間情報
-  int turnMillis;     // 作戦時間
-  int intervalMillis; // 遷移時間
+  //int turnMillis;     // 作戦時間
+  //int intervalMillis; // 遷移時間
 
   int my_attr_tmp; // TeamID用のjson添字
   int en_attr_tmp;
@@ -657,8 +663,11 @@ void Field::init(){
     stream.close();
   }
 
-  turnMillis = (int)matches.get<object>()["turnMillis"].get<double>();
-  intervalMillis = (int)matches.get<object>()["intervalMillis"].get<double>();
+  this->turnMillis = (int)matches.get<object>()["turnMillis"].get<double>();
+  this->intervalMillis = (int)matches.get<object>()["intervalMillis"].get<double>();
+  
+  // 探索時間
+  //this->search_time = (uint_fast32_t)turnMillis;
 
 	this->height = (int)maps.get<object>()["height"].get<double>();
 	this->width  = (int)maps.get<object>()["width"].get<double>();
@@ -883,6 +892,9 @@ void Field::setPanels(const std::vector<std::vector<std::pair<uint_fast32_t, uin
 }
 
 void Field::update(){
+  // python 呼び出し
+  system("python ../../test.py");
+
 	// agetn情報
 	int agent_data[30][3];
   
