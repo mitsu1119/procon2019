@@ -296,7 +296,8 @@ private:
 	double_t average_distance_weght = 0;
 	
 	//A*パラメータ
-	uint_fast32_t greedy_count = 6;
+	//uint_fast32_t greedy_count = 6;
+	uint_fast32_t greedy_count = 5;
 	uint_fast32_t search_count = 100;
 	int_fast32_t min_open_list_value = 7;
 

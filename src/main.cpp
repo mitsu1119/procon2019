@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 }
 */
 
-
+/*
 int main(int argc, char *argv[]){
   manage_time = time(NULL); // とりあえず開始時の時刻を入れとく
 	
@@ -74,9 +74,8 @@ int main(int argc, char *argv[]){
   }
 	return 0;
 }
+*/
 
-
-/*
 int main(int argc, char* argv[]){
 	//manage_time = time(NULL); // とりあえず開始時刻を設定
 
@@ -175,7 +174,6 @@ int main(int argc, char* argv[]){
 	astar_enemy.init(&field);
 	
 	while(true){
-<<<<<<< HEAD
 
 		std::cerr << "---------- MINE ----------" << std::endl;
 		//astar_mine.move(&field, MINE_ATTR);
@@ -183,13 +181,6 @@ int main(int argc, char* argv[]){
 		astar_enemy.move(&field, ENEMY_ATTR);
 
 		beam_search.move(&field, MINE_ATTR);
-=======
-		
-		astar_mine.move(&field, MINE_ATTR);
-		astar_enemy.move(&field, ENEMY_ATTR);
-		
-		//beam_search.move(&field, MINE_ATTR);
->>>>>>> master
 		//beam_search.move(&field, ENEMY_ATTR);
 		
 		//greedy.move(&field, MINE_ATTR);
@@ -209,7 +200,6 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
-*/
 
 void move2json(){
     object actions;
