@@ -486,15 +486,8 @@ void Display::keyboard(unsigned char key, int x, int y){
 		this->astar->move(this->field, MINE_ATTR);
 		//this->astar->move(this->field, ENEMY_ATTR);
 
-<<<<<<< HEAD
 		//this->moveNext();
 
-=======
-		
-		//this->moveNext();
-
-
->>>>>>> master
 		//this->greedy->move(this->field, MINE_ATTR);
 		//this->greedy->move(this->field, ENEMY_ATTR);
 

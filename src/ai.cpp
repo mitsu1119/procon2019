@@ -1376,10 +1376,6 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		return;
 	}
 
-<<<<<<< HEAD
-=======
-	std::cerr << "----------A*----------" << std::endl;
->>>>>>> master
 	this->singleMove(field, agent);
 }
 

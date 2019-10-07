@@ -274,17 +274,12 @@ private:
 	/*
 	//自己対局用
 	//Node
-	//double_t move_weight = 3;
 	double_t move_weight = 5;
 	double_t state_weight = 68;
 	double_t heuristic_weight = 5;
-	//double_t value_weight = 1000;
 	double_t value_weight = 100;
-	//double_t is_on_decided_route_weight = 350;
 	double_t is_on_decided_route_weight = 5000;
-	//double_t is_on_mine_panel_weight = 10000;
 	double_t is_on_mine_panel_weight = 9000;
-	//double_t is_on_enemy_panel_weight = 5000;
 	double_t is_on_enemy_panel_weight = 400;
 	double_t adjacent_agent_weight = 100;
 	double_t average_distance_weght = 100;
@@ -293,10 +288,9 @@ private:
 	double_t move_weight = 100;
 	double_t state_weight = 3;
 	double_t heuristic_weight = 100;
-	//double_t value_weight = 600;
 	double_t value_weight = 650;
 	double_t is_on_decided_route_weight = 250;
-	double_t is_on_mine_panel_weight = 300;
+	double_t is_on_mine_panel_weight = 400;
 	double_t is_on_enemy_panel_weight = 0;
 	double_t adjacent_agent_weight = 0;
 	double_t average_distance_weght = 0;
@@ -304,8 +298,7 @@ private:
 	//A*パラメータ
 	uint_fast32_t greedy_count = 6;
 	uint_fast32_t search_count = 100;
-	//int_fast32_t min_open_list_value = 7;
-	int_fast32_t min_open_list_value = 6;
+	int_fast32_t min_open_list_value = 7;
 
 	double_t occpancy_weight = 20;
 	double_t is_on_decided_weight = 20;
