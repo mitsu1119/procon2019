@@ -1026,9 +1026,9 @@ std::pair<double, std::vector<Node>> Astar::searchRoute(Field field, const uint_
 			}
 			else{
 				if(current_field.agents.at(agent).getAttr() == MINE_ATTR)
-					score = ((current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR)) * score_weight) + (this->goalEvaluation(field, agent, goal) * goal_weight) + (current->getScore() * cost_weight);
+					score = ((current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR)) * score_weight) + (this->goalEvaluation(field, agent, goal) * goal_weight) - (current->getScore() * cost_weight);
 				else
-					score = ((current_field.calcScore(ENEMY_ATTR) - current_field.calcScore(MINE_ATTR)) * score_weight) + (this->goalEvaluation(field, agent, goal) * goal_weight) + (current->getScore() * cost_weight);
+					score = ((current_field.calcScore(ENEMY_ATTR) - current_field.calcScore(MINE_ATTR)) * score_weight) + (this->goalEvaluation(field, agent, goal) * goal_weight) - (current->getScore() * cost_weight);
 			}	
 
 			
