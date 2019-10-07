@@ -20,9 +20,10 @@
 #include <err.h>
 #include <errno.h>
 #include "useful.hpp"
+#include <iostream>
 
-size_t Dim = 10;
-size_t Np = 14;
+constexpr size_t Dim = 25;
+size_t Np = 10;
 size_t Ng = 150;
 
 // 交叉法
@@ -30,7 +31,7 @@ size_t Ng = 150;
 // #define CHIASMA_SPX
 
 // メインプログラムでの評価を行うときの試行回数
-size_t numberOfTrials = 8;
+size_t numberOfTrials = 4;
 
 class Swarm;
 class Individual {
@@ -39,11 +40,38 @@ private:
 	XorOshiro128p rand;
 	double rate;
 	std::vector<double> params;
+	std::vector<double> enemParams;
 	
 	Individual(std::vector<double> parameters): rate(0.0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
 		params = parameters;
+
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(55);
+		enemParams.emplace_back(5);
+		enemParams.emplace_back(35);
+		enemParams.emplace_back(80);
+		enemParams.emplace_back(95);
+		enemParams.emplace_back(90);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(40);
+		enemParams.emplace_back(50);
+		enemParams.emplace_back(20);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(30);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(1.1);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(0.023);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(16);
 	}
 
 	Individual *makeNewIndividual_BLXa(const Individual *p) {
@@ -52,7 +80,7 @@ private:
 		for(size_t i = 0; i < Dim; i++) {
 			dist = std::abs(p->params[i] - params[i]);
 			max = std::max(p->params[i], params[i]) + 0.3 * dist;
-			min = std::min(p->params[i], params[i]) - 0.3 * dist;
+			min = std::max(std::min(p->params[i], params[i]) - 0.3 * dist, 0.0);
 			dist = std::abs(max - min);
 			genParam[i] = min + rand.gend(dist);
 		}
@@ -105,10 +133,65 @@ private:
 	}
 
 public:
-	Individual(): rate(0.0) {
+	Individual(bool isBias = true): rate(0.0) {
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
-		for(size_t i = 0; i < Dim; i++) params.emplace_back(rand.gend());
+		if(isBias) {
+			params.emplace_back(2);
+			params.emplace_back(55);
+			params.emplace_back(5);
+			params.emplace_back(35);
+			params.emplace_back(80);
+			params.emplace_back(95);
+			params.emplace_back(90);
+			params.emplace_back(10);
+			params.emplace_back(40);
+			params.emplace_back(50);
+			params.emplace_back(20);
+			params.emplace_back(2);
+			params.emplace_back(2);
+			params.emplace_back(10);
+			params.emplace_back(2);
+			params.emplace_back(2);
+			params.emplace_back(30);
+			params.emplace_back(2);
+			params.emplace_back(10);
+			params.emplace_back(1.1);
+			params.emplace_back(8);
+			params.emplace_back(0.023);
+			params.emplace_back(8);
+			params.emplace_back(8);
+			params.emplace_back(16);
+		} else {
+			for(size_t i = 0; i < Dim; i++) {
+				params.emplace_back(rand.gend(200));
+			}
+		}
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(55);
+		enemParams.emplace_back(5);
+		enemParams.emplace_back(35);
+		enemParams.emplace_back(80);
+		enemParams.emplace_back(95);
+		enemParams.emplace_back(90);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(40);
+		enemParams.emplace_back(50);
+		enemParams.emplace_back(20);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(30);
+		enemParams.emplace_back(2);
+		enemParams.emplace_back(10);
+		enemParams.emplace_back(1.1);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(0.023);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(8);
+		enemParams.emplace_back(16);
 	}
 
 	void eval() {
@@ -136,14 +219,22 @@ public:
 				dup2(fd[1], 1);
 				close(fd[0]);
 				close(fd[1]);
-				char *const args[] = {"./run", NULL};
+				char *args[Dim * 2 + 2] = {"./run"};
+				for(int i = 0; i < Dim; i++) {
+					args[i + 1] = new char[std::to_string(params[i]).size() + 1];
+					args[Dim + 1 + i] = new char[std::to_string(params[i]).size() + 1];
+					std::strcpy(args[i + 1], std::to_string(params[i]).c_str());
+					std::strcpy(args[Dim + 1 + i], std::to_string(enemParams[i]).c_str());
+				}
+				args[Dim * 2 + 1] = NULL;
 				execv(args[0], args);
+				for(int i = 0; i < Dim; i++) delete[] args[i + 1];
 				break;
 					}
 			default:
 				// parents
 				int childStatus;
-				printf("This is parent process. child process number is %d\n", pid);
+				fprintf(stderr, "This is parent process. child process number is %d\n", pid);
 
 				pid_t wait_pid = wait(&childStatus);
 				
@@ -164,16 +255,16 @@ public:
 				*/
 
 				// 得点差による評価
-				int scoreDiff = std::atoi(buf);
-				printf("スコア差: %d\n", scoreDiff);
+				printf("are %s\n", buf);
+				double scoreDiff = std::atof(buf);
 				rate += scoreDiff;
 
 				close(fd[0]);
 				close(fd[1]);
 				if(WIFEXITED(childStatus)) {
-					printf("Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
+					fprintf(stderr, "Finished uccessfully. child = %d, status = %d\n", wait_pid, WEXITSTATUS(childStatus));
 				} else if(WIFSIGNALED(childStatus)) {
-					printf("Child process %d ended by signale %d\n", wait_pid, WTERMSIG(childStatus));
+					fprintf(stderr, "Child process %d ended by signale %d\n", wait_pid, WTERMSIG(childStatus));
 				} else {
 					err(EXIT_FAILURE, "wait err");
 					exit(EXIT_FAILURE);
@@ -181,6 +272,7 @@ public:
 			}
 		}
 		rate /= numberOfTrials;
+		fprintf(stderr, "rate = %lf\n", rate);
 	}
 
 	void print() const {
@@ -233,11 +325,16 @@ private:
 
 public:
 	Swarm(size_t size): cumulativeSum(0) {
-		swarm = std::vector<Individual *>(size, nullptr);
-		for(size_t i = 0; i < size; i++) swarm[i] = new Individual();
-
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
+
+		swarm = std::vector<Individual *>(size, nullptr);
+		double rou;
+		for(size_t i = 0; i < size; i++) {
+			rou = rand.gend();
+			if(rou < 0.5) swarm[i] = new Individual();
+			else swarm[i] = new Individual(false);
+		}
 	}
 	
 	Swarm() {
@@ -308,7 +405,7 @@ public:
 	}
 };
 
-int main() {
+int main(int argc, char *argv[]) {
 	std::chrono::system_clock::time_point start, end;
 	/*
 	start = std::chrono::system_clock::now();
@@ -321,6 +418,9 @@ int main() {
 
 	swarm = new Swarm(Np);
 
+	FILE *fp;
+	if(argc == 2) fp = fopen(argv[1], "w");
+
 	for(size_t i = 0; i <= Ng; i++) {	
 		fprintf(stderr, "----------------------------------------\n");
 		fprintf(stderr, "%ld世代目!!\n", i);
@@ -329,11 +429,20 @@ int main() {
 			fprintf(stderr, "------ Final --------------------------\n");
 		}
 
+		swarm->print();
+
 		nextSwarm = swarm->makeNextSwarm();
 
-		printf("%ld %lf\n", i, swarm->getElite()->getRate());
+		if(fp) {
+			fprintf(fp, "%ld %lf\n", i, swarm->getElite()->getRate());
+			fflush(fp);
+		} else {
+			printf("%ld %lf\n", i, swarm->getElite()->getRate());
+		}
 		delete swarm;
 		swarm = nextSwarm;
 	}
+
+	if(fp) fclose(fp);
 }
 
