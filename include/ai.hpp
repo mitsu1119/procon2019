@@ -230,6 +230,7 @@ public:
 	
 };
 
+
 /*
 constexpr uint_fast32_t greedy_count       = 8;
 constexpr uint_fast32_t search_count       = 16;
@@ -264,7 +265,6 @@ constexpr uint_fast32_t grace_time          = 2000;
 constexpr double_t max_mine_distance  = 16;
 constexpr double_t min_mine_distance  = 2;
 constexpr uint_fast32_t astar_depth   = 37;
-
 
 #define ANGLE_COORD 1
 #define SIDE_COORD  2

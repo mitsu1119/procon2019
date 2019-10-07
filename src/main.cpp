@@ -21,6 +21,7 @@ Astar astar_enemy;
 void move2json();
 std::string getType(int nx, int ny, int dx, int dy);
 
+/*
 int main(int argc, char *argv[]) {
 	field.init();
 
@@ -32,6 +33,7 @@ int main(int argc, char *argv[]) {
 
 	return 0;	
 }
+*/
 
 /*
 int main(int argc, char *argv[]){
@@ -53,7 +55,6 @@ int main(int argc, char *argv[]){
 }
 */
 
-/*
 int main(int argc, char* argv[]){
 	
 	field.init();
@@ -122,6 +123,7 @@ int main(int argc, char* argv[]){
 	_average_distance_weght = std::stof(argv[34]);
 
 	//---------------------- Another ----------------------
+		
 	_greedy_count = std::stof(argv[35]);
 	_search_count = std::stof(argv[36]);
 	_min_open_list_value = std::stof(argv[37]);
@@ -154,13 +156,13 @@ int main(int argc, char* argv[]){
 	while(true){
 		
 		astar_mine.move(&field, MINE_ATTR);
-		//astar_enemy.move(&field, ENEMY_ATTR);
+		astar_enemy.move(&field, ENEMY_ATTR);
 		
 		//beam_search.move(&field, MINE_ATTR);
 		//beam_search.move(&field, ENEMY_ATTR);
 		
 		//greedy.move(&field, MINE_ATTR);
-		greedy.move(&field, ENEMY_ATTR);
+		//greedy.move(&field, ENEMY_ATTR);
 
 		
 		//---------------------------------------
@@ -180,7 +182,6 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
-*/
 
 /*
 int main(int argc, char *argv[]) {

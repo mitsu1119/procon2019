@@ -1195,6 +1195,7 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 
 	start = std::chrono::system_clock::now();
 	this->setSearchTarget(field, agent);
+
 	std::for_each(this->search_target.begin(), this->search_target.end(), [&, this](auto& coord){
 			threads.emplace_back(std::thread(_multiThread, this, std::ref(field), agent, std::ref(coord)));
 		});
@@ -1207,7 +1208,7 @@ void Astar::searchBestRoute(Field& field,const uint_fast32_t agent){
 
 	end = std::chrono::system_clock::now();
 	time = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
-	std::cout << time << "milliseconds" << std::endl;
+	std::cerr << time << "milliseconds" << std::endl;
 
 	if(this->tentative_max_score == -INT_MAX){
 		this->decided_route.at(agent).clear();
@@ -1316,12 +1317,13 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 	}
 
 	//味方Agentが接近している場合
-	if(this->countAdjacentAgent(field, agent, MINE_ATTR) == 1){
+	if(this->countAdjacentAgent(field, agent, MINE_ATTR) == 2){
 		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
 		this->singleMove(field, agent);
 		return;
 	}
-	
+
+	std::cerr << "----------A*----------" << std::endl;
 	this->singleMove(field, agent);
 }
 
@@ -1448,7 +1450,6 @@ void Astar::init(const Field& field){
 }
 
 void Astar::move(Field *field, const uint_fast32_t attr){
-	
 	this->clock = std::chrono::system_clock::now();
 	this->is_time_over = false;
 	Field tmp = static_cast<Field> (*field);

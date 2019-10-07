@@ -7,4 +7,4 @@ data = json.load(f)
 
 f.close()
 
-print(data)
+#print(data)
