@@ -293,7 +293,7 @@ private:
 	uint_fast32_t greedy_count = 2;
 	//uint_fast32_t search_count = 3;
 	//uint_fast32_t search_count = 4;
-	uint_fast32_t search_count = 10;
+	uint_fast32_t search_count = 3;
 	int_fast32_t min_open_list_value = 0;
 
 	double_t occpancy_weight = 20;
@@ -304,8 +304,7 @@ private:
 
 	uint_fast32_t min_agent_distance = 0;
 	uint_fast32_t min_goal_distance = 0;
-	//uint_fast32_t max_move = 10;
-	uint_fast32_t max_move = 14;
+	uint_fast32_t max_move = 10;
 	//uint_fast32_t max_move = 8;
 	uint_fast32_t min_move_cost = 2;
 	int_fast32_t  min_value = 0;
