@@ -1029,7 +1029,7 @@ std::pair<double, std::vector<Node>> Astar::searchRoute(Field field, const uint_
 					score = ((current_field.calcScore(MINE_ATTR) - current_field.calcScore(ENEMY_ATTR)) * score_weight) + (this->goalEvaluation(field, agent, goal) * goal_weight) - (current->getScore() * cost_weight);
 				else
 					score = ((current_field.calcScore(ENEMY_ATTR) - current_field.calcScore(MINE_ATTR)) * score_weight) + (this->goalEvaluation(field, agent, goal) * goal_weight) - (current->getScore() * cost_weight);
-			}	
+			}
 
 			
 			return std::make_pair(score, node);
@@ -1352,6 +1352,17 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		return;
 	}
 
+	/*
+	if(field.getTurn() < 10){
+		Direction direction = this->exceptionMove(field, agent);
+		
+		field.agents.at(agent).move(direction);
+		this->next_coord.push_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
+		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
+		return;
+	}
+	*/
+
 	//全探索
 	if(field.getTurn() >= (field.getMaxTurn() - simple_bfs_depth - this->plus_breadth_force_search)){
 		Direction direction = this->finalPhase(field, agent);
@@ -1384,7 +1395,6 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	const uint_fast32_t x = field.agents.at(agent).getX();
 	const uint_fast32_t y = field.agents.at(agent).getY();
 	
-	//if(this->decided_route.at(agent).size() <= 1 || this->counter.at(agent) == search_count)
 	if(this->decided_route.at(agent).empty() || this->counter.at(agent) == search_count)
 		this->searchBestRoute(field, agent);
 	else
@@ -1405,7 +1415,6 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	{
 	auto result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 
-	//---------- もう１度探索をかける ----------
 	if(result != this->next_coord.end()){
 		this->searchBestRoute(field, agent);
 		if(this->is_time_over)
@@ -1424,7 +1433,6 @@ void Astar::singleMove(Field& field, const uint_fast32_t agent){
 	result = std::find(this->next_coord.begin(), this->next_coord.end(), std::make_pair(this->decided_route.at(agent).at(0).first, this->decided_route.at(agent).at(0).second));
 	if(result != this->next_coord.end())
 		goto _EXCEPTION_SEARCH;
-	//------------------------------------------
 
 	}
 	
@@ -1450,14 +1458,13 @@ void Astar::correctionRoute(Field& field, const uint_fast32_t agent){
 	std::vector<std::pair<uint_fast32_t, uint_fast32_t>> route;
 	int_fast32_t score;
 
-	//condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->move_count_list.at(agent) + this->plus_route_size);
 	if(field.getTurn() + this->max_move >= field.getMaxTurn())
 		condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), field.getMaxTurn() - field.getTurn());
 	else
 		condidate = this->searchRoute(field, agent, this->decided_goal.at(agent), this->move_count_list.at(agent) + this->plus_route_size);
 		
 	score = condidate.first;
-	if(score > 0){
+	if(score > 10000000){
 		route = this->makeRoute(field, condidate.second, agent, this->decided_goal.at(agent));
 		this->decided_route.at(agent) = route;
 		this->setDecidedCoord(route);
@@ -1616,7 +1623,6 @@ void _multiThread(Astar* astar, Field field, const uint_fast32_t agent, std::pai
 
 	static std::mutex mtx_;
 	
-	//condidate = tmp.searchRoute(field, agent, coord, tmp.max_move);
 	if(field.getTurn() + tmp.max_move >= field.getMaxTurn())
 		condidate = tmp.searchRoute(field, agent, coord, field.getMaxTurn() - field.getTurn());
 	else

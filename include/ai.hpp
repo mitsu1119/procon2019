@@ -218,7 +218,7 @@ public:
 
 constexpr double_t max_mine_distance  = 16;
 constexpr double_t min_mine_distance  = 2;
-constexpr uint_fast32_t astar_depth   = 45;
+constexpr uint_fast32_t astar_depth   = 35;
 
 #define ANGLE_COORD 1
 #define SIDE_COORD  2
@@ -272,34 +272,29 @@ private:
 	int_fast32_t plus_breadth_force_search = 2;
 	*/
 
-	/*
-	//自己対局用
-	//Node
-	double_t move_weight = 5;
-	double_t state_weight = 68;
-	double_t heuristic_weight = 5;
-	double_t value_weight = 100;
-	double_t is_on_decided_route_weight = 5000;
-	double_t is_on_mine_panel_weight = 9000;
-	double_t is_on_enemy_panel_weight = 400;
-	double_t adjacent_agent_weight = 100;
-	double_t average_distance_weght = 100;
-	*/
-
-	double_t move_weight = 10;
-	double_t state_weight = 2;
-	double_t heuristic_weight = 10;
-	double_t value_weight = 920;
-	double_t is_on_decided_route_weight = 250;
-	double_t is_on_mine_panel_weight = 1200;
+	//double_t move_weight = 1.1;
+	//double_t move_weight = 5;
+	double_t move_weight = 2;
+	double_t state_weight = 5;
+	//double_t heuristic_weight = 1.1;
+	//double_t heuristic_weight = 5;
+	double_t heuristic_weight = 2;
+	//double_t value_weight = 27;
+	double_t value_weight = 30;
+	//double_t is_on_decided_route_weight = 250;
+	double_t is_on_decided_route_weight = 400;
+	//double_t is_on_mine_panel_weight = 1100;
+	double_t is_on_mine_panel_weight = 400;
 	double_t is_on_enemy_panel_weight = 0;
 	double_t adjacent_agent_weight = 0;
 	double_t average_distance_weght = 0;
 	
 	//A*パラメータ
-	uint_fast32_t greedy_count = 6;
-	uint_fast32_t search_count = 100;
-	int_fast32_t min_open_list_value = 7;
+	uint_fast32_t greedy_count = 2;
+	//uint_fast32_t search_count = 3;
+	//uint_fast32_t search_count = 4;
+	uint_fast32_t search_count = 10;
+	int_fast32_t min_open_list_value = 0;
 
 	double_t occpancy_weight = 20;
 	double_t is_on_decided_weight = 20;
@@ -309,60 +304,26 @@ private:
 
 	uint_fast32_t min_agent_distance = 0;
 	uint_fast32_t min_goal_distance = 0;
-	uint_fast32_t max_move = 16;
-	uint_fast32_t min_move_cost = 1;
-	int_fast32_t  min_value = 5;
+	//uint_fast32_t max_move = 10;
+	uint_fast32_t max_move = 14;
+	//uint_fast32_t max_move = 8;
+	uint_fast32_t min_move_cost = 2;
+	int_fast32_t  min_value = 0;
 
-	double_t score_weight = 2;
-	double_t goal_weight = 3;
-	double_t cost_weight = 0.7;
+	double_t score_weight = 0.1;
+	//double_t goal_weight = 1.2;
+	double_t goal_weight = 0;
+	//double_t cost_weight = 2.7;
+	double_t cost_weight = 3;
 
 	//定数パラメータ
 	int_fast32_t minus_average_score = 5;
 	int_fast32_t occupancy_mine = 5;
-	int_fast32_t plus_route_size = 7;
-	int_fast32_t plus_max_move = 20;
-	int_fast32_t plus_breadth_force_search = 6;
-
-	/*
-	double_t move_weight = 61.1857;
-	double_t state_weight = 76.1857;
-	double_t heuristic_weight = 40.1616;
-	double_t value_weight = 24.60022;
-	double_t is_on_decided_route_weight = 99.9786;
-	double_t is_on_mine_panel_weight = 59.8429;
-	double_t is_on_enemy_panel_weight = 134.16;
-	double_t adjacent_agent_weight = 76.4947;
-	double_t average_distance_weght = 107.831;
-	
-	//A*パラメータ
-	uint_fast32_t greedy_count = 19;
-	uint_fast32_t search_count = 109;
-	int_fast32_t min_open_list_value = 12;
-
-	double_t occpancy_weight = 20;
-	double_t is_on_decided_weight = 20;
-	double_t is_angle_weight = 2;
-	double_t is_side_weight = 0;
-	double_t is_inside_closed_weight = 15;
-
-	uint_fast32_t min_agent_distance = 0;
-	uint_fast32_t min_goal_distance = 1;
-	uint_fast32_t max_move = 200;
-	uint_fast32_t min_move_cost = 18;
-	int_fast32_t  min_value = 91;
-
-	double_t score_weight = 107;
-	double_t goal_weight = 135.9656;
-	double_t cost_weight = 61.787;
-
-	//定数パラメータ
-	int_fast32_t minus_average_score = 9;
-	int_fast32_t occupancy_mine = 5;
-	int_fast32_t plus_route_size = 7;
-	int_fast32_t plus_max_move = 17;
-	int_fast32_t plus_breadth_force_search = 6;
-	*/
+	//int_fast32_t plus_route_size = 2;
+	int_fast32_t plus_route_size = 5;
+	//int_fast32_t plus_max_move = 20;
+	int_fast32_t plus_max_move = 10;
+	int_fast32_t plus_breadth_force_search = 9;
 	
 private:
 	
