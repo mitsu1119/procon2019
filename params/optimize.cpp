@@ -47,6 +47,7 @@ private:
 		rand = XorOshiro128p(seed());
 		params = parameters;
 
+		/*
 		enemParams.emplace_back(2);
 		enemParams.emplace_back(55);
 		enemParams.emplace_back(5);
@@ -72,6 +73,7 @@ private:
 		enemParams.emplace_back(8);
 		enemParams.emplace_back(8);
 		enemParams.emplace_back(16);
+		*/
 	}
 
 	Individual *makeNewIndividual_BLXa(const Individual *p) {
@@ -137,36 +139,37 @@ public:
 		std::random_device seed;
 		rand = XorOshiro128p(seed());
 		if(isBias) {
-			params.emplace_back(2);
-			params.emplace_back(55);
-			params.emplace_back(5);
-			params.emplace_back(35);
-			params.emplace_back(80);
-			params.emplace_back(95);
-			params.emplace_back(90);
-			params.emplace_back(10);
-			params.emplace_back(40);
-			params.emplace_back(50);
+			params.emplace_back(100);
+			params.emplace_back(3);
+			params.emplace_back(100);
+			params.emplace_back(650);
+			params.emplace_back(250);
+			params.emplace_back(400);
+			params.emplace_back(0);
+			params.emplace_back(0);
+			params.emplace_back(0);
+			params.emplace_back(7);
+			params.emplace_back(6);
+			params.emplace_back(100);
+			params.emplace_back(20);
 			params.emplace_back(20);
 			params.emplace_back(2);
+			params.emplace_back(0);
+			params.emplace_back(15);
+			params.emplace_back(0);
 			params.emplace_back(2);
-			params.emplace_back(10);
+			params.emplace_back(14);
 			params.emplace_back(2);
+			params.emplace_back(5);
 			params.emplace_back(2);
-			params.emplace_back(30);
-			params.emplace_back(2);
-			params.emplace_back(10);
-			params.emplace_back(1.1);
-			params.emplace_back(8);
-			params.emplace_back(0.023);
-			params.emplace_back(8);
-			params.emplace_back(8);
-			params.emplace_back(16);
+			params.emplace_back(14);
+			params.emplace_back(0.0055);
 		} else {
 			for(size_t i = 0; i < Dim; i++) {
 				params.emplace_back(rand.gend(200));
 			}
 		}
+		/*
 		enemParams.emplace_back(2);
 		enemParams.emplace_back(55);
 		enemParams.emplace_back(5);
@@ -192,6 +195,7 @@ public:
 		enemParams.emplace_back(8);
 		enemParams.emplace_back(8);
 		enemParams.emplace_back(16);
+		*/
 	}
 
 	void eval() {
@@ -219,14 +223,16 @@ public:
 				dup2(fd[1], 1);
 				close(fd[0]);
 				close(fd[1]);
-				char *args[Dim * 2 + 2] = {"./run"};
+				// char *args[Dim * 2 + 2] = {"./run"};
+				char *args[Dim + 2] = {"./run"};
 				for(int i = 0; i < Dim; i++) {
 					args[i + 1] = new char[std::to_string(params[i]).size() + 1];
-					args[Dim + 1 + i] = new char[std::to_string(params[i]).size() + 1];
+					// args[Dim + 1 + i] = new char[std::to_string(params[i]).size() + 1];
 					std::strcpy(args[i + 1], std::to_string(params[i]).c_str());
-					std::strcpy(args[Dim + 1 + i], std::to_string(enemParams[i]).c_str());
+					// std::strcpy(args[Dim + 1 + i], std::to_string(enemParams[i]).c_str());
 				}
-				args[Dim * 2 + 1] = NULL;
+				// args[Dim * 2 + 1] = NULL;
+				args[Dim + 1] = NULL;
 				execv(args[0], args);
 				for(int i = 0; i < Dim; i++) delete[] args[i + 1];
 				break;
