@@ -64,13 +64,15 @@ int main(int argc, char *argv[]){
     move2json();
     system("python ../../post.py");
 		
-		field.applyNextAgents();
+		//field.applyNextAgents();
 		field.print();
 		if(field.checkEnd()){
 			field.judgeWinner();
 			break;
 		}
-    time_process(); // 時間処理(仮) 
+    time_process(); // 時間処理
+
+    field.update(); // 盤面や座標のアップデート
   }
 	return 0;
 }
@@ -289,6 +291,7 @@ void time_process(){
   int intervalMillis = (int)(field.getIntervalMillis()/1000);  // 遷移時間
   int sub_manage_time = (int)field.getStartUnixTime();
   std::cerr << "started_Unix_Time: " << sub_manage_time << std::endl;
+  manage_time = sub_manage_time;
   manage_time += turnMillis; // 作戦時間を加算しておく
 
   std::cerr << "[*] turn: " << manage_time - time(NULL) << " seconds left" <<std::endl;

@@ -628,9 +628,9 @@ void Field::judgeWinner(){
 
 void Field::init(){
   // python 呼び出し
-  system("python ../../test.py"); // matches
+  system("python ../../req_match.py"); // matches
 
-  system("python ../../test.py"); // maps
+  system("python ../../req_map.py"); // maps
   
 	// agetn情報
 	int agent_data[30][3];
@@ -901,7 +901,7 @@ void Field::setPanels(const std::vector<std::vector<std::pair<uint_fast32_t, uin
 
 void Field::update(){
   // python 呼び出し
-  system("python ../../test.py");
+  system("python ../../req_map.py");
 
 	// agetn情報
 	int agent_data[30][3];
