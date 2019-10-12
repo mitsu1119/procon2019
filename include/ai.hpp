@@ -309,8 +309,7 @@ private:
 	int_fast32_t plus_route_size = 4;
 	int_fast32_t plus_max_move = 28;
 	int_fast32_t plus_breadth_force_search = 6;
-	//int_fast32_t start_beam_search = 3;
-	int_fast32_t start_beam_search = 2;
+	int_fast32_t start_beam_search = 3;
 
 	/*
 	//double_t move_weight = 1.1;
