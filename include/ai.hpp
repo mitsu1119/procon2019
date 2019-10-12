@@ -227,9 +227,8 @@ class Astar : public AI{
 private:
 
 	//時間管理用
-	//uint_fast32_t search_time         = 30000;
-	uint_fast32_t search_time         = 40000;
-	uint_fast32_t grace_time          = 3500;
+	uint_fast32_t search_time         = 30000;
+	uint_fast32_t grace_time          = 500;
 
 	/*
 	//自己対局用
@@ -272,18 +271,11 @@ private:
 	int_fast32_t plus_breadth_force_search = 2;
 	*/
 
-	//double_t move_weight = 1.1;
-	//double_t move_weight = 5;
-	double_t move_weight = 2;
-	double_t state_weight = 5;
-	//double_t heuristic_weight = 1.1;
-	//double_t heuristic_weight = 5;
-	double_t heuristic_weight = 2;
-	//double_t value_weight = 27;
+	double_t move_weight = 1.5;
+	double_t state_weight = 7;
+	double_t heuristic_weight = 1.5;
 	double_t value_weight = 30;
-	//double_t is_on_decided_route_weight = 250;
-	double_t is_on_decided_route_weight = 400;
-	//double_t is_on_mine_panel_weight = 1100;
+	double_t is_on_decided_route_weight = 430;
 	double_t is_on_mine_panel_weight = 400;
 	double_t is_on_enemy_panel_weight = 0;
 	double_t adjacent_agent_weight = 0;
@@ -291,10 +283,55 @@ private:
 	
 	//A*パラメータ
 	uint_fast32_t greedy_count = 2;
-	//uint_fast32_t search_count = 3;
+	uint_fast32_t search_count = 3;
+	int_fast32_t min_open_list_value = 8;
+
+	double_t occpancy_weight = 20;
+	double_t is_on_decided_weight = 10;
+	double_t is_angle_weight = 0;
+	double_t is_side_weight = 0;
+	double_t is_inside_closed_weight = 10;
+
+	uint_fast32_t min_agent_distance = 0;
+	uint_fast32_t min_goal_distance = 0;
+	uint_fast32_t max_move = 10;
+	uint_fast32_t min_move_cost = 2;
+	int_fast32_t  min_value = 0;
+
+	//double_t score_weight = 0.01;
+	double_t score_weight = 0;
+	double_t goal_weight = 0.12;
+	double_t cost_weight = 3;
+
+	//定数パラメータ
+	int_fast32_t minus_average_score = 5;
+	int_fast32_t occupancy_mine = 5;
+	int_fast32_t plus_route_size = 4;
+	int_fast32_t plus_max_move = 28;
+	int_fast32_t plus_breadth_force_search = 6;
+	int_fast32_t start_beam_search = 3;
+
+	/*
+	//double_t move_weight = 1.1;
+	//double_t move_weight = 5;
+	double_t move_weight = 1;
+	double_t state_weight = 5;
+	//double_t heuristic_weight = 1.1;
+	//double_t heuristic_weight = 5;
+	double_t heuristic_weight = 1;
+	double_t value_weight = 25;
+	double_t is_on_decided_route_weight = 400;
+	double_t is_on_mine_panel_weight = 400;
+	double_t is_on_enemy_panel_weight = 0;
+	double_t adjacent_agent_weight = 0;
+	double_t average_distance_weght = 0;
+	
+	//A*パラメータ
+	uint_fast32_t greedy_count = 2;
+	//uint_fast32_t greedy_count = 2;
 	//uint_fast32_t search_count = 4;
 	uint_fast32_t search_count = 3;
-	int_fast32_t min_open_list_value = 0;
+	int_fast32_t min_open_list_value = 10;
 
 	double_t occpancy_weight = 20;
 	double_t is_on_decided_weight = 20;
@@ -304,25 +341,24 @@ private:
 
 	uint_fast32_t min_agent_distance = 0;
 	uint_fast32_t min_goal_distance = 0;
-	uint_fast32_t max_move = 10;
+	//uint_fast32_t max_move = 10;
 	//uint_fast32_t max_move = 8;
+	uint_fast32_t max_move = 12;
 	uint_fast32_t min_move_cost = 2;
 	int_fast32_t  min_value = 0;
 
 	double_t score_weight = 0.1;
-	//double_t goal_weight = 1.2;
 	double_t goal_weight = 0;
-	//double_t cost_weight = 2.7;
 	double_t cost_weight = 3;
 
 	//定数パラメータ
 	int_fast32_t minus_average_score = 5;
 	int_fast32_t occupancy_mine = 5;
-	//int_fast32_t plus_route_size = 2;
-	int_fast32_t plus_route_size = 5;
+	int_fast32_t plus_route_size = 2;
 	//int_fast32_t plus_max_move = 20;
-	int_fast32_t plus_max_move = 10;
-	int_fast32_t plus_breadth_force_search = 9;
+	int_fast32_t plus_max_move = 12;
+	int_fast32_t plus_breadth_force_search = 5;
+	*/
 	
 private:
 	

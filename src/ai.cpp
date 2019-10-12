@@ -185,7 +185,6 @@ Field BeamSearch::search(Field* field, const uint_fast32_t agent, uint_fast32_t 
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);
-
 			
 			fbuf.applyNextAgents();
 			fields.emplace_back(fbuf, fbuf);
@@ -432,8 +431,7 @@ Field SimpleMove::beamSearch(Field* field, const uint_fast32_t agent, uint_fast3
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);			
-			this->greedyMove(fbuf, agent);
-			//味方を確定ルートで動かす
+			//this->greedyMove(fbuf, agent);
 			this->decidedMove(fbuf, agent, fbuf.decided_route);
 			fbuf.applyNextAgents();			
 			fields.emplace_back(fbuf, fbuf);
@@ -489,7 +487,8 @@ Field SimpleMove::breadthForceSearch(Field* field, const uint_fast32_t agent, ui
 		if(field->canMove(field->agents.at(agent), (Direction)i)){
 			Field fbuf = *field;
 			fbuf.agents.at(agent).move((Direction)i);
-			this->greedyMove(fbuf, agent);
+			
+			//this->greedyMove(fbuf, agent);
 			fbuf.applyNextAgents();
 			fields.emplace_back(fbuf, fbuf);
 		}
@@ -1343,6 +1342,9 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 	const uint_fast32_t x = field.agents.at(agent).getX();
 	const uint_fast32_t y = field.agents.at(agent).getY();
 
+	if(this->isTimeOver())
+		this->is_time_over = true;
+
 	if(this->is_time_over){
 		Direction direction = this->exceptionMove(field, agent);
 		
@@ -1352,8 +1354,8 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		return;
 	}
 
-	/*
-	if(field.getTurn() < 10){
+	//-----------------------------------------------
+	if(field.getTurn() <= start_beam_search){
 		Direction direction = this->exceptionMove(field, agent);
 		
 		field.agents.at(agent).move(direction);
@@ -1361,7 +1363,7 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
 		return;
 	}
-	*/
+	//-----------------------------------------------
 
 	//全探索
 	if(field.getTurn() >= (field.getMaxTurn() - simple_bfs_depth - this->plus_breadth_force_search)){
