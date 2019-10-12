@@ -298,10 +298,10 @@ private:
 	uint_fast32_t min_move_cost = 2;
 	int_fast32_t  min_value = 0;
 
-	//double_t score_weight = 0.01;
 	double_t score_weight = 0;
 	double_t goal_weight = 0.12;
-	double_t cost_weight = 3;
+	//double_t cost_weight = 3;
+	double_t cost_weight = 2;
 
 	//定数パラメータ
 	int_fast32_t minus_average_score = 5;
