@@ -1360,7 +1360,6 @@ void Astar::chooseAlgorithm(Field& field, const uint_fast32_t agent){
 		field.agents.at(agent).move(direction);
 		this->next_coord.push_back(std::make_pair(x + this->vec_x.at(direction), y + this->vec_y.at(direction)));
 		this->decided_route.at(agent) = std::vector<std::pair<uint_fast32_t, uint_fast32_t>>();
-		
 		return;
 	}
 
@@ -1494,7 +1493,8 @@ void Astar::init(const Field* field){
 	this->move_count_list.clear();
 	this->move_count_list.resize(field->agents.size());
 
-  this->search_time = field->getTurnMillis();
+	this->search_time = field->getTurnMillis();
+	std::cerr << "search_time:" << this->search_time << std::endl;
 }
 
 void Astar::init(const Field& field){
@@ -1517,6 +1517,8 @@ void Astar::init(const Field& field){
 	this->move_count_list.resize(field.agents.size());
 
   this->search_time = field.getTurnMillis();
+	std::cerr << "search_time:" << this->search_time << std::endl;
+
 }
 
 void Astar::move(Field *field, const uint_fast32_t attr){
