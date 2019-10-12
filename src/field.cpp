@@ -846,7 +846,7 @@ void Field::init(){
 	}
 
 	//ターン
-	this->turn = 0;
+	this->turn = (int)maps.get<object>()["turn"].get<double>();
 
 	// 終了ターン
 	this->max_turn = (int)matches.get<object>()["turns"].get<double>();
@@ -941,6 +941,8 @@ void Field::update(){
 	this->yShiftOffset = (uint_fast32_t)(buff + ((std::ceil(buff) == std::floor(buff)) ? 0 : 1));
 	sizee = this->height << this->yShiftOffset;
   
+  // ターン
+  this->turn = (int)maps.get<object>()["turn"].get<double>();
   // 開始時間
   this->startUnixTime = (int_fast32_t)maps.get<object>()["startedAtUnixTime"].get<double>();
 	// マップ生成
