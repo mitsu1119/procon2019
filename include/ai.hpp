@@ -181,6 +181,7 @@ inline const double Node::getScore() const{
 
 constexpr uint_fast32_t simple_beam_depth = 3;
 constexpr uint_fast32_t simple_beam_width = 30;
+//constexpr uint_fast32_t simple_beam_width = 40;
 constexpr uint_fast32_t simple_bfs_depth  = 4;
 
 class SimpleMove : public AI{
@@ -300,8 +301,7 @@ private:
 
 	double_t score_weight = 0;
 	double_t goal_weight = 0.12;
-	//double_t cost_weight = 3;
-	double_t cost_weight = 2;
+	double_t cost_weight = 3;
 
 	//定数パラメータ
 	int_fast32_t minus_average_score = 5;
@@ -309,7 +309,8 @@ private:
 	int_fast32_t plus_route_size = 4;
 	int_fast32_t plus_max_move = 28;
 	int_fast32_t plus_breadth_force_search = 6;
-	int_fast32_t start_beam_search = 3;
+	//int_fast32_t start_beam_search = 3;
+	int_fast32_t start_beam_search = 2;
 
 	/*
 	//double_t move_weight = 1.1;

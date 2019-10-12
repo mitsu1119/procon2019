@@ -944,6 +944,7 @@ void Field::update(){
   
   // ターン
   this->turn = (int)maps.get<object>()["turn"].get<double>();
+	
   // 開始時間
   this->startUnixTime = (int_fast32_t)maps.get<object>()["startedAtUnixTime"].get<double>();
 	// マップ生成
@@ -1046,7 +1047,8 @@ void Field::update(){
   // TODO: 汎用的な実装にする(agentIDとATTR)
   // このままだと自チームが敵側の場合OUT
 	agent_num *= 2;
-	std::vector<Agent>().swap(this->agents);
+	//std::vector<Agent>().swap(this->agents);
+	this->agents.clear();
 	for(int s=0; s < agent_num; s++){
 		if(s < agent_num/2){
 			this->agents.emplace_back(agent_data[s][0]-1, agent_data[s][1]-1, MINE_ATTR, agent_data[s][2]);

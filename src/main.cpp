@@ -63,8 +63,6 @@ int main(int argc, char *argv[]){
 
     move2json();
     system("python ../../post.py");
-
-    time_process(); // 時間処理(仮) 
 		
 		//field.applyNextAgents();
 		field.print();
@@ -72,7 +70,6 @@ int main(int argc, char *argv[]){
 			field.judgeWinner();
 			break;
 		}
-
     time_process(); // 時間処理
 
     field.update(); // 盤面や座標のアップデート
