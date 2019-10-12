@@ -66,12 +66,16 @@ int main(int argc, char *argv[]){
 
     time_process(); // 時間処理(仮) 
 		
-		field.applyNextAgents();
+		//field.applyNextAgents();
 		field.print();
 		if(field.checkEnd()){
 			field.judgeWinner();
 			break;
 		}
+
+    time_process(); // 時間処理
+
+    field.update(); // 盤面や座標のアップデート
   }
 	return 0;
 }
@@ -282,16 +286,24 @@ std::string getType(int nx, int ny, int dx, int dy){
 }
 
 void time_process(){
+  int post_flag = 1;
   int turnMillis     = (int)(field.getTurnMillis()/1000);      // 作戦時間
   int intervalMillis = (int)(field.getIntervalMillis()/1000);  // 遷移時間
-
+  int sub_manage_time = (int)field.getStartUnixTime();
+  std::cerr << "started_Unix_Time: " << sub_manage_time << std::endl;
+  manage_time = sub_manage_time;
   manage_time += turnMillis; // 作戦時間を加算しておく
 
   std::cerr << "[*] turn: " << manage_time - time(NULL) << " seconds left" <<std::endl;
   while(time(NULL) < manage_time){
     if(manage_time - time(NULL) <= 5)
       std::cerr << "[*] turn: " << manage_time - time(NULL) << " seconds left" << std::endl;
-    system("python ../../post.py");
+    if(post_flag == 1){
+      system("python ../../post.py");
+      post_flag = 0;
+    }else{
+      post_flag = 1;
+    }
     sleep(1);
   }
   

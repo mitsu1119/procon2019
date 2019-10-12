@@ -80,6 +80,7 @@ private:
 	//時間処理
 	uint_fast32_t intervalMillis;
 	uint_fast32_t turnMillis;
+  int_fast32_t startUnixTime;
 
   //ターン数
 	uint_fast32_t turn;
@@ -180,6 +181,7 @@ public:
 	//時間処理
 	const uint_fast32_t getIntervalMillis() const;
 	const uint_fast32_t getTurnMillis() const;
+  int_fast32_t getStartUnixTime(); // 毎ターンの開始時刻
 
 	//終了条件
 	const bool checkEnd() const;

@@ -601,6 +601,10 @@ const uint_fast32_t Field::getTurnMillis() const{
 	return this->turnMillis;
 }
 
+int_fast32_t Field::getStartUnixTime(){
+  return this->startUnixTime;
+}
+
 const bool Field::checkEnd() const{
 	return (this->turn == (uint_fast32_t)this->max_turn);
 }
@@ -624,9 +628,9 @@ void Field::judgeWinner(){
 
 void Field::init(){
   // python 呼び出し
-  system("python ../../test.py"); // matches
+  system("python ../../req_match.py"); // matches
 
-  system("python ../../test.py"); // maps
+  system("python ../../req_map.py"); // maps
   
 	// agetn情報
 	int agent_data[30][3];
@@ -665,6 +669,10 @@ void Field::init(){
 
   this->turnMillis = (int)matches.get<object>()["turnMillis"].get<double>();
   this->intervalMillis = (int)matches.get<object>()["intervalMillis"].get<double>();
+  this->startUnixTime = (int_fast32_t)maps.get<object>()["startedAtUnixTime"].get<double>();
+  // Debug ---------
+  std::cerr << "[*] startedAtUnixTime: " << maps.get<object>()["startedAtUnixTime"].get<double>();
+
   
   // 探索時間
   //this->search_time = (uint_fast32_t)turnMillis;
@@ -838,7 +846,7 @@ void Field::init(){
 	}
 
 	//ターン
-	this->turn = 0;
+	this->turn = (int)maps.get<object>()["turn"].get<double>();
 
 	// 終了ターン
 	this->max_turn = (int)matches.get<object>()["turns"].get<double>();
@@ -894,7 +902,7 @@ void Field::setPanels(const std::vector<std::vector<std::pair<uint_fast32_t, uin
 
 void Field::update(){
   // python 呼び出し
-  system("python ../../test.py");
+  system("python ../../req_map.py");
 
 	// agetn情報
 	int agent_data[30][3];
@@ -933,7 +941,11 @@ void Field::update(){
 	buff = std::log2(this->width);
 	this->yShiftOffset = (uint_fast32_t)(buff + ((std::ceil(buff) == std::floor(buff)) ? 0 : 1));
 	sizee = this->height << this->yShiftOffset;
-
+  
+  // ターン
+  this->turn = (int)maps.get<object>()["turn"].get<double>();
+  // 開始時間
+  this->startUnixTime = (int_fast32_t)maps.get<object>()["startedAtUnixTime"].get<double>();
 	// マップ生成
 	value::array tile = maps.get<object>()["tiled"].get<value::array>();
 	for(int i = 0; i < height; i++){
