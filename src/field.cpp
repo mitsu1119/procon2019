@@ -709,11 +709,11 @@ void Field::init(){
 	}
   
 
-	value::array agents = maps.get<object>()["teams"].get<value::array>(); // all agent
+	value::array all_agents = maps.get<object>()["teams"].get<value::array>(); // all agent
 
 	// teamID  <- 別のスクリプトで取ってくる必要あり
-	int myID = (int)agents[0].get<object>()["teamID"].get<double>();
-	int enID = (int)agents[1].get<object>()["teamID"].get<double>();
+	int myID = (int)all_agents[0].get<object>()["teamID"].get<double>();
+	int enID = (int)all_agents[1].get<object>()["teamID"].get<double>();
   // これ
   int myTeamID = (int)matches.get<object>()["teamID"].get<double>();
 	int enTeamID;
@@ -732,8 +732,8 @@ void Field::init(){
   }
 
 	// agent array
-	value::array myagents = agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
-	value::array enagents = agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
+	value::array myagents = all_agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
+	value::array enagents = all_agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
 
 	// Debug---------------
 	std::cerr << "\n\n";
@@ -957,11 +957,11 @@ void Field::update(){
 		}
 	}
 
-	value::array agents = maps.get<object>()["teams"].get<value::array>(); // all agent
+	value::array all_agents = maps.get<object>()["teams"].get<value::array>(); // all agent
 
 	// teamID  <- 別のスクリプトで取ってくる必要あり
-	int myID = (int)agents[0].get<object>()["teamID"].get<double>();
-	int enID = (int)agents[1].get<object>()["teamID"].get<double>();
+	int myID = (int)all_agents[0].get<object>()["teamID"].get<double>();
+	int enID = (int)all_agents[1].get<object>()["teamID"].get<double>();
   // これ
   int myTeamID = (int)matches.get<object>()["teamID"].get<double>();
 	int enTeamID;
@@ -980,8 +980,8 @@ void Field::update(){
   }
 
 	// agent array
-	value::array myagents = agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
-	value::array enagents = agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
+	value::array myagents = all_agents[my_attr_tmp].get<object>()["agents"].get<value::array>(); // my
+	value::array enagents = all_agents[en_attr_tmp].get<object>()["agents"].get<value::array>(); // enemy
 
 	// Debug---------------
 	std::cerr << "\n\n";
