@@ -6,10 +6,10 @@ import json
 ID = 6
 
 headers = {
-        'Authorization': 'procon30_example_token',
+        'Authorization': '5cbd0878da3217118a9893bcab4aa864d9478aaccb25a94eac926cc3b401ae1a',
         }
 
-url = 'http://localhost:8081/matches/' + str(ID)
+url = 'http://10.10.52.252/matches/' + str(ID)
 response = requests.get( url, headers=headers)
 
 map_data = response.json()

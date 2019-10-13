@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 }
 */
 
-/*
+
 int main(int argc, char *argv[]){
   manage_time = time(NULL); // とりあえず開始時の時刻を入れとく
 	
@@ -76,8 +76,9 @@ int main(int argc, char *argv[]){
   }
 	return 0;
 }
-*/
 
+
+/*
 int main(int argc, char* argv[]){
 	//manage_time = time(NULL); // とりあえず開始時刻を設定
 
@@ -202,6 +203,7 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
+*/
 
 void move2json(){
     object actions;
