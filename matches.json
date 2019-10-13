@@ -1,8 +1,8 @@
 {
   "id": 6,
-  "intervalMillis": 5000,
+  "intervalMillis": 1000,
   "matchTo": "C高専",
   "teamID": 1,
-  "turnMillis": 30000,
-  "turns": 60
+  "turnMillis": 14000,
+  "turns": 30
 }
