@@ -56,11 +56,8 @@ int main(int argc, char *argv[]){
 		//astar_enemy.move(&field, ENEMY_ATTR);
 		
 		//beam_search.move(&field, MINE_ATTR);
-		//beam_search.move(&field, ENEMY_ATTR);
+		beam_search.move(&field, ENEMY_ATTR);
 		
-		//greedy.move(&field, MINE_ATTR);
-		greedy.move(&field, ENEMY_ATTR);
-
     move2json();
     system("python ../../post.py");
 		
