@@ -3,10 +3,10 @@ import json
 
 # リクエストを送りマッチデータを取得
 headers = {
-        'Authorization': 'procon30_example_token',
+        'Authorization': '5cbd0878da3217118a9893bcab4aa864d9478aaccb25a94eac926cc3b401ae1a',
         }
 # リクエスト用URL
-url = 'http://localhost:8081/matches'
+url = 'http://10.10.52.252/matches'
 response = requests.get(url , headers=headers)
     
 match_data = response.json()

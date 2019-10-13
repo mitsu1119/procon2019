@@ -13,7 +13,7 @@ f.close()
 
 # 本戦用
 headers = {
-    'Authorization': 'procon30_example_token',
+    'Authorization': '5cbd0878da3217118a9893bcab4aa864d9478aaccb25a94eac926cc3b401ae1a',
     'Content-Type': 'application/json',
 }
 
@@ -32,9 +32,9 @@ data = json.dumps(post_data).encode("utf-8")
 #response = requests.post('http://localhost:8081/matches/1/action', headers=headers, data=data)
 
 # 本戦用URLを入れる
-response = requests.post('http://172.16.18.243:80/index.php', headers=headers, data=data)
+response = requests.post('http://10.10.52.252/matches/1/action', headers=headers, data=data)
 
-#print(response.text, file=sys.stderr)
+print(response, file=sys.stderr)
 
 print("[*] done", file=sys.stderr)
 
